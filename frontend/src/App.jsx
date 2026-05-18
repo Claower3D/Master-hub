@@ -706,8 +706,8 @@ export default function App() {
           <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему">
             <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
           </button>
-          <a href="tel:+77780211316" className="phone">
-            <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> +7 (778) 021-13-16
+          <a href="tel:+77780211316" className="phone" aria-label="Позвонить">
+            <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>+7 (778) 021-13-16</span>
           </a>
           <button className="btn-primary" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
             {t('cta_req')}
