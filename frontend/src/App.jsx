@@ -8,8 +8,8 @@ export default function App() {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   
   // Mega Menu states
-  const [activeMegaTab, setActiveMegaTab] = useState('remont-tehniki');
-  const [activeMegaCat, setActiveMegaCat] = useState('cat-210');
+  const [activeMegaTab, setActiveMegaTab] = useState('okna');
+  const [activeMegaCat, setActiveMegaCat] = useState('cat-okna-1');
   const [activeMegaSub, setActiveMegaSub] = useState('none');
   
   // Dedicated Category Page & Modal States
@@ -18,7 +18,7 @@ export default function App() {
   const [selectedModalItem, setSelectedModalItem] = useState(null); // { title, type: 'brand' | 'service', parentTitle }
   
   // Catalog Pill state
-  const [activeCatPill, setActiveCatPill] = useState('home');
+  const [activeCatPill, setActiveCatPill] = useState('okna');
   
   // Callback form state
   const [formName, setFormName] = useState('');
@@ -130,500 +130,146 @@ export default function App() {
   };
 
   // Mega Menu Data structure
-  // Mega Menu Data structure
   const megaTabs = [
-    { id: 'remont-tehniki', label: 'Ремонт техники' },
-    { id: 'transport', label: 'Транспорт' },
-    { id: 'bytovye-uslugi', label: 'Бытовые услуги' },
-    { id: 'specialist', label: 'Специалисты' },
-    { id: 'stroitelstvo-i-remont', label: 'Строительство' },
-    { id: 'tury', label: 'Туры' },
-    { id: 'drugoe', label: 'Другое' },
-    { id: 'countries', label: 'Мы в других странах' }
+    { id: 'okna', label: 'Окна' },
+    { id: 'servis', label: 'Сервис' },
+    { id: 'mebel', label: 'Мебель' }
   ];
 
   const megaCategories = [
-    // Ремонт техники
-    { id: 'cat-210', tab: 'remont-tehniki', title: 'Интернет-магазин запчастей', icon: 'ri-store-2-line' },
-    { id: 'cat-128', tab: 'remont-tehniki', title: 'Ремонт аудиотехники', icon: 'ri-headphone-line' },
-    { id: 'cat-230', tab: 'remont-tehniki', title: 'Ремонт бытовой техники', icon: 'ri-home-gear-line' },
-    { id: 'cat-112', tab: 'remont-tehniki', title: 'Ремонт климатической техники', icon: 'ri-temp-cold-line' },
-    { id: 'cat-15', tab: 'remont-tehniki', title: 'Ремонт компьютерной техники', icon: 'ri-computer-line' },
-    { id: 'cat-18', tab: 'remont-tehniki', title: 'Ремонт крупно бытовой техники', icon: 'ri-fridge-line' },
-    { id: 'cat-220', tab: 'remont-tehniki', title: 'Ремонт кухонной техники', icon: 'ri-restaurant-line' },
-    { id: 'cat-17', tab: 'remont-tehniki', title: 'Ремонт офисной техники', icon: 'ri-printer-line' },
-    { id: 'cat-135', tab: 'remont-tehniki', title: 'Ремонт садовой техники', icon: 'ri-plant-line' },
-    { id: 'cat-120', tab: 'remont-tehniki', title: 'Ремонт строительной техники', icon: 'ri-building-line' },
-    { id: 'cat-154', tab: 'remont-tehniki', title: 'Ремонт уходовой техники', icon: 'ri-t-shirt-air-line' },
-    { id: 'cat-94', tab: 'remont-tehniki', title: 'Ремонт цифровой техники', icon: 'ri-smartphone-line' },
-    { id: 'cat-148', tab: 'remont-tehniki', title: 'Ремонт часов', icon: 'ri-time-line' },
-    { id: 'cat-105', tab: 'remont-tehniki', title: 'Ремонт электротранспорта', icon: 'ri-roadster-line' },
-    { id: 'cat-255', tab: 'remont-tehniki', title: 'Сервисный центр', icon: 'ri-tools-line' },
+    // Окна
+    { id: 'cat-okna-1', tab: 'okna', title: 'Москитные сетки', icon: 'ri-window-line' },
+    { id: 'cat-okna-2', tab: 'okna', title: 'Детская защита и решетки', icon: 'ri-shield-check-line' },
+    { id: 'cat-okna-3', tab: 'okna', title: 'Ремонт окон', icon: 'ri-tools-line' },
+    { id: 'cat-okna-4', tab: 'okna', title: 'Изготовление окон', icon: 'ri-building-line' },
+    { id: 'cat-okna-5', tab: 'okna', title: 'Ролл-шторы и жалюзи', icon: 'ri-layout-top-line' },
 
-    // Транспорт
-    { id: 'cat-859', tab: 'transport', title: 'Аренда транспорта', icon: 'ri-roadster-line' },
-    { id: 'cat-542', tab: 'transport', title: 'Перевозка авто', icon: 'ri-truck-line' },
-    { id: 'cat-310', tab: 'transport', title: 'СТО', icon: 'ri-tools-line' },
-    { id: 'cat-447', tab: 'transport', title: 'Спецтехника', icon: 'ri-car-line' },
-    { id: 'cat-858', tab: 'transport', title: 'Трансфер', icon: 'ri-guide-line' },
+    // Сервис
+    { id: 'cat-srv-1', tab: 'servis', title: 'Ремонт стиральных машин', icon: 'ri-t-shirt-air-line' },
+    { id: 'cat-srv-2', tab: 'servis', title: 'Ремонт холодильников', icon: 'ri-fridge-line' },
+    { id: 'cat-srv-3', tab: 'servis', title: 'Ремонт кондиционеров и посудомоечных машин', icon: 'ri-temp-cold-line' },
+    { id: 'cat-srv-4', tab: 'servis', title: 'Установка/Ремонт вытяжек', icon: 'ri-windy-line' },
+    { id: 'cat-srv-5', tab: 'servis', title: 'Установка/Ремонт кондиционеров', icon: 'ri-temp-cold-line' },
+    { id: 'cat-srv-6', tab: 'servis', title: 'Сварка', icon: 'ri-flashlight-line' },
+    { id: 'cat-srv-7', tab: 'servis', title: 'Металлоконструкции', icon: 'ri-grid-line' },
+    { id: 'cat-srv-8', tab: 'servis', title: 'Электрика', icon: 'ri-lightbulb-flash-line' },
 
-    // Бытовые услуги
-    { id: 'cat-506', tab: 'bytovye-uslugi', title: 'Ассенизатор', icon: 'ri-water-flash-line' },
-    { id: 'cat-165', tab: 'bytovye-uslugi', title: 'Ремонт ювелирных изделий', icon: 'ri-vip-diamond-line' },
-    { id: 'cat-463', tab: 'bytovye-uslugi', title: 'Видеонаблюдение', icon: 'ri-shield-check-line' },
-    { id: 'cat-419', tab: 'bytovye-uslugi', title: 'Вывоз мусора', icon: 'ri-truck-line' },
-    { id: 'cat-427', tab: 'bytovye-uslugi', title: 'Дезинсекция', icon: 'ri-bug-line' },
-    { id: 'cat-421', tab: 'bytovye-uslugi', title: 'Дезинфекция', icon: 'ri-virus-line' },
-    { id: 'cat-426', tab: 'bytovye-uslugi', title: 'Дератизация', icon: 'ri-skull-line' },
-    { id: 'cat-433', tab: 'bytovye-uslugi', title: 'Доставка воды', icon: 'ri-drop-line' },
-    { id: 'cat-410', tab: 'bytovye-uslugi', title: 'Клининг', icon: 'ri-sparkling-line' },
-    { id: 'cat-505', tab: 'bytovye-uslugi', title: 'Муж на час', icon: 'ri-hammer-line' },
-    { id: 'cat-434', tab: 'bytovye-uslugi', title: 'Прачечная', icon: 'ri-water-flash-line' },
-    { id: 'cat-526', tab: 'bytovye-uslugi', title: 'Сварщик', icon: 'ri-tools-line' },
-    { id: 'cat-474', tab: 'bytovye-uslugi', title: 'Сигнализация', icon: 'ri-alarm-warning-line' },
-    { id: 'cat-461', tab: 'bytovye-uslugi', title: 'Услуги по мебели', icon: 'ri-sofa-line' },
-    { id: 'cat-420', tab: 'bytovye-uslugi', title: 'Услуги сантехника', icon: 'ri-drop-line' },
-    { id: 'cat-163', tab: 'bytovye-uslugi', title: 'Услуги электрика', icon: 'ri-lightbulb-flash-line' },
-    { id: 'cat-420-chem', tab: 'bytovye-uslugi', title: 'Химчистка', icon: 'ri-shirt-line' },
-    { id: 'cat-437', tab: 'bytovye-uslugi', title: 'Ателье', icon: 'ri-scissors-line' },
-
-    // Специалисты
-    { id: 'cat-713', tab: 'specialist', title: 'Няня', icon: 'ri-user-heart-line' },
-    { id: 'cat-668', tab: 'specialist', title: 'Подготовка к ЕНТ', icon: 'ri-graduation-cap-line' },
-    { id: 'cat-476', tab: 'specialist', title: 'Адвокат', icon: 'ri-scales-3-line' },
-    { id: 'cat-646', tab: 'specialist', title: 'Астролог', icon: 'ri-star-line' },
-    { id: 'cat-671', tab: 'specialist', title: 'Бухгалтер', icon: 'ri-money-dollar-circle-line' },
-    { id: 'cat-731', tab: 'specialist', title: 'Вокал', icon: 'ri-music-line' },
-    { id: 'cat-535', tab: 'specialist', title: 'Грузчики', icon: 'ri-truck-line' },
-    { id: 'cat-670', tab: 'specialist', title: 'Косметолог', icon: 'ri-sparkling-line' },
-    { id: 'cat-720', tab: 'specialist', title: 'Коуч по карьере', icon: 'ri-briefcase-line' },
-    { id: 'cat-704', tab: 'specialist', title: 'Курсы языка', icon: 'ri-translate' },
-    { id: 'cat-710', tab: 'specialist', title: 'Лазерная эпиляция', icon: 'ri-flashlight-line' },
-    { id: 'cat-652', tab: 'specialist', title: 'Маникюр', icon: 'ri-hand-heart-line' },
-    { id: 'cat-675', tab: 'specialist', title: 'Нотариус', icon: 'ri-file-text-line' },
-    { id: 'cat-680', tab: 'specialist', title: 'Нумеролог', icon: 'ri-hashtag' },
-    { id: 'cat-677', tab: 'specialist', title: 'Профориентолог', icon: 'ri-compass-line' },
-    { id: 'cat-690', tab: 'specialist', title: 'Репетитор начальных классов', icon: 'ri-book-open-line' },
-    { id: 'cat-510', tab: 'specialist', title: 'Репетитор по математике', icon: 'ri-book-open-line' },
-    { id: 'cat-716', tab: 'specialist', title: 'Рисование для детей', icon: 'ri-palette-line' },
-    { id: 'cat-658', tab: 'specialist', title: 'Таролог', icon: 'ri-star-line' },
-    { id: 'cat-649', tab: 'specialist', title: 'Тимбилдинг', icon: 'ri-team-line' },
-    { id: 'cat-241', tab: 'specialist', title: 'Трезвый водитель', icon: 'ri-car-line' },
-    { id: 'cat-824', tab: 'specialist', title: 'Шугаринг', icon: 'ri-sparkling-line' },
-    { id: 'cat-520-jur', tab: 'specialist', title: 'Юрист', icon: 'ri-scales-line' },
-    { id: 'cat-565', tab: 'specialist', title: 'Медицина', icon: 'ri-heart-pulse-line' },
-
-    // Строительство
-    { id: 'cat-520-bur', tab: 'stroitelstvo-i-remont', title: 'Алмазное бурение', icon: 'ri-building-line' },
-    { id: 'cat-623', tab: 'stroitelstvo-i-remont', title: 'Аренда инструментов', icon: 'ri-tools-line' },
-    { id: 'cat-519', tab: 'stroitelstvo-i-remont', title: 'Асфальтирование', icon: 'ri-road-map-line' },
-    { id: 'cat-504', tab: 'stroitelstvo-i-remont', title: 'Бетон', icon: 'ri-building-line' },
-    { id: 'cat-823', tab: 'stroitelstvo-i-remont', title: 'Жалюзи', icon: 'ri-window-line' },
-    { id: 'cat-741', tab: 'stroitelstvo-i-remont', title: 'Москитные сетки', icon: 'ri-window-line' },
-    { id: 'cat-620', tab: 'stroitelstvo-i-remont', title: 'Пластиковые окна', icon: 'ri-window-line' },
-    { id: 'cat-610', tab: 'stroitelstvo-i-remont', title: 'Ремонт квартир', icon: 'ri-building-line' },
-    { id: 'cat-759', tab: 'stroitelstvo-i-remont', title: 'Решетки на окна', icon: 'ri-grid-line' },
-
-    // Туры
-    { id: 'cat-866', tab: 'tury', title: 'Походы', icon: 'ri-walk-line' },
-    { id: 'cat-882', tab: 'tury', title: 'Активный отдых', icon: 'ri-run-line' },
-    { id: 'cat-807', tab: 'tury', title: 'Виды туров', icon: 'ri-compass-line' },
-    { id: 'cat-853', tab: 'tury', title: 'Направления', icon: 'ri-map-pin-line' },
-
-    // Другое
-    { id: 'cat-497', tab: 'drugoe', title: 'Локальные сети', icon: 'ri-global-line' },
-    { id: 'cat-854', tab: 'drugoe', title: 'Наркологический центр', icon: 'ri-hospital-line' },
-    { id: 'cat-617', tab: 'drugoe', title: 'Партнерам', icon: 'ri-team-line' },
-    { id: 'cat-855', tab: 'drugoe', title: 'Психиатрическая клиника', icon: 'ri-hospital-line' },
-    { id: 'cat-168', tab: 'drugoe', title: 'Скупка техники', icon: 'ri-exchange-dollar-line' },
-    { id: 'cat-595', tab: 'drugoe', title: 'Спорт', icon: 'ri-run-line' },
-    { id: 'cat-570', tab: 'drugoe', title: 'Студия звукозаписи', icon: 'ri-mic-line' },
-    { id: 'cat-439', tab: 'drugoe', title: 'Типография', icon: 'ri-printer-line' },
-
-    // Мы в других странах
-    { id: 'cat-901', tab: 'countries', title: 'Россия', icon: 'ri-map-pin-line' },
-    { id: 'cat-902', tab: 'countries', title: 'Узбекистан', icon: 'ri-map-pin-line' },
-    { id: 'cat-903', tab: 'countries', title: 'Кыргызстан', icon: 'ri-map-pin-line' }
+    // Мебель
+    { id: 'cat-meb-1', tab: 'mebel', title: 'Мебель на заказ (корпусная, мягкая)', icon: 'ri-sofa-line' }
   ];
 
   const megaSubcategories = {
-    // Ремонт техники
-    'cat-210': [
-      { id: 'sub-210-1', title: 'Интернет-магазин запчастей' },
-      { id: 'sub-210-2', title: 'Запчасти для стиральных машин' },
-      { id: 'sub-210-3', title: 'Запчасти для холодильников' }
+    // Окна
+    'cat-okna-1': [
+      { id: 'sub-okna-1-1', title: 'Москитные сетки Стандарт' },
+      { id: 'sub-okna-1-2', title: 'Сетки Антикошка' },
+      { id: 'sub-okna-1-3', title: 'Сетки Антипыль' }
     ],
-    'cat-128': [
-      { id: 'sub-128-1', title: 'Ремонт аудиотехники' },
-      { id: 'sub-128-2', title: 'Ремонт усилителей' },
-      { id: 'sub-128-3', title: 'Ремонт колонок' }
+    'cat-okna-2': [
+      { id: 'sub-okna-2-1', title: 'Детские замки на окна' },
+      { id: 'sub-okna-2-2', title: 'Металлические решетки' },
+      { id: 'sub-okna-2-3', title: 'Защитные тросики' }
     ],
-    'cat-230': [
-      { id: 'sub-231', title: 'Ремонт пылесосов' },
-      { id: 'sub-232', title: 'Ремонт утюгов' },
-      { id: 'sub-233', title: 'Ремонт блендеров' }
+    'cat-okna-3': [
+      { id: 'sub-okna-3-1', title: 'Регулировка окон' },
+      { id: 'sub-okna-3-2', title: 'Замена стеклопакетов' },
+      { id: 'sub-okna-3-3', title: 'Замена уплотнителей' },
+      { id: 'sub-okna-3-4', title: 'Замена ручек и навесов' },
+      { id: 'sub-okna-3-5', title: 'Сложное открывание' },
+      { id: 'sub-okna-3-6', title: 'Детский замок' },
+      { id: 'sub-okna-3-7', title: 'Замок курильщика' }
     ],
-    'cat-112': [
-      { id: 'sub-112-1', title: 'Ремонт климатической техники' },
-      { id: 'sub-112-2', title: 'Ремонт кондиционеров' },
-      { id: 'sub-112-3', title: 'Ремонт обогревателей' }
+    'cat-okna-4': [
+      { id: 'sub-okna-4-1', title: 'Пластиковые окна ПВХ' },
+      { id: 'sub-okna-4-2', title: 'Алюминиевые окна' },
+      { id: 'sub-okna-4-3', title: 'Остекление балконов и лоджий' }
     ],
-    'cat-15': [
-      { id: 'sub-15-1', title: 'Ремонт компьютерной техники' },
-      { id: 'sub-15-2', title: 'Ремонт ноутбуков' },
-      { id: 'sub-15-3', title: 'Ремонт моноблоков' }
-    ],
-    'cat-18': [
-      { id: 'sub-211', title: 'Ремонт стиральных машин' },
-      { id: 'sub-212', title: 'Ремонт холодильников' },
-      { id: 'sub-213', title: 'Ремонт посудомоечных машин' }
-    ],
-    'cat-220': [
-      { id: 'sub-221', title: 'Ремонт кофемашин' },
-      { id: 'sub-222', title: 'Ремонт микроволновок' },
-      { id: 'sub-223', title: 'Ремонт мультиварок' }
-    ],
-    'cat-17': [
-      { id: 'sub-17-1', title: 'Ремонт офисной техники' },
-      { id: 'sub-17-2', title: 'Ремонт принтеров' },
-      { id: 'sub-17-3', title: 'Ремонт МФУ' }
-    ],
-    'cat-135': [
-      { id: 'sub-135-1', title: 'Ремонт садовой техники' },
-      { id: 'sub-135-2', title: 'Ремонт газонокосилок' }
-    ],
-    'cat-120': [
-      { id: 'sub-120-1', title: 'Ремонт строительной техники' },
-      { id: 'sub-120-2', title: 'Ремонт перфораторов' }
-    ],
-    'cat-154': [
-      { id: 'sub-154-1', title: 'Ремонт уходовой техники' },
-      { id: 'sub-154-2', title: 'Ремонт фенов' }
-    ],
-    'cat-94': [
-      { id: 'sub-94-1', title: 'Ремонт цифровой техники' },
-      { id: 'sub-94-2', title: 'Ремонт телефонов' },
-      { id: 'sub-94-3', title: 'Ремонт планшетов' }
-    ],
-    'cat-148': [
-      { id: 'sub-148-1', title: 'Ремонт часов' },
-      { id: 'sub-148-2', title: 'Ремонт настенных часов' }
-    ],
-    'cat-105': [
-      { id: 'sub-105-1', title: 'Ремонт электротранспорта' },
-      { id: 'sub-105-2', title: 'Ремонт самокатов' }
-    ],
-    'cat-255': [
-      { id: 'sub-255-1', title: 'Сервисный центр' }
+    'cat-okna-5': [
+      { id: 'sub-okna-5-1', title: 'Рулонные шторы (Ролл-шторы)' },
+      { id: 'sub-okna-5-2', title: 'Горизонтальные жалюзи' },
+      { id: 'sub-okna-5-3', title: 'Вертикальные жалюзи' }
     ],
 
-    // Транспорт
-    'cat-859': [
-      { id: 'sub-321', title: 'Аренда транспорта' },
-      { id: 'sub-859-2', title: 'Прокат авто' }
+    // Сервис
+    'cat-srv-1': [
+      { id: 'sub-srv-1-1', title: 'Замена ТЭНа' },
+      { id: 'sub-srv-1-2', title: 'Замена подшипников' },
+      { id: 'sub-srv-1-3', title: 'Замена сливного насоса (помпы)' },
+      { id: 'sub-srv-1-4', title: 'Ремонт модуля управления' }
     ],
-    'cat-542': [
-      { id: 'sub-542-1', title: 'Перевозка авто' },
-      { id: 'sub-542-2', title: 'Эвакуатор' }
+    'cat-srv-2': [
+      { id: 'sub-srv-2-1', title: 'Заправка фреоном' },
+      { id: 'sub-srv-2-2', title: 'Замена компрессора' },
+      { id: 'sub-srv-2-3', title: 'Замена термостата' },
+      { id: 'sub-srv-2-4', title: 'Ремонт системы No Frost' }
     ],
-    'cat-310': [
-      { id: 'sub-311', title: 'СТО' },
-      { id: 'sub-312', title: 'Компьютерная диагностика' }
+    'cat-srv-3': [
+      { id: 'sub-srv-3-1', title: 'Ремонт кондиционеров' },
+      { id: 'sub-srv-3-2', title: 'Ремонт посудомоечных машин' },
+      { id: 'sub-srv-3-3', title: 'Чистка и заправка сплит-систем' }
     ],
-    'cat-447': [
-      { id: 'sub-447-1', title: 'Спецтехника' },
-      { id: 'sub-447-2', title: 'Аренда спецтехники' }
+    'cat-srv-4': [
+      { id: 'sub-srv-4-1', title: 'Установка кухонных вытяжек' },
+      { id: 'sub-srv-4-2', title: 'Ремонт двигателей и плат вытяжек' },
+      { id: 'sub-srv-4-3', title: 'Замена фильтров' }
     ],
-    'cat-858': [
-      { id: 'sub-322', title: 'Трансфер' },
-      { id: 'sub-858-2', title: 'Встреча в аэропорту' }
+    'cat-srv-5': [
+      { id: 'sub-srv-5-1', title: 'Монтаж кондиционеров' },
+      { id: 'sub-srv-5-2', title: 'Демонтаж сплит-систем' },
+      { id: 'sub-srv-5-3', title: 'Сервисное обслуживание' }
     ],
-
-    // Бытовые услуги
-    'cat-506': [
-      { id: 'sub-506-1', title: 'Ассенизатор' },
-      { id: 'sub-506-2', title: 'Откачка септиков' }
+    'cat-srv-6': [
+      { id: 'sub-srv-6-1', title: 'Сварочные работы с выездом' },
+      { id: 'sub-srv-6-2', title: 'Сварка труб и каркасов' },
+      { id: 'sub-srv-6-3', title: 'Электродуговая и аргонная сварка' }
     ],
-    'cat-165': [
-      { id: 'sub-165-1', title: 'Ремонт ювелирных изделий' },
-      { id: 'sub-165-2', title: 'Пайка цепочек' }
+    'cat-srv-7': [
+      { id: 'sub-srv-7-1', title: 'Изготовление металлоконструкций' },
+      { id: 'sub-srv-7-2', title: 'Навесы и козырьки' },
+      { id: 'sub-srv-7-3', title: 'Заборы и ворота' }
     ],
-    'cat-463': [
-      { id: 'sub-463-1', title: 'Видеонаблюдение' },
-      { id: 'sub-463-2', title: 'Установка камер' }
-    ],
-    'cat-419': [
-      { id: 'sub-419-1', title: 'Вывоз мусора' },
-      { id: 'sub-419-2', title: 'Вывоз строительного мусора' }
-    ],
-    'cat-427': [
-      { id: 'sub-427-1', title: 'Дезинсекция' },
-      { id: 'sub-427-2', title: 'Уничтожение насекомых' }
-    ],
-    'cat-421': [
-      { id: 'sub-421-1', title: 'Дезинфекция' },
-      { id: 'sub-421-2', title: 'Обработка помещений' }
-    ],
-    'cat-426': [
-      { id: 'sub-426-1', title: 'Дератизация' },
-      { id: 'sub-426-2', title: 'Уничтожение грызунов' }
-    ],
-    'cat-433': [
-      { id: 'sub-433-1', title: 'Доставка воды' },
-      { id: 'sub-433-2', title: 'Питьевая вода 19л' }
-    ],
-    'cat-410': [
-      { id: 'sub-411', title: 'Уборка домов' },
-      { id: 'sub-412', title: 'Генеральная уборка дома' },
-      { id: 'sub-413', title: 'Химчистка диванов' }
-    ],
-    'cat-505': [
-      { id: 'sub-422', title: 'Муж на час' },
-      { id: 'sub-505-2', title: 'Мелкий бытовой ремонт' }
-    ],
-    'cat-434': [
-      { id: 'sub-434-1', title: 'Прачечная' },
-      { id: 'sub-434-2', title: 'Стирка белья' }
-    ],
-    'cat-526': [
-      { id: 'sub-526-1', title: 'Сварщик' },
-      { id: 'sub-526-2', title: 'Сварочные работы' }
-    ],
-    'cat-474': [
-      { id: 'sub-474-1', title: 'Сигнализация' },
-      { id: 'sub-474-2', title: 'Охранная сигнализация' }
-    ],
-    'cat-461': [
-      { id: 'sub-461-1', title: 'Услуги по мебели' },
-      { id: 'sub-461-2', title: 'Сборка мебели' }
-    ],
-    'cat-420': [
-      { id: 'sub-421', title: 'Услуги сантехника' },
-      { id: 'sub-420-2', title: 'Устранение засоров' }
-    ],
-    'cat-163': [
-      { id: 'sub-163-1', title: 'Услуги электрика' },
-      { id: 'sub-163-2', title: 'Монтаж проводки' }
-    ],
-    'cat-420-chem': [
-      { id: 'sub-420-chem-1', title: 'Химчистка' },
-      { id: 'sub-420-chem-2', title: 'Химчистка ковров' }
-    ],
-    'cat-437': [
-      { id: 'sub-437-1', title: 'Ателье' },
-      { id: 'sub-437-2', title: 'Ремонт одежды' }
+    'cat-srv-8': [
+      { id: 'sub-srv-8-1', title: 'Монтаж электропроводки' },
+      { id: 'sub-srv-8-2', title: 'Установка розеток и выключателей' },
+      { id: 'sub-srv-8-3', title: 'Сборка электрощитов' },
+      { id: 'sub-srv-8-4', title: 'Устранение короткого замыкания' }
     ],
 
-    // Специалисты
-    'cat-713': [
-      { id: 'sub-713-1', title: 'Няня' },
-      { id: 'sub-713-2', title: 'Няня для грудничка' }
-    ],
-    'cat-668': [
-      { id: 'sub-512', title: 'Подготовка к ЕНТ' },
-      { id: 'sub-668-2', title: 'ЕНТ по математике' }
-    ],
-    'cat-476': [
-      { id: 'sub-522', title: 'Адвокат' },
-      { id: 'sub-476-2', title: 'Уголовный адвокат' }
-    ],
-    'cat-646': [
-      { id: 'sub-646-1', title: 'Астролог' },
-      { id: 'sub-646-2', title: 'Натальная карта' }
-    ],
-    'cat-671': [
-      { id: 'sub-671-1', title: 'Бухгалтер' },
-      { id: 'sub-671-2', title: 'Бухгалтерское сопровождение' }
-    ],
-    'cat-731': [
-      { id: 'sub-731-1', title: 'Вокал' },
-      { id: 'sub-731-2', title: 'Уроки вокала' }
-    ],
-    'cat-535': [
-      { id: 'sub-535-1', title: 'Грузчики' },
-      { id: 'sub-535-2', title: 'Квартирный переезд' }
-    ],
-    'cat-670': [
-      { id: 'sub-670-1', title: 'Косметолог' },
-      { id: 'sub-670-2', title: 'Чистка лица' }
-    ],
-    'cat-720': [
-      { id: 'sub-720-1', title: 'Коуч по карьере' },
-      { id: 'sub-720-2', title: 'Карьерная консультация' }
-    ],
-    'cat-704': [
-      { id: 'sub-704-1', title: 'Курсы языка' },
-      { id: 'sub-704-2', title: 'Курсы английского' }
-    ],
-    'cat-710': [
-      { id: 'sub-710-1', title: 'Лазерная эпиляция' },
-      { id: 'sub-710-2', title: 'Эпиляция всего тела' }
-    ],
-    'cat-652': [
-      { id: 'sub-652-1', title: 'Маникюр' },
-      { id: 'sub-652-2', title: 'Маникюр с покрытием' }
-    ],
-    'cat-675': [
-      { id: 'sub-675-1', title: 'Нотариус' },
-      { id: 'sub-675-2', title: 'Оформление доверенности' }
-    ],
-    'cat-680': [
-      { id: 'sub-680-1', title: 'Нумеролог' },
-      { id: 'sub-680-2', title: 'Нумерологический расчет' }
-    ],
-    'cat-677': [
-      { id: 'sub-677-1', title: 'Профориентолог' },
-      { id: 'sub-677-2', title: 'Выбор профессии' }
-    ],
-    'cat-690': [
-      { id: 'sub-690-1', title: 'Репетитор начальных классов' },
-      { id: 'sub-690-2', title: 'Помощь с домашним заданием' }
-    ],
-    'cat-510': [
-      { id: 'sub-511', title: 'Репетитор по математике' },
-      { id: 'sub-510-2', title: 'Высшая математика' }
-    ],
-    'cat-716': [
-      { id: 'sub-716-1', title: 'Рисование для детей' },
-      { id: 'sub-716-2', title: 'Художественная школа' }
-    ],
-    'cat-658': [
-      { id: 'sub-658-1', title: 'Таролог' },
-      { id: 'sub-658-2', title: 'Расклад Таро' }
-    ],
-    'cat-649': [
-      { id: 'sub-649-1', title: 'Тимбилдинг' },
-      { id: 'sub-649-2', title: 'Организация тимбилдинга' }
-    ],
-    'cat-241': [
-      { id: 'sub-241-1', title: 'Трезвый водитель' },
-      { id: 'sub-241-2', title: 'Перегон авто' }
-    ],
-    'cat-824': [
-      { id: 'sub-824-1', title: 'Шугаринг' },
-      { id: 'sub-824-2', title: 'Депиляция сахаром' }
-    ],
-    'cat-520-jur': [
-      { id: 'sub-521', title: 'Юрист' },
-      { id: 'sub-520-jur-2', title: 'Юридическая консультация' }
-    ],
-    'cat-565': [
-      { id: 'sub-565-1', title: 'Медицина' },
-      { id: 'sub-565-2', title: 'Вызов врача на дом' }
-    ],
-
-    // Строительство
-    'cat-520-bur': [
-      { id: 'sub-622', title: 'Алмазное бурение' },
-      { id: 'sub-520-bur-2', title: 'Бурение отверстий в бетоне' }
-    ],
-    'cat-623': [
-      { id: 'sub-623-1', title: 'Аренда инструментов' },
-      { id: 'sub-623-2', title: 'Прокат генераторов' }
-    ],
-    'cat-519': [
-      { id: 'sub-612', title: 'Асфальтирование' },
-      { id: 'sub-519-2', title: 'Укладка асфальта' }
-    ],
-    'cat-504': [
-      { id: 'sub-504-1', title: 'Бетон' },
-      { id: 'sub-504-2', title: 'Доставка бетона' }
-    ],
-    'cat-823': [
-      { id: 'sub-823-1', title: 'Жалюзи' },
-      { id: 'sub-823-2', title: 'Рулонные шторы' }
-    ],
-    'cat-741': [
-      { id: 'sub-741-1', title: 'Москитные сетки' },
-      { id: 'sub-741-2', title: 'Сетки антикошка' }
-    ],
-    'cat-620': [
-      { id: 'sub-621', title: 'Пластиковые окна' },
-      { id: 'sub-620-2', title: 'Регулировка окон' }
-    ],
-    'cat-610': [
-      { id: 'sub-611', title: 'Ремонт квартир' },
-      { id: 'sub-610-2', title: 'Косметический ремонт' }
-    ],
-    'cat-759': [
-      { id: 'sub-759-1', title: 'Решетки на окна' },
-      { id: 'sub-759-2', title: 'Кованые решетки' }
-    ],
-
-    // Туры
-    'cat-866': [
-      { id: 'sub-866-1', title: 'Походы' },
-      { id: 'sub-866-2', title: 'Горные походы' }
-    ],
-    'cat-882': [
-      { id: 'sub-882-1', title: 'Активный отдых' },
-      { id: 'sub-882-2', title: 'Рафтинг' }
-    ],
-    'cat-807': [
-      { id: 'sub-807-1', title: 'Виды туров' },
-      { id: 'sub-807-2', title: 'Экскурсионные туры' }
-    ],
-    'cat-853': [
-      { id: 'sub-853-1', title: 'Направления' },
-      { id: 'sub-853-2', title: 'Туры по Казахстану' }
-    ],
-
-    // Другое
-    'cat-497': [
-      { id: 'sub-497-1', title: 'Локальные сети' },
-      { id: 'sub-497-2', title: 'Настройка сети' }
-    ],
-    'cat-854': [
-      { id: 'sub-854-1', title: 'Наркологический центр' },
-      { id: 'sub-854-2', title: 'Вывод из запоя' }
-    ],
-    'cat-617': [
-      { id: 'sub-617-1', title: 'Партнерам' },
-      { id: 'sub-617-2', title: 'Сотрудничество' }
-    ],
-    'cat-855': [
-      { id: 'sub-855-1', title: 'Психиатрическая клиника' },
-      { id: 'sub-855-2', title: 'Консультация психиатра' }
-    ],
-    'cat-168': [
-      { id: 'sub-168-1', title: 'Скупка техники' },
-      { id: 'sub-168-2', title: 'Скупка ноутбуков' }
-    ],
-    'cat-595': [
-      { id: 'sub-595-1', title: 'Спорт' },
-      { id: 'sub-595-2', title: 'Персональный тренер' }
-    ],
-    'cat-570': [
-      { id: 'sub-570-1', title: 'Студия звукозаписи' },
-      { id: 'sub-570-2', title: 'Запись песни' }
-    ],
-    'cat-439': [
-      { id: 'sub-439-1', title: 'Типография' },
-      { id: 'sub-439-2', title: 'Печать визиток' }
-    ],
-
-    // Мы в других странах
-    'cat-901': [
-      { id: 'sub-901-1', title: 'Россия' },
-      { id: 'sub-901-2', title: 'Москва' }
-    ],
-    'cat-902': [
-      { id: 'sub-902-1', title: 'Узбекистан' },
-      { id: 'sub-902-2', title: 'Ташкент' }
-    ],
-    'cat-903': [
-      { id: 'sub-903-1', title: 'Кыргызстан' },
-      { id: 'sub-903-2', title: 'Бишкек' }
+    // Мебель
+    'cat-meb-1': [
+      { id: 'sub-meb-1-1', title: 'Корпусная мебель на заказ' },
+      { id: 'sub-meb-1-2', title: 'Мягкая мебель на заказ' },
+      { id: 'sub-meb-1-3', title: 'Кухни и шкафы-купе' },
+      { id: 'sub-meb-1-4', title: 'Перетяжка и ремонт мебели' }
     ]
   };
 
   const megaDetails = {
-    'sub-221': { title: 'Ремонт кофемашин', desc: 'Чистка гидросистемы, замена помп, ремонт плат управления и капучинаторов.', price: 'от 2 500 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
-    'sub-222': { title: 'Ремонт микроволновок', desc: 'Замена магнетрона, слюдяной пластины, ремонт сенсорных панелей и замков.', price: 'от 2 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
-    'sub-231': { title: 'Ремонт пылесосов', desc: 'Замена двигателей, щеток, фильтров и ремонт механизмов сматывания шнура.', price: 'от 2 500 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
-    'sub-232': { title: 'Ремонт утюгов', desc: 'Очистка от накипи, замена термопредохранителей, ремонт подошвы и шнура питания.', price: 'от 1 500 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
-    'sub-411': { title: 'Уборка домов', desc: 'Генеральная, поддерживающая уборка и клининг после ремонта.', price: 'от 8 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
-    'sub-611': { title: 'Ремонт квартир', desc: 'Косметический, капитальный и дизайнерский ремонт квартир и офисов под ключ.', price: 'от 25 000 ₸/м²', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' }
+    'sub-okna-1-1': { title: 'Москитные сетки Стандарт', desc: 'Надежная защита от насекомых, тополиного пуха и пыли. Быстрое изготовление и установка по размеру вашего окна.', price: 'от 2 500 ₸', time: 'Изготовление: 1 день', warr: 'Гарантия: 1 год' },
+    'sub-okna-1-2': { title: 'Сетки Антикошка', desc: 'Усиленное полотно из прочных нитей, устойчивое к когтям домашних животных. Гарантирует безопасность вашего питомца.', price: 'от 5 000 ₸', time: 'Изготовление: 1 день', warr: 'Гарантия: 1 год' },
+    'sub-okna-1-3': { title: 'Сетки Антипыль', desc: 'Специальное мелкоячеистое полотно, задерживающее уличную пыль и аллергены. Идеально для аллергиков и семей с детьми.', price: 'от 4 500 ₸', time: 'Изготовление: 1 день', warr: 'Гарантия: 1 год' },
+    'sub-okna-2-1': { title: 'Детские замки на окна', desc: 'Блокираторы открывания створки с ключом. Позволяют откидывать окно на проветривание, не открывая его нараспашку.', price: 'от 2 000 ₸', time: 'Установка: 30 мин', warr: 'Гарантия: 1 год' },
+    'sub-okna-2-2': { title: 'Металлические решетки', desc: 'Прочные сварные и кованые решетки на окна для защиты от взлома и выпадения детей.', price: 'от 12 000 ₸/м²', time: 'Изготовление: от 2 дней', warr: 'Гарантия: 3 года' },
+    'sub-okna-3-1': { title: 'Регулировка окон', desc: 'Устранение провисания створок, продуваний, настройка прижима зима/лето, смазка фурнитуры.', price: 'от 1 500 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-okna-3-2': { title: 'Замена стеклопакетов', desc: 'Замена разбитых, треснувших или запотевающих стеклопакетов на новые энергосберегающие.', price: 'от 15 000 ₸', time: 'Изготовление: 1-2 дня', warr: 'Гарантия: 3 года' },
+    'sub-okna-3-3': { title: 'Замена уплотнителей', desc: 'Демонтаж старой резины и установка качественного немецкого или российского уплотнителя (EPDM/KBE/REHAU).', price: 'от 800 ₸/м', time: 'Выезд: 45 мин', warr: 'Гарантия: 5 лет' },
+    'sub-okna-3-4': { title: 'Замена ручек и навесов', desc: 'Замена сломанных ручек, установка ручек с замком, ремонт и замена оконных петель и навесов.', price: 'от 2 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-okna-3-5': { title: 'Сложное открывание', desc: 'Модернизация поворотной створки в поворотно-откидную (сложное открывание) без замены самого окна.', price: 'от 12 000 ₸', time: 'Работа: 1 час', warr: 'Гарантия: 2 года' },
+    'sub-okna-3-6': { title: 'Детский замок', desc: 'Надежная защита створки от случайного открывания детьми. Ключ в комплекте.', price: 'от 2 000 ₸', time: 'Установка: 30 мин', warr: 'Гарантия: 1 год' },
+    'sub-okna-3-7': { title: 'Замок курильщика', desc: 'Балконная защелка (замок курильщика), позволяющая фиксировать балконную дверь снаружи.', price: 'от 1 500 ₸', time: 'Установка: 20 мин', warr: 'Гарантия: 1 год' },
+    'sub-okna-4-1': { title: 'Пластиковые окна ПВХ', desc: 'Изготовление и монтаж высококачественных пластиковых окон из профилей Rehau, Veka, KBE, Funke.', price: 'от 35 000 ₸', time: 'Изготовление: 3-5 дней', warr: 'Гарантия: 5 лет' },
+    'sub-okna-5-1': { title: 'Рулонные шторы (Ролл-шторы)', desc: 'Большой выбор тканей (блэкаут, день-ночь, зебра). Индивидуальный замер и профессиональная установка.', price: 'от 5 000 ₸', time: 'Изготовление: 1-2 дня', warr: 'Гарантия: 1 год' },
+    'sub-srv-1-1': { title: 'Замена ТЭНа', desc: 'Замена нагревательного элемента стиральной машины при отсутствии нагрева воды или выбивании автоматов.', price: 'от 4 500 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-srv-1-2': { title: 'Замена подшипников', desc: 'Профессиональная разборка бака и замена сальников и подшипников при сильном шуме и гуле во время отжима.', price: 'от 12 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-srv-2-1': { title: 'Заправка фреоном', desc: 'Поиск и устранение утечки хладагента, вакуумирование системы и заправка фреоном (R600a, R134a).', price: 'от 6 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-srv-3-1': { title: 'Ремонт кондиционеров', desc: 'Чистка сплит-систем, дозаправка фреоном, устранение течи конденсата, ремонт плат управления и компрессоров.', price: 'от 5 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-srv-4-1': { title: 'Установка кухонных вытяжек', desc: 'Монтаж купольных, встраиваемых, островных вытяжек, подключение к вентиляционному каналу и электросети.', price: 'от 5 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-srv-5-1': { title: 'Монтаж кондиционеров', desc: 'Профессиональная установка сплит-систем любой мощности с использованием качественной медной трассы.', price: 'от 15 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 2 года' },
+    'sub-srv-6-1': { title: 'Сварочные работы с выездом', desc: 'Услуги квалифицированного сварщика со своим профессиональным оборудованием. Сварка труб, петель, каркасов.', price: 'от 5 000 ₸', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' },
+    'sub-srv-7-1': { title: 'Изготовление металлоконструкций', desc: 'Проектирование, сварка и монтаж навесов, козырьков, лестниц, заборов, ворот и стеллажей по вашим размерам.', price: 'от 15 000 ₸/м²', time: 'Изготовление: от 3 дней', warr: 'Гарантия: 3 года' },
+    'sub-srv-8-1': { title: 'Монтаж электропроводки', desc: 'Полная или частичная замена электропроводки в квартирах, домах и офисах по современным стандартам ПУЭ.', price: 'от 2 000 ₸/точка', time: 'Выезд: 45 мин', warr: 'Гарантия: 3 года' },
+    'sub-meb-1-1': { title: 'Корпусная мебель на заказ', desc: 'Индивидуальный дизайн и изготовление кухонных гарнитуров, шкафов-купе, гардеробных, столов и тумб из ЛДСП/МДФ.', price: 'от 45 000 ₸/п.м.', time: 'Изготовление: от 5 дней', warr: 'Гарантия: 2 года' },
+    'sub-meb-1-2': { title: 'Мягкая мебель на заказ', desc: 'Изготовление стильных и комфортных диванов, кресел, кроватей, пуфов по индивидуальным размерам и эскизам.', price: 'от 60 000 ₸', time: 'Изготовление: от 7 дней', warr: 'Гарантия: 2 года' }
   };
 
   const activeSubObj = Object.values(megaSubcategories).flat().find(s => s.id === activeMegaSub);
@@ -640,119 +286,360 @@ export default function App() {
 
   // Service Catalog pills
   const catPills = [
-    { id: 'home', label: 'cat_home' },
-    { id: 'digital', label: 'cat_digital' },
-    { id: 'apple', label: 'cat_apple' },
-    { id: 'big', label: 'cat_big' },
-    { id: 'comp', label: 'cat_comp' },
-    { id: 'clean', label: 'cat_clean' },
-    { id: 'auto', label: 'cat_auto' },
-    { id: 'ses', label: 'cat_ses' },
-    { id: 'buy', label: 'cat_buy' },
-    { id: 'extra', label: 'cat_extra' }
+    { id: 'okna', label: 'Окна' },
+    { id: 'servis', label: 'Сервис' },
+    { id: 'mebel', label: 'Мебель' }
   ];
 
   // Service cards data
   const srvCards = [
-    { cat: 'home', title: 'Ремонт стиральных машин', desc: 'Замена ТЭНа, подшипников, помп, ремонт модулей управления.', price: 'от 3 000 ₸' },
-    { cat: 'home', title: 'Ремонт холодильников', desc: 'Заправка фреоном, замена компрессора, устранение утечек.', price: 'от 4 000 ₸' },
-    { cat: 'home', title: 'Ремонт посудомоек', desc: 'Устранение засоров, замена циркуляционных насосов и датчиков.', price: 'от 3 500 ₸' },
-    { cat: 'home', title: 'Ремонт кофемашин', desc: 'Чистка гидросистемы, замена помп, ремонт плат управления.', price: 'от 2 500 ₸' },
-    { cat: 'digital', title: 'Ремонт телефонов', desc: 'Замена дисплеев, аккумуляторов, разъемов питания, пайка плат.', price: 'от 2 000 ₸' },
-    { cat: 'digital', title: 'Ремонт планшетов', desc: 'Замена стекла, тачскрина, восстановление после залития.', price: 'от 3 000 ₸' },
-    { cat: 'apple', title: 'Ремонт iPhone', desc: 'Оригинальные запчасти, сохранение влагозащиты, True Tone.', price: 'от 4 000 ₸' },
-    { cat: 'apple', title: 'Ремонт MacBook', desc: 'Чистка от пыли, замена термопасты, ремонт клавиатуры и матрицы.', price: 'от 8 000 ₸' },
-    { cat: 'big', title: 'Ремонт кондиционеров', desc: 'Чистка, заправка фреоном, монтаж/демонтаж, ремонт плат.', price: 'от 5 000 ₸' },
-    { cat: 'big', title: 'Ремонт электроплит', desc: 'Замена конфорок, стеклокерамики, переключателей режимов.', price: 'от 3 500 ₸' },
-    { cat: 'comp', title: 'Ремонт компьютеров', desc: 'Установка ОС, удаление вирусов, сборка ПК, апгрейд комплектующих.', price: 'от 2 500 ₸' },
-    { cat: 'clean', title: 'Генеральная уборка', desc: 'Мытьё окон, обеспыливание всех поверхностей, чистка сантехники.', price: 'от 12 000 ₸' },
-    { cat: 'auto', title: 'Компьютерная диагностика', desc: 'Чтение и сброс ошибок, проверка работы датчиков и блоков управления.', price: 'от 4 000 ₸' },
-    { cat: 'ses', title: 'Услуги сантехника', desc: 'Устранение течей, монтаж труб, установка смесителей и унитазов.', price: 'от 2 500 ₸' }
+    // Окна
+    { cat: 'okna', title: 'Москитные сетки', desc: 'Надежная защита от насекомых, тополиного пуха и пыли. Быстрое изготовление и установка.', price: 'от 2 500 ₸' },
+    { cat: 'okna', title: 'Детская защита и решетки', desc: 'Блокираторы с ключом, детские замки и прочные металлические решетки для безопасности детей.', price: 'от 2 000 ₸' },
+    { cat: 'okna', title: 'Ремонт и регулировка окон', desc: 'Устранение продуваний, замена уплотнителей, ручек, стеклопакетов и сложного открывания.', price: 'от 1 500 ₸' },
+    { cat: 'okna', title: 'Изготовление пластиковых окон', desc: 'Производство и профессиональный монтаж окон из немецких профилей Rehau, Veka, KBE.', price: 'от 35 000 ₸' },
+    { cat: 'okna', title: 'Ролл-шторы и жалюзи', desc: 'Огромный выбор тканей и текстур (блэкаут, день-ночь). Индивидуальный замер и установка.', price: 'от 5 000 ₸' },
+
+    // Сервис
+    { cat: 'servis', title: 'Ремонт стиральных машин', desc: 'Замена ТЭНа, подшипников, сливных помп, ремонт модулей управления с гарантией.', price: 'от 3 000 ₸' },
+    { cat: 'servis', title: 'Ремонт холодильников', desc: 'Заправка фреоном, замена компрессора, термостата, ремонт системы No Frost.', price: 'от 4 000 ₸' },
+    { cat: 'servis', title: 'Ремонт кондиционеров и посудомоек', desc: 'Чистка, заправка сплит-систем, устранение засоров и замена насосов посудомоечных машин.', price: 'от 5 000 ₸' },
+    { cat: 'servis', title: 'Установка и ремонт вытяжек', desc: 'Монтаж кухонных вытяжек, подключение к вентиляции, замена фильтров и ремонт двигателей.', price: 'от 4 000 ₸' },
+    { cat: 'servis', title: 'Установка и ремонт кондиционеров', desc: 'Профессиональный монтаж, демонтаж и сервисное обслуживание климатической техники.', price: 'от 15 000 ₸' },
+    { cat: 'servis', title: 'Сварочные работы', desc: 'Услуги квалифицированного сварщика с выездом. Сварка труб, петель, каркасов.', price: 'от 5 000 ₸' },
+    { cat: 'servis', title: 'Металлоконструкции', desc: 'Изготовление навесов, козырьков, лестниц, заборов, ворот и стеллажей на заказ.', price: 'от 15 000 ₸/м²' },
+    { cat: 'servis', title: 'Услуги электрика', desc: 'Монтаж проводки, установка розеток, выключателей, сборка щитов, устранение замыканий.', price: 'от 2 000 ₸' },
+
+    // Мебель
+    { cat: 'mebel', title: 'Мебель на заказ (корпусная, мягкая)', desc: 'Индивидуальный дизайн и изготовление кухонь, шкафов-купе, гардеробных, диванов и кроватей.', price: 'от 45 000 ₸' }
   ];
 
   // Dynamic Category Page Data Generator
   const getCategoryPageData = (pageObj, currentLang) => {
-    if (!pageObj) return { brands: [], services: [], parentTabLabel: 'Ремонт техники', parentCatTitle: 'Сервисный центр' };
+    if (!pageObj) return { brands: [], services: [], parentTabLabel: 'Окна', parentCatTitle: 'Москитные сетки' };
     
     const baseTitle = t(pageObj.title);
-    const parentCat = megaCategories.find(c => c.id === pageObj.parentCatId) || { title: 'Сервисный центр', tab: 'remont-tehniki' };
-    const parentTab = megaTabs.find(t => t.id === pageObj.parentTabId || t.id === parentCat.tab) || { label: 'Ремонт техники' };
+    const parentCat = megaCategories.find(c => c.id === pageObj.parentCatId) || { title: 'Москитные сетки', tab: 'okna' };
+    const parentTab = megaTabs.find(t => t.id === pageObj.parentTabId || t.id === parentCat.tab) || { label: 'Окна' };
 
-    // Custom overrides matching user prompt exactly
-    if (pageObj.id === 'sub-221' || pageObj.title.includes('кофемаш')) {
+    const pageDataMap = {
+      // --- ОКНА ---
+      'cat-okna-1': {
+        brands: ['Фибергласс (Стандарт)', 'PetScreen (Антикошка)', 'MicroMesh (Антипыль)', 'Алюминиевый профиль', 'Усиленные крепления'],
+        services: ['Замер и подбор полотна', 'Изготовление каркаса по размерам', 'Установка металлических креплений', 'Замена старого полотна сетки', 'Ремонт уголков и ручек сетки']
+      },
+      'sub-okna-1-1': {
+        brands: ['Фибергласс (США)', 'Fiberglass Standard', 'Российское полотно', 'Немецкий профиль рамки'],
+        services: ['Точный замер оконного проема', 'Изготовление сетки Стандарт за 1 день', 'Установка z-креплений (металл/пластик)', 'Замена порванного полотна Стандарт']
+      },
+      'sub-okna-1-2': {
+        brands: ['PetScreen (США)', 'Антикошка Усиленная', 'Многослойный полиэстер с ПВХ', 'Металлические кронштейны'],
+        services: ['Замер под сетку Антикошка', 'Монтаж на усиленные металлические зацепы', 'Проверка полотна на разрыв когтями', 'Изготовление двери-сетки Антикошка']
+      },
+      'sub-okna-1-3': {
+        brands: ['MicroMesh (Антипыль)', 'Poll-Tex (Нидерланды)', 'Гипоаллергенное полотно', 'Нейлоновая мембрана'],
+        services: ['Замер под сетку Антипыль', 'Изготовление сетки с защитой от пыльцы', 'Установка плотного контура уплотнения', 'Инструктаж по уходу и мытью полотна']
+      },
+
+      'cat-okna-2': {
+        brands: ['Penkid', 'BSL (Baby Safety Lock)', 'Maco', 'Roto', 'Сварные решетки Сталь', 'Кованые элементы'],
+        services: ['Установка блокираторов с ключом', 'Монтаж защитных металлических решеток', 'Установка стальных тросиков', 'Укрепление оконных створок от детей', 'Проверка безопасности фурнитуры']
+      },
+      'sub-okna-2-1': {
+        brands: ['BSL (Baby Safety Lock)', 'Penkid (Турция)', 'Roto (Германия)', 'Maco (Австрия)'],
+        services: ['Установка нижнего замка-блокиратора', 'Монтаж ручки с встроенным замком и ключом', 'Экспресс-установка за 20 минут', 'Регулировка створки после монтажа замка']
+      },
+      'sub-okna-2-2': {
+        brands: ['Сталь 3 (ГОСТ)', 'Кованые решетки Премиум', 'Порошковая окраска RAL', 'Усиленные анкерные болты'],
+        services: ['Замер и согласование эскиза решетки', 'Сварка и покраска металлической решетки', 'Монтаж решеток на любом этаже', 'Антикоррозийная обработка швов']
+      },
+      'sub-okna-2-3': {
+        brands: ['Penkid Cable', 'Jackloc (Великобритания)', 'Стальной многожильный трос', 'Усиленный корпус замка'],
+        services: ['Монтаж гибкого защитного тросика', 'Настройка ограничения ширины распахивания', 'Тестирование троса на разрывную нагрузку (до 500кг)']
+      },
+
+      'cat-okna-3': {
+        brands: ['Rehau', 'Veka', 'KBE', 'Maco', 'Roto', 'Siegenia', 'Winkhaus', 'EPDM (Германия)'],
+        services: ['Полная регулировка оконной створки', 'Замена разбитых стеклопакетов', 'Замена изношенного уплотнителя', 'Ремонт и замена фурнитуры', 'Устранение продувания и промерзания']
+      },
+      'sub-okna-3-1': {
+        brands: ['Maco', 'Roto', 'Siegenia-Aubi', 'Winkhaus', 'Vorne', 'Kale'],
+        services: ['Регулировка прижима створки (зима/лето)', 'Выравнивание геометрии провисшей створки', 'Смазка и чистка рабочих механизмов', 'Устранение заклинивания ручки']
+      },
+      'sub-okna-3-2': {
+        brands: ['Guardian Glass', 'AGC Glass', 'Pilkington', 'Энергосберегающие i-стекла', 'Мультифункциональные стеклопакеты'],
+        services: ['Замер точных габаритов стеклопакета', 'Изготовление 1, 2, 3-камерных пакетов', 'Срочная замена разбитого стекла за 1 день', 'Установка тонированных и бронированных стекол']
+      },
+      'sub-okna-3-3': {
+        brands: ['EPDM (Германия)', 'KBE 228', 'Rehau Raucell', 'Силиконовые уплотнители', 'Полиуретановые контуры Q-Lon'],
+        services: ['Удаление старого рассохшегося уплотнителя', 'Очистка и обезжиривание паза', 'Укладка нового уплотнителя единым контуром', 'Проверка герметичности тепловизором']
+      },
+      'sub-okna-3-4': {
+        brands: ['Hoppe Secustik', 'Roto Line', 'Maco Harmony', 'Усиленные петли Siegenia', 'Металлические гребенки'],
+        services: ['Замена сломанной оконной ручки', 'Установка ручек-ракушек (для балкона)', 'Замена и усиление оконных навесов (петель)', 'Ремонт механизма запирания']
+      },
+      'sub-okna-3-5': {
+        brands: ['Maco Multi-Matic', 'Roto NX', 'Siegenia Titan AF', 'Winkhaus activPilot'],
+        services: ['Демонтаж простой поворотной обвязки', 'Установка комплекта сложного (откидного) открывания', 'Установка щелевого микропроветривания', 'Финальная балансировка створки']
+      },
+      'sub-okna-3-6': {
+        brands: ['BSL Original', 'Penkid Pentilt', 'Замки-защелки с ключом'],
+        services: ['Монтаж детского замка в нижнюю часть створки', 'Проверка надежности фиксации', 'Выдача запасных ключей']
+      },
+      'sub-okna-3-7': {
+        brands: ['Maco (Защелка)', 'Roto (Балконный узел)', 'Магнитные защелки', 'Алюминиевые ручки-тянучки'],
+        services: ['Установка механической балконной защелки', 'Монтаж магнитной защелки (бесшумной)', 'Установка внешней ручки курильщика (металл/пластик)']
+      },
+
+      'cat-okna-4': {
+        brands: ['Rehau', 'Veka', 'KBE', 'Salamander', 'Gealan', 'Alutech (Алюминий)', 'Hoffen', 'Funke'],
+        services: ['Бесплатный профессиональный замер', 'Демонтаж старых деревянных/пластиковых окон', 'Монтаж оконных конструкций по ГОСТу', 'Установка подоконников, отливов и откосов', 'Остекление под ключ с гарантией 5 лет']
+      },
+      'sub-okna-4-1': {
+        brands: ['Rehau (Германия)', 'Veka (Германия)', 'KBE (Германия)', 'Salamander', 'Funke Kunststoffe'],
+        services: ['Изготовление 3, 5, 7-камерных пластиковых окон', 'Монтаж с использованием паро- и гидроизоляционных лент', 'Установка премиум подоконников (Danke, Moeller)', 'Теплая отделка внутренних откосов']
+      },
+      'sub-okna-4-2': {
+        brands: ['Alutech', 'Schüco', 'Татпроф', 'КраМЗ', 'Холодный и теплый алюминий'],
+        services: ['Проектирование и расчет алюминиевых конструкций', 'Изготовление панорамных и витражных окон', 'Монтаж входных алюминиевых групп', 'Окраска профиля в любой цвет по каталогу RAL']
+      },
+      'sub-okna-4-3': {
+        brands: ['Rehau Euro', 'Veka Euroline', 'Alutech Alt100', 'Слайдорс (Slidors)'],
+        services: ['Теплое остекление балконов (ПВХ)', 'Холодное раздвижное остекление (алюминий)', 'Усиление парапета и вынос балкона', 'Полное утепление и внутренняя обшивка лоджии']
+      },
+
+      'cat-okna-5': {
+        brands: ['Sunless', 'Amigo', 'Benthin', 'Coulisse', 'Ткани Блэкаут (Blackout)', 'День-Ночь (Зебра)'],
+        services: ['Выезд мастера с каталогом тканей', 'Изготовление ролл-штор по индивидуальным размерам', 'Монтаж на створки без сверления', 'Установка кассетных систем (Уни-1, Уни-2)', 'Автоматизация штор (электропривод)']
+      },
+      'sub-okna-5-1': {
+        brands: ['Ткани Blackout (100% защита)', 'Зебра (День-Ночь)', 'Солнцеотражающие ткани Скрин (Screen)', 'Системы Мини и Кассета'],
+        services: ['Индивидуальный замер оконных створок', 'Пошив и сборка рулонных штор', 'Установка с боковой фиксацией (леска/направляющие)', 'Химчистка и замена старой ткани штор']
+      },
+      'sub-okna-5-2': {
+        brands: ['Алюминиевые ламели 16/25мм', 'Holz (Деревянные жалюзи)', 'Перфорированные ламели', 'Amigo System'],
+        services: ['Замер горизонтальных жалюзи', 'Монтаж в проем или на створку', 'Ремонт поворотного механизма и замена шнура', 'Установка межрамных горизонтальных жалюзи']
+      },
+      'sub-okna-5-3': {
+        brands: ['Тканевые ламели 89мм', 'Пластиковые вертикальные жалюзи', 'Мультифактурные жалюзи', 'Солнцезащитные карнизы'],
+        services: ['Замер и подбор фактуры для офиса/дома', 'Монтаж карниза к потолку или стене', 'Замена поврежденных нижних грузиков и цепочки', 'Укорачивание длины ламелей']
+      },
+
+      // --- СЕРВИС ---
+      'cat-srv-1': {
+        brands: ['LG', 'Samsung', 'Bosch', 'Indesit', 'Beko', 'Candy', 'Electrolux', 'Атлант', 'Zanussi'],
+        services: ['Замена сгоревшего ТЭНа', 'Замена подшипников и сальников бака', 'Замена сливной помпы (насоса)', 'Ремонт и прошивка модуля управления', 'Замена манжеты люка и щеток двигателя']
+      },
+      'sub-srv-1-1': {
+        brands: ['Thermowatt (Италия)', 'IRCA (Италия)', 'Bleckmann (Австрия)', 'Kawasaki', 'Оригинальные ТЭНы LG/Samsung'],
+        services: ['Диагностика цепи нагрева воды', 'Демонтаж старого ТЭНа и очистка посадочного места от накипи', 'Установка нового ТЭНа с датчиком температуры', 'Проверка отсутствия утечек тока на корпус']
+      },
+      'sub-srv-1-2': {
+        brands: ['SKF (Швеция/Франция)', 'FAG (Германия)', 'NSK (Япония)', 'Сальники Corteco (Италия)', 'Специальная влагостойкая смазка Hydra-2'],
+        services: ['Полная разборка стиральной машины', 'Распил неразборного бака (при необходимости)', 'Выпрессовка старых и запрессовка новых подшипников SKF', 'Герметичная сборка бака и тестирование отжима']
+      },
+      'sub-srv-1-3': {
+        brands: ['Askoll (Италия)', 'Plaset (Италия)', 'Leili (Китай)', 'Copreci', 'Оригинальные помпы Bosch/Indesit'],
+        services: ['Диагностика отсутствия слива воды', 'Удаление засора из фильтра и патрубков', 'Замена сливного насоса на новый Askoll', 'Тестирование циклов полоскания и слива']
+      },
+      'sub-srv-1-4': {
+        brands: ['Платы управления LG/Samsung', 'Модули Arcadia (Indesit/Ariston)', 'Платы Bosch/Siemens', 'Процессоры Freescale/NEC'],
+        services: ['Диагностика ошибок (F01, LE, 5E, 3E и др.)', 'Перепайка сгоревших реле, симисторов и цепей питания', 'Прошивка и восстановление ПО микроконтроллера', 'Замена модуля управления в сборе']
+      },
+
+      'cat-srv-2': {
+        brands: ['Samsung', 'LG', 'Атлант', 'Bosch', 'Liebherr', 'Beko', 'Indesit', 'Haier', 'Бирюса', 'Stinol'],
+        services: ['Заправка фреоном и устранение утечек', 'Замена мотор-компрессора', 'Замена терморегулятора и пускового реле', 'Ремонт системы No Frost (ТЭН, датчики, таймер)', 'Перевешивание дверей и замена уплотнителя']
+      },
+      'sub-srv-2-1': {
+        brands: ['Фреон R600a (Изобутан)', 'Фреон R134a', 'Фреон R404a', 'Медные трубки Halcor', 'Припой с серебром (Германия)'],
+        services: ['Опрессовка системы азотом и поиск микроутечки', 'Устранение утечки в запененной части или контуре обогрева', 'Замена фильтра-осушителя', 'Вакуумирование контура и заправка фреоном по весам']
+      },
+      'sub-srv-2-2': {
+        brands: ['Secop (Danfoss)', 'Jiaxipera', 'Embraco Aspera', 'Атлант (Барановичи)', 'Инверторные компрессоры LG/Samsung'],
+        services: ['Демонтаж заклинившего мотор-компрессора', 'Монтаж нового оригинального компрессора', 'Пайка стыков серебряным припоем', 'Полный цикл вакуумирования и заправки системы']
+      },
+      'sub-srv-2-3': {
+        brands: ['Ranco (Италия)', 'Danfoss', 'ТАМ-133 / ТАМ-145 (Россия)', 'Электронные датчики NTC (Samsung/Bosch)'],
+        services: ['Диагностика отсутствия отключения или перемораживания', 'Замена механического термостата', 'Замена электронных сенсоров температуры', 'Калибровка температурного режима']
+      },
+      'sub-srv-2-4': {
+        brands: ['Датчики оттайки (Дефростеры)', 'ТЭНы оттайки испарителя', 'Таймеры TMDE/TD-20', 'Плавкие предохранители No Frost'],
+        services: ['Разморозка испарителя и проверка дренажа', 'Замена сгоревшего ТЭНа оттайки', 'Замена дефростера и плавкого предохранителя', 'Замена вентилятора обдува испарителя']
+      },
+
+      'cat-srv-3': {
+        brands: ['Bosch', 'Siemens', 'Electrolux', 'Midea', 'Gree', 'Daikin', 'LG', 'Beko', 'Hansa', 'Candy'],
+        services: ['Ремонт посудомоечных машин (замена помпы, ТЭНа, чистка)', 'Ремонт и чистка кондиционеров', 'Устранение протечек и ошибок посудомоек', 'Заправка кондиционеров фреоном R410a/R32', 'Замена циркуляционного насо']
+      },
+      'sub-srv-3-1': {
+        brands: ['Gree', 'Midea', 'Daikin', 'Mitsubishi Electric', 'LG', 'Samsung', 'Almacom', 'TCL'],
+        services: ['Диагностика сплит-системы во всех режимах', 'Чистка внутреннего и внешнего блоков с дезинфекцией', 'Устранение течи конденсата из внутреннего блока', 'Ремонт инверторных плат управления внешнего блока']
+      },
+      'sub-srv-3-2': {
+        brands: ['Bosch', 'Siemens', 'Electrolux', 'Beko', 'Hansa', 'Gorenje', 'Midea', 'Indesit'],
+        services: ['Замена циркуляционного насоса (помпы с ТЭНом Bosch)', 'Устранение ошибки E09, E15, E24, i30', 'Замена сливного насоса и прессостата', 'Чистка засоров гидросистемы и аквастопа (AquaStop)']
+      },
+      'sub-srv-3-3': {
+        brands: ['Фреон R410a (Sanmei/Dupont)', 'Фреон R32', 'Фреон R22', 'Антибактериальная пена для чистки'],
+        services: ['Промывка теплообменника аппаратом высокого давления', 'Дезинфекция испарителя от грибка и неприятного запаха', 'Проверка рабочего давления в контуре', 'Точная дозаправка сплит-системы фреоном']
+      },
+
+      'cat-srv-4': {
+        brands: ['Elikor', 'Krona', 'Cata', 'Elica', 'Falmec', 'Jetair', 'Maunfeld', 'Lex', 'Bosch'],
+        services: ['Монтаж купольных, наклонных и встраиваемых вытяжек', 'Подключение вытяжки к вентиляционной шахте (гофра/пластик)', 'Ремонт и замена двигателя вентилятора', 'Замена кнопочного или сенсорного блока управления', 'Замена угольных и жироулавливающих фильтров']
+      },
+      'sub-srv-4-1': {
+        brands: ['Krona', 'Elikor', 'Maunfeld', 'Elica', 'Пластиковые каналы Vents', 'Алюминиевая гофра'],
+        services: ['Разметка и крепление вытяжки к стене или в шкаф', 'Прокладка эстетичного пластикового воздуховода', 'Установка обратного клапана (защита от запахов из шахты)', 'Подключение к электросети без висящих проводов']
+      },
+      'sub-srv-4-2': {
+        brands: ['Оригинальные моторы Elikor/Krona', 'Турбины Elica', 'Блоки переключателей скорости', 'Трансформаторы и LED-лампы'],
+        services: ['Диагностика повышенного шума или отсутствия тяги', 'Замена или ремонт электродвигателя вытяжки', 'Перепайка сгоревших контактов кнопочного поста', 'Замена ламп подсветки на современные LED']
+      },
+      'sub-srv-4-3': {
+        brands: ['Угольные фильтры (Carbon)', 'Алюминиевые жироулавливающие сетки', 'Универсальные фильтры Filtero', 'Оригинальные кассеты Krona/Bosch'],
+        services: ['Подбор угольного фильтра под вашу модель вытяжки', 'Ультразвуковая чистка металлических жировых сеток', 'Замена одноразовых акриловых фильтров', 'Обработка внутренних полостей от жирового налета']
+      },
+
+      'cat-srv-5': {
+        brands: ['Daikin', 'Mitsubishi Electric', 'Gree', 'Midea', 'LG', 'Samsung', 'Almacom', 'Haier', 'TCL', 'Hisense'],
+        services: ['Профессиональный монтаж кондиционеров (сплит-систем)', 'Закладка фреоновой трассы на стадии ремонта', 'Аккуратный демонтаж кондиционера с сохранением фреона', 'Полное сервисное обслуживание (чистка, заправка)', 'Ремонт компрессора и замена пусковых конденсаторов']
+      },
+      'sub-srv-5-1': {
+        brands: ['Медная труба Majdanpek / Halcor', 'Качественная теплоизоляция K-Flex', 'Кронштейны ГОСТ (толщина 2мм)', 'Кабель ПВС (ГОСТ)'],
+        services: ['Бурение отверстия буром SDS-Max без пыли', 'Монтаж внешнего блока на надежные кронштейны', 'Навеска внутреннего блока по лазерному уровню', 'Вакуумирование трассы и пусконаладочные работы']
+      },
+      'sub-srv-5-2': {
+        brands: ['Специнструмент Value', 'Манометрические станции', 'Заглушки для герметизации портов'],
+        services: ['Перекачка и перекрытие фреона во внешнем блоке', 'Аккуратный демонтаж внутреннего и внешнего блоков', 'Герметизация медных трубок от попадания влаги и пыли', 'Упаковка кондиционера для безопасной транспортировки']
+      },
+      'sub-srv-5-3': {
+        brands: ['Мойка высокого давления Karcher', 'Химсредства Advanced Engineering', 'Фреоны R410a/R32 (Оригинал)'],
+        services: ['Глубокая антибактериальная чистка парогенератором', 'Промывка дренажного поддона и патрубка', 'Замер пусковых токов и проверка изоляции', 'Дозаправка хладагентом до нормы']
+      },
+
+      'cat-srv-6': {
+        brands: ['Ресанта', 'Сварог', 'Kemppi', 'Lincoln Electric', 'Esab', 'Электроды МР-3 / УОНИ', 'Сварочная проволока СВ08Г2С'],
+        services: ['Сварочные работы с выездом мастера на объект', 'Электродуговая сварка (ММА) металлоконструкций', 'Полуавтоматическая сварка (MIG/MAG)', 'Аргонодуговая сварка (TIG) нержавейки и алюминия', 'Сварка труб водоснабжения и отопления']
+      },
+      'sub-srv-6-1': {
+        brands: ['Инверторы Ресанта ПРОФ', 'Kemppi Minarc', 'Автономные бензогенераторы (для участков без света)'],
+        services: ['Срочный выезд сварщика со всем оборудованием', 'Сварка петель ворот, калиток, дверей', 'Ремонт металлических лестниц, стеллажей, заборов', 'Усиление несущих металлоконструкций швеллером']
+      },
+      'sub-srv-6-2': {
+        brands: ['Трубы ВГП (ГОСТ 3262-75)', 'Профильные трубы Северсталь', 'Качественные электроды Esab / Kobelco'],
+        services: ['Сварка стояков водоснабжения и отопления', 'Изготовление металлических каркасов под лестницы', 'Сварка каркасов для теплиц, навесов и беседок', 'Герметичная заварка свищей в трубах под давлением']
+      },
+      'sub-srv-6-3': {
+        brands: ['Сварог TIG 200 AC/DC', 'Вольфрамовые электроды WL-20', 'Присадочные прутки ER308L / ER4043', 'Чистый Аргон (99.99%)'],
+        services: ['Аргонная сварка алюминиевых поддонов и блоков ДВС', 'Сварка трубок кондиционера и радиаторов', 'Сварка перил и баков из пищевой нержавейки', 'Декоративный (ювелирный) сварочный шов']
+      },
+
+      'cat-srv-7': {
+        brands: ['Металлопрокат ГОСТ', 'Профильные трубы ММК / Северсталь', 'Поликарбонат Lexan / Carboglass', 'Краска Хаммерайт (Hammerite)'],
+        services: ['Проектирование и 3D-моделирование металлоконструкций', 'Изготовление автомобильных навесов и козырьков', 'Сварка и монтаж металлических заборов и ворот', 'Изготовление наружных и межэтажных лестниц', 'Производство складских стеллажей и ферм']
+      },
+      'sub-srv-7-1': {
+        brands: ['Профильная труба 80x80, 100x100', 'Швеллер и Двутавр (ГОСТ 8239-89)', 'Антикоррозийный грунт ГФ-021', 'Эмаль 3 в 1'],
+        services: ['Индивидуальный расчет нагрузок конструкции', 'Распил и профессиональная сварка каркаса', 'Грунтование и покраска в покрасочной камере', 'Монтаж тяжелых конструкций с помощью автокрана']
+      },
+      'sub-srv-7-2': {
+        brands: ['Сотовый поликарбонат 8-10мм (УФ-защита)', 'Монолитный поликарбонат', 'Металлочерепица Grand Line', 'Профлист МП-20'],
+        services: ['Изготовление навесов для автомобилей (односкатные/арочные)', 'Сварка козырьков над крыльцом с коваными элементами', 'Бетонирование опорных столбов навеса', 'Герметичный монтаж кровельного покрытия']
+      },
+      'sub-srv-7-3': {
+        brands: ['Профнастил С-8 / МП-20', '3D-сетка Гиттер (Gitter)', 'Кованые пики и вензеля', 'Автоматика для ворот Came / Faac / Nice'],
+        services: ['Монтаж заборов из профлиста и евроштакетника', 'Изготовление распашных и откатных ворот', 'Установка автоматического электропривода на ворота', 'Врезка надежных замков и задвижек в калитки']
+      },
+
+      'cat-srv-8': {
+        brands: ['Legrand', 'Schneider Electric', 'ABB', 'IEK', 'Кабель ВВГнг-LS (ГОСТ)', 'Автоматы защиты ABB/Schneider', 'WAGO'],
+        services: ['Полная или частичная замена электропроводки', 'Установка и перенос розеток, выключателей, светильников', 'Сборка и монтаж электрических щитов (УЗО, Дифавтоматы)', 'Поиск и устранение короткого замыкания (обрыва цепи)', 'Подключение мощной бытовой техники (плиты, духовки)']
+      },
+      'sub-srv-8-1': {
+        brands: ['Кабель ВВГнг(А)-LS (ГОСТ)', 'NYM (Севкабель)', 'Гофротруба ДКС (DKC)', 'Подрозетники Schneider Electric'],
+        services: ['Штробление стен штроборезом с пылесосом без пыли', 'Прокладка кабеля по потолку, стенам и в floor', 'Монтаж и вмазка подрозетников и распаечных коробок', 'Соединение проводов сваркой или клеммами WAGO']
+      },
+      'sub-srv-8-2': {
+        brands: ['Schneider Electric (AtlasDesign, Glossa)', 'Legrand (Valena, Etika)', 'ABB (Basic 55)', 'Werkel'],
+        services: ['Установка и замена электрических розеток', 'Монтаж одно-, двух-, трехклавишных и проходных выключателей', 'Установка диммеров (регуляторов света)', 'Монтаж влагозащищенных розеток IP44/IP65 в ванной']
+      },
+      'sub-srv-8-3': {
+        brands: ['Боксы ABB Mistral / Tekfor', 'Автоматы ABB серии S200 / SH200', 'УЗО и Дифавтоматы Schneider Electric iK60N', 'Реле напряжения Зубр (RBUZ)'],
+        services: ['Расчет нагрузок по группам потребителей', 'Профессиональная сборка и маркировка электрощита', 'Установка реле защиты от скачков напряжения (Зубр)', 'Подключение вводного кабеля и проверка заземления']
+      },
+      'sub-srv-8-4': {
+        brands: ['Мультиметры Fluke / Mastech', 'Трассоискатели MS6818', 'Изолента 3M', 'Термоусадочные трубки с клеем'],
+        services: ['Срочный выезд электрика при отключении света', 'Диагностика электропроводки и поиск места обрыва/КЗ', 'Восстановление поврежденного кабеля в стене', 'Замена сгоревших автоматических выключателей']
+      },
+
+      // --- МЕБЕЛЬ ---
+      'cat-meb-1': {
+        brands: ['Blum (Австрия)', 'Hettich (Германия)', 'Boyard', 'Egger (ЛДСП)', 'Kronospan', 'AGT (МДФ)', 'Hafele', 'Arpa (Пластик)'],
+        services: ['Изготовление корпусной мебели (кухни, шкафы, гардеробные)', 'Изготовление мягкой мебели (диваны, кровати, пуфы)', 'Профессиональная перетяжка и реставрация старой мебели', 'Замена кухонных фасадов, столешниц и фурнитуры', 'Разработка 3D-дизайн проекта и замер помещения']
+      },
+      'sub-meb-1-1': {
+        brands: ['Egger (Австрия)', 'Kronospan', 'Фурнитура Blum / Hettich / Boyard', 'Алюминиевые профили Modus / Aristo'],
+        services: ['Проектирование и изготовление шкафов-купе и гардеробных', 'Производство офисной мебели (столы, тумбы, стеллажи)', 'Изготовление детских комнат и прихожих по индивидуальным размерам', 'Сборка и регулировка мебели на объекте заказчика']
+      },
+      'sub-meb-1-2': {
+        brands: ['Велюр, Рогожка, Флок, Жаккард (Союз-М / Арбен)', 'Натуральная кожа и экокожа Премиум', 'ППУ Elax / HR (Высокоэластичный)', 'Независимые пружинные блоки Pocket Spring'],
+        services: ['Изготовление дизайнерских диванов (прямые, угловые, модульные)', 'Производство интерьерных кроватей с мягким изголовьем', 'Изготовление пуфов, банкеток и кресел для дома и HoReCa', 'Подбор обивочной ткани с выездом дизайнера']
+      },
+      'sub-meb-1-3': {
+        brands: ['МДФ фасады AGT / Alvic Luxe / Эмаль RAL', 'Столешницы Egger / Кедр / Искусственный камень', 'Подъемные механизмы Blum Aventos', 'Выдвижные системы Tandembox / Направляющие скрытого монтажа'],
+        services: ['Замер помещения с учетом выводов сантехники и электрики', 'Создание фотореалистичного 3D-проекта кухни', 'Изготовление кухонного гарнитура под ключ', 'Врезка мойки, варочной панели и подключение вытяжки']
+      },
+      'sub-meb-1-4': {
+        brands: ['Качественный пенополиуретан (ППУ)', 'Специальные мебельные ткани с пропиткой Easy Clean', 'Мебельные скобы Bea / Prebena', 'Оригинальные механизмы трансформации (Книжка, Дельфин, Аккордеон)'],
+        services: ['Полная или частичная перетяжка диванов, кресел, стульев', 'Замена просевшего поролона и пружинных блоков', 'Ремонт и замена механизмов раскладывания дивана', 'Реставрация деревянных элементов и столярные работы']
+      }
+    };
+
+    const specificData = pageDataMap[pageObj.id] || pageDataMap[pageObj.parentCatId];
+
+    if (specificData) {
       return {
         parentTabLabel: parentTab.label,
         parentCatTitle: parentCat.title,
-        brands: ['Delonghi', 'Bosch', 'Jura', 'Saeco', 'Krups', 'Philips'],
-        services: ['Капучинаторы для кофемашин', 'Помпы для кофемашин', 'Помпы для кофемашин Delonghi', 'ТЭНы и бойлеры', 'Плат управления', 'Уплотнители и клапаны']
+        brands: specificData.brands,
+        services: specificData.services
       };
     }
 
-    if (pageObj.title.includes('стиральн')) {
+    if (parentTab.id === 'okna') {
       return {
         parentTabLabel: parentTab.label,
         parentCatTitle: parentCat.title,
-        brands: ['LG', 'Samsung', 'Bosch', 'Indesit', 'Beko', 'Candy', 'Electrolux'],
-        services: ['Замена ТЭНа', 'Замена подшипников', 'Замена сливного насоса (помпы)', 'Ремонт модуля управления', 'Замена манжеты люка', 'Устранение протечек']
+        brands: ['Rehau', 'Veka', 'KBE', 'Salamander', 'Gealan', 'Trocal', 'Maco', 'Roto'],
+        services: ['Бесплатный замер и консультация', 'Экспресс-ремонт за 45 минут', 'Замена фурнитуры и уплотнителей', 'Изготовление москитных сеток', 'Монтаж по ГОСТу с гарантией']
       };
     }
 
-    if (pageObj.title.includes('холодильн')) {
+    if (parentTab.id === 'servis') {
       return {
         parentTabLabel: parentTab.label,
         parentCatTitle: parentCat.title,
-        brands: ['Samsung', 'LG', 'Atlant', 'Bosch', 'Liebherr', 'Beko', 'Haier'],
-        services: ['Заправка фреоном', 'Замена компрессора', 'Замена термостата', 'Ремонт системы No Frost', 'Устранение утечки хладагента', 'Замена уплотнительной резины']
+        brands: ['LG', 'Samsung', 'Bosch', 'Indesit', 'Beko', 'Electrolux', 'Gorenje', 'Ariston'],
+        services: ['Срочная диагностика с выездом', 'Замена оригинальных запчастей', 'Ремонт электронных плат управления', 'Пайка и устранение утечек', 'Гарантийное и постгарантийное обслуживание']
       };
     }
 
-    if (pageObj.title.includes('телефон') || pageObj.title.includes('смартфон')) {
+    if (parentTab.id === 'mebel') {
       return {
         parentTabLabel: parentTab.label,
         parentCatTitle: parentCat.title,
-        brands: ['Apple iPhone', 'Samsung Galaxy', 'Xiaomi', 'Huawei', 'Honor', 'Realme', 'Google Pixel'],
-        services: ['Замена дисплея (оригинал)', 'Замена аккумулятора', 'Замена разъема зарядки', 'Восстановление после попадания воды', 'Замена стекла камеры', 'Пайка материнской платы']
+        brands: ['Blum', 'Hettich', 'Boyard', 'Egger', 'Kronospan', 'Hafele'],
+        services: ['Разработка 3D-дизайн проекта', 'Распил и кромление плитных материалов', 'Сборка и монтаж корпусной мебели', 'Замена фасадов и столешниц', 'Перетяжка и реставрация мягкой мебели']
       };
-    }
-
-    if (pageObj.title.includes('ноутбук') || pageObj.title.includes('компьютер')) {
-      return {
-        parentTabLabel: parentTab.label,
-        parentCatTitle: parentCat.title,
-        brands: ['Apple MacBook', 'ASUS', 'Lenovo', 'HP', 'Acer', 'Dell', 'MSI'],
-        services: ['Чистка от пыли и замена термопасты', 'Замена клавиатуры', 'Замена матрицы (экрана)', 'Ремонт цепей питания', 'Установка SSD и настройка ОС', 'Восстановление данных']
-      };
-    }
-
-    // Dynamic generation for all other categories based on tab
-    let brands = [];
-    let services = [];
-
-    if (parentTab.id === 'remont-tehniki') {
-      brands = ['Apple', 'Samsung', 'LG', 'Bosch', 'Sony', 'Xiaomi', 'Philips', 'Panasonic'];
-      services = ['Диагностика: ' + baseTitle, 'Замена оригинальных деталей: ' + baseTitle, 'Экспресс-ремонт: ' + baseTitle, 'Обслуживание: ' + baseTitle, 'Ремонт плат управления: ' + baseTitle];
-    } else if (parentTab.id === 'transport') {
-      brands = ['Toyota', 'Hyundai', 'Kia', 'Mercedes-Benz', 'BMW', 'Lexus', 'Volkswagen'];
-      services = ['Полная диагностика', 'Экспресс-выезд мастера', 'Сезонное обслуживание', 'Замена расходников', 'Премиум сервис: ' + baseTitle];
-    } else if (parentTab.id === 'bytovye-uslugi') {
-      brands = ['Kärcher', 'Diversey', 'Pro-Brite', 'Grass', 'Eco-Clean'];
-      services = ['Генеральное выполнение: ' + baseTitle, 'Срочный выезд специалиста', 'Индивидуальный расчет стоимости', 'Договор на регулярное обслуживание'];
-    } else if (parentTab.id === 'specialist') {
-      brands = ['Сертифицированные специалисты', 'Высшая категория', 'Проверенные отзывы', 'Опыт от 5 лет', 'Гарантия результата'];
-      services = ['Первичная консультация', 'Индивидуальный план и проект', 'Полное сопровождение', 'Экспресс-услуга'];
-    } else if (parentTab.id === 'stroitelstvo-i-remont') {
-      brands = ['Knauf', 'Ceresit', 'Alina Paint', 'Rehau', 'Bosch', 'Makita'];
-      services = ['Бесплатный замер', 'Составление точной сметы', 'Работа под ключ', 'Авторский надзор', 'Гарантийное обслуживание'];
-    } else {
-      brands = ['Премиум качество', 'Проверенные партнеры', 'Официальная гарантия', 'Международные стандарты'];
-      services = ['Базовая услуга: ' + baseTitle, 'Расширенный сервис', 'Экспресс-обслуживание', 'Консультация эксперта'];
     }
 
     return {
       parentTabLabel: parentTab.label,
       parentCatTitle: parentCat.title,
-      brands,
-      services
+      brands: ['Премиум качество', 'Проверенные партнеры', 'Официальная гарантия'],
+      services: ['Базовая услуга: ' + baseTitle, 'Экспресс-обслуживание']
     };
   };
 
@@ -826,6 +713,22 @@ export default function App() {
                   setActiveMegaSub(firstSub ? firstSub.id : 'none');
                 }
               }}
+              onDoubleClick={(e) => {
+                e.preventDefault();
+                const firstCat = megaCategories.find(c => c.tab === tab.id);
+                if (firstCat) {
+                  setSelectedCategoryPageObj({
+                    id: firstCat.id,
+                    title: firstCat.title,
+                    parentCatId: firstCat.id,
+                    parentTabId: tab.id
+                  });
+                  setActivePage('category');
+                  setMegaMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              title="Дважды нажмите, чтобы открыть раздел целиком"
             >
               {t(tab.label)}
             </a>
@@ -854,13 +757,52 @@ export default function App() {
               >
                 <i className={`mega-cat-icon ${cat.icon}`}></i>
                 <span className="mega-cat-link">{t(cat.title)}</span>
-                <i className="ri-arrow-right-s-line mega-cat-arrow"></i>
+                <button
+                  className="btn-ghost"
+                  style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedCategoryPageObj({
+                      id: cat.id,
+                      title: cat.title,
+                      parentCatId: cat.id,
+                      parentTabId: activeMegaTab
+                    });
+                    setActivePage('category');
+                    setMegaMenuOpen(false);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  title="Открыть страницу категории"
+                >
+                  Открыть ↗
+                </button>
               </div>
             ))}
           </div>
 
           {/* Col 2: Subcategories */}
           <div className="mega-col2">
+            {megaCategories.find(c => c.id === activeMegaCat) && (
+              <div
+                className="mega-sub all-cat-link"
+                style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700' }}
+                onClick={() => {
+                  const currCat = megaCategories.find(c => c.id === activeMegaCat);
+                  setSelectedCategoryPageObj({
+                    id: currCat.id,
+                    title: currCat.title,
+                    parentCatId: currCat.id,
+                    parentTabId: activeMegaTab
+                  });
+                  setActivePage('category');
+                  setMegaMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                <span className="mega-sub-link">⚡ Все услуги: {t(megaCategories.find(c => c.id === activeMegaCat)?.title)}</span>
+                <i className="ri-arrow-right-line mega-sub-arrow" style={{ color: 'var(--accent)' }}></i>
+              </div>
+            )}
             {(megaSubcategories[activeMegaCat] || []).map(sub => (
               <div
                 key={sub.id}
