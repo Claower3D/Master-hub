@@ -570,12 +570,12 @@ footer{
 @media (max-width:960px){
   .top-nav { display: flex; gap: 14px; }
   .hero{grid-template-columns:1fr;padding-top:48px}
-  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .hero-stats{grid-template-columns:repeat(2,1fr);gap:16px}
   .services-layout{grid-template-columns:1fr}
   .cat-nav{position:static;flex-direction:row;overflow-x:auto;padding:10px}
   .cat{white-space:nowrap}
   .timeline{grid-template-columns:1fr}
-  .callback-inner{grid-template-columns:1fr;padding:28px}
+  .callback-inner{grid-template-columns:1fr;padding:28px;gap:32px}
   footer{grid-template-columns:1fr 1fr}
   section{padding:60px 5vw}
   
@@ -586,13 +586,35 @@ footer{
   .catalog-btn { display: inline-flex !important; }
 }
 @media (max-width:768px){
-  .topbar { margin: 10px 15px 0; padding: 8px 14px; gap: 8px; }
+  .topbar { margin: 8px 10px 0; padding: 6px 12px; gap: 6px; }
   .brand-sub { display: none; }
+  .brand-name { font-size: 15px !important; }
   .top-cta .btn-primary { display: none; }
-  .catalog-btn { padding: 6px 14px; font-size: 13px; }
+  .catalog-btn { padding: 6px 12px; font-size: 12px; gap: 4px; }
+  .city-select { font-size: 12px; padding: 4px 18px 4px 8px; }
+  .lang-btn { padding: 4px 6px; font-size: 11px; }
+  .theme-toggle { width: 32px; height: 32px; font-size: 16px; }
+  .phone { width: 32px; height: 32px; font-size: 16px; }
+  .top-cta { gap: 6px; }
 }
 @media (max-width:520px){
+  .topbar { margin: 6px 6px 0; padding: 6px 10px; gap: 4px; }
+  .brand-name { font-size: 14px !important; }
+  .catalog-btn { padding: 5px 10px; font-size: 11px; gap: 4px; }
+  .city-select { font-size: 11px; padding: 3px 14px 3px 6px; }
+  .lang-btn { padding: 3px 5px; font-size: 10px; }
+  .theme-toggle { width: 28px; height: 28px; font-size: 14px; }
+  .phone { width: 28px; height: 28px; font-size: 14px; }
+  .top-cta { gap: 4px; }
+  .hero h1 { font-size: 28px; }
+  .lead { font-size: 15px; }
   .hero-stats{grid-template-columns:1fr 1fr}
-  footer{grid-template-columns:1fr}
+  .cat-nav-pills { padding: 10px 16px; gap: 8px; margin-bottom: 32px; }
+  .cat-pill { padding: 10px 18px; font-size: 13px; }
+  .srv-card { padding: 20px; }
+  .srv-title { font-size: 17px; }
+  .srv-price { font-size: 15px; }
+  .srv-btn { padding: 8px 16px; font-size: 12px; }
+  footer{grid-template-columns:1fr; gap: 24px}
 }
 

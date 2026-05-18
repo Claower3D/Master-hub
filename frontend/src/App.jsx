@@ -996,21 +996,27 @@ export default function App() {
               </ul>
             </div>
             <div className="hero-visual">
-              <div className="hero-card">
-                <div className="hero-card-head">
-                  <div className="dot"></div>
-                  <span>{t('hero_card_head')}</span>
-                </div>
-                <div className="master">
-                  <div className="avatar"><i className="ri-user-star-line" style={{ fontSize: '24px' }}></i></div>
-                  <div>
-                    <div className="m-name">Мастер по ремонту</div>
-                    <div className="m-role">бытовой техники (стаж 8 лет)</div>
+              <div className="hero-img-container" style={{ position: 'relative', width: '100%', minHeight: '380px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(124,242,199,0.2)' }}>
+                <img src="./hero_bg.png" alt="Premium Home Services" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transform: 'scale(1.02)', transition: 'transform 0.5s ease' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(11,16,32,0.1) 0%, rgba(11,16,32,0.85) 100%)' }}></div>
+                <div style={{ position: 'absolute', bottom: '24px', left: '24px', right: '24px' }}>
+                  <div className="hero-card" style={{ margin: 0, width: '100%', background: 'rgba(20, 27, 52, 0.85)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.3)' }}>
+                    <div className="hero-card-head">
+                      <div className="dot"></div>
+                      <span>{t('hero_card_head')}</span>
+                    </div>
+                    <div className="master">
+                      <div className="avatar"><i className="ri-user-star-line" style={{ fontSize: '24px' }}></i></div>
+                      <div>
+                        <div className="m-name">Мастер по ремонту</div>
+                        <div className="m-role">бытовой техники (стаж 8 лет)</div>
+                      </div>
+                      <div className="rate">★ 4.9</div>
+                    </div>
+                    <div className="hero-card-foot">
+                      <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
+                    </div>
                   </div>
-                  <div className="rate">★ 4.9</div>
-                </div>
-                <div className="hero-card-foot">
-                  <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
                 </div>
               </div>
             </div>
@@ -1125,8 +1131,12 @@ export default function App() {
       )}
 
       {/* CALLBACK FORM */}
-      <section id="contact" className="callback">
-        <div className="callback-inner">
+      <section id="contact" className="callback" style={{ position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+          <img src="./why_bg.png" alt="Smart Home Interior" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, filter: 'blur(3px)' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, var(--bg-2) 0%, rgba(15,21,43,0.85) 50%, var(--bg-2) 100%)' }}></div>
+        </div>
+        <div className="callback-inner" style={{ position: 'relative', zIndex: 2, background: 'linear-gradient(135deg, rgba(20,27,52,0.85), rgba(26,34,68,0.85))', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.2)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
           <div>
             <h2>{t('call_title')}</h2>
             <p>{t('call_sub')}</p>
