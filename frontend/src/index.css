@@ -23,37 +23,37 @@ section{padding:88px 6vw}
 /* TOPBAR (FLOATING GLASS PILL) */
 .topbar{
   position:sticky;top:16px;z-index:50;
-  display:flex;align-items:center;gap:28px;
-  margin:16px 6vw 0;padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  margin:16px 6vw 0;padding:10px 20px;
   background:rgba(15,21,43,0.75);backdrop-filter:blur(24px);
   border:1px solid rgba(255,255,255,0.12);border-radius:999px;
   box-shadow:0 20px 40px -15px rgba(0,0,0,0.6), 0 0 30px rgba(124,242,199,0.05);
   transition:all 0.3s ease;
 }
-.brand{display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .logo{
-  width:44px;height:44px;border-radius:50%;
+  width:40px;height:40px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#0b1020;font-weight:800;font-size:16px;display:grid;place-items:center;font-family:'Unbounded',sans-serif;
+  color:#0b1020;font-weight:800;font-size:15px;display:grid;place-items:center;font-family:'Unbounded',sans-serif;
   box-shadow:0 0 20px rgba(124,242,199,0.4);
 }
-.brand-name{font-family:'Unbounded',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.02em;background:linear-gradient(135deg,#fff,var(--muted));-webkit-background-clip:text;color:transparent}
+.brand-name{font-family:'Unbounded',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.02em;background:linear-gradient(135deg,#fff,var(--muted));-webkit-background-clip:text;color:transparent}
 .brand-sub{font-size:10px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-top:2px}
-.top-nav{display:flex;align-items:center;gap:8px;margin-left:auto}
+.top-nav{display:flex;align-items:center;gap:6px}
 .top-nav a:not(.catalog-btn){
-  color:var(--muted);font-weight:600;font-size:14px;padding:8px 18px;border-radius:999px;transition:all .2s;
+  color:var(--muted);font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px;transition:all .2s;white-space:nowrap;
 }
 .top-nav a:not(.catalog-btn):hover{
   color:var(--text);background:rgba(255,255,255,0.06);transform:translateY(-1px);
 }
-.top-cta{display:flex;align-items:center;gap:18px}
-.phone{display:flex;align-items:center;gap:6px;font-weight:700;font-size:15px;color:var(--text);transition:color .2s}
+.top-cta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.phone{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:var(--text);transition:color .2s;white-space:nowrap}
 .phone:hover{color:var(--accent)}
 .btn-primary{
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
   color:#0b1020;font-weight:700;
-  padding:12px 24px;border:0;border-radius:999px;cursor:pointer;
-  font-family:inherit;font-size:14px;transition:all .2s;
+  padding:10px 20px;border:0;border-radius:999px;cursor:pointer;
+  font-family:inherit;font-size:13px;transition:all .2s;white-space:nowrap;
   box-shadow:0 8px 20px -8px rgba(124,242,199,0.5);
 }
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 28px -10px rgba(124,242,199,0.7)}
@@ -65,9 +65,9 @@ section{padding:88px 6vw}
 .btn-ghost:hover{border-color:var(--accent);background:rgba(255,255,255,0.03)}
 
 .theme-toggle {
-  width: 42px; height: 42px; border-radius: 50%;
+  width: 38px; height: 38px; border-radius: 50%;
   background: var(--surface-2); border: 1px solid var(--line);
-  color: var(--text); font-size: 20px; display: grid; place-items: center;
+  color: var(--text); font-size: 18px; display: grid; place-items: center;
   cursor: pointer; transition: all 0.2s; flex-shrink: 0;
 }
 .theme-toggle:hover {
@@ -80,7 +80,7 @@ section{padding:88px 6vw}
 }
 .lang-btn {
   background: transparent; border: 0; color: var(--muted); font-weight: 700;
-  font-size: 12px; padding: 6px 10px; border-radius: 999px; cursor: pointer;
+  font-size: 12px; padding: 4px 8px; border-radius: 999px; cursor: pointer;
   transition: all 0.2s; font-family: inherit;
 }
 .lang-btn:hover { color: var(--text); }
@@ -91,11 +91,11 @@ section{padding:88px 6vw}
 
 .city-switch {
   display: flex; align-items: center; gap: 6px; background: var(--surface-2);
-  border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; flex-shrink: 0;
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; flex-shrink: 0;
 }
 .city-select {
   background: transparent; border: 0; color: var(--text); font-weight: 600;
-  font-size: 13px; cursor: pointer; outline: none; font-family: inherit;
+  font-size: 12px; cursor: pointer; outline: none; font-family: inherit;
 }
 .city-select option {
   background: var(--surface); color: var(--text);
@@ -110,9 +110,9 @@ body.light-theme {
   --line: rgba(0, 0, 0, 0.08);
   --text: #0f172a;
   --muted: #64748b;
-  --accent: #059669; /* vibrant emerald green */
-  --accent-2: #2563eb; /* royal blue */
-  --accent-3: #ea580c; /* vibrant orange */
+  --accent: #059669;
+  --accent-2: #2563eb;
+  --accent-3: #ea580c;
   --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.12);
 }
 body.light-theme .theme-toggle:hover { color: #ffffff; }
@@ -529,7 +529,7 @@ footer{
   box-shadow: var(--shadow); max-width: 600px;
 }
 .mega-preview-desc { font-size: 16px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
-.mega-preview-meta { display: flex; gap: 24px; margin-bottom: 28px; flex-wrap: wrap; }
+.mega-preview-meta { display: flex; gap: 24px; margin-bottom: 28px; flex-wrap: inline-flex; }
 .mega-preview-meta span {
   display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;
   color: var(--accent); background: rgba(124,242,199,0.12); padding: 8px 16px; border-radius: 999px;
@@ -543,6 +543,10 @@ footer{
 }
 
 /* RESPONSIVE */
+@media (max-width:1400px){
+  .top-nav a:not(.catalog-btn) { display: none; }
+  .topbar { gap: 16px; justify-content: space-between; }
+}
 @media (max-width:1200px){
   .mega-menu { left: 3vw; right: 3vw; top: 80px; }
   .mega-body { grid-template-columns: 280px 320px 1fr; }
@@ -550,7 +554,6 @@ footer{
 }
 @media (max-width:960px){
   .top-nav { display: flex; gap: 14px; }
-  .top-nav a:not(.catalog-btn) { display: none; }
   .hero{grid-template-columns:1fr;padding-top:48px}
   .hero-stats{grid-template-columns:repeat(2,1fr)}
   .services-layout{grid-template-columns:1fr}
@@ -572,4 +575,3 @@ footer{
   .hero-stats{grid-template-columns:1fr 1fr}
   footer{grid-template-columns:1fr}
 }
-
