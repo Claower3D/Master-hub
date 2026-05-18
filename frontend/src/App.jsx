@@ -125,35 +125,150 @@ export default function App() {
   };
 
   // Mega Menu Data structure
+  // Mega Menu Data structure
   const megaTabs = [
     { id: 'remont-tehniki', label: 'Ремонт техники' },
     { id: 'transport', label: 'Транспорт' },
     { id: 'bytovye-uslugi', label: 'Бытовые услуги' },
     { id: 'specialist', label: 'Специалисты' },
-    { id: 'stroitelstvo-i-remont', label: 'Строительство' }
+    { id: 'stroitelstvo-i-remont', label: 'Строительство' },
+    { id: 'tury', label: 'Туры' },
+    { id: 'drugoe', label: 'Другое' },
+    { id: 'countries', label: 'Мы в других странах' }
   ];
 
   const megaCategories = [
     // Ремонт техники
-    { id: 'cat-210', tab: 'remont-tehniki', title: 'Ремонт крупно бытовой техники', icon: 'ri-fridge-line' },
-    { id: 'cat-220', tab: 'remont-tehniki', title: 'Ремонт кухонной техники', icon: 'ri-restaurant-line' },
+    { id: 'cat-210', tab: 'remont-tehniki', title: 'Интернет-магазин запчастей', icon: 'ri-store-2-line' },
+    { id: 'cat-128', tab: 'remont-tehniki', title: 'Ремонт аудиотехники', icon: 'ri-headphone-line' },
     { id: 'cat-230', tab: 'remont-tehniki', title: 'Ремонт бытовой техники', icon: 'ri-home-gear-line' },
+    { id: 'cat-112', tab: 'remont-tehniki', title: 'Ремонт климатической техники', icon: 'ri-temp-cold-line' },
+    { id: 'cat-15', tab: 'remont-tehniki', title: 'Ремонт компьютерной техники', icon: 'ri-computer-line' },
+    { id: 'cat-18', tab: 'remont-tehniki', title: 'Ремонт крупно бытовой техники', icon: 'ri-fridge-line' },
+    { id: 'cat-220', tab: 'remont-tehniki', title: 'Ремонт кухонной техники', icon: 'ri-restaurant-line' },
+    { id: 'cat-17', tab: 'remont-tehniki', title: 'Ремонт офисной техники', icon: 'ri-printer-line' },
+    { id: 'cat-135', tab: 'remont-tehniki', title: 'Ремонт садовой техники', icon: 'ri-plant-line' },
+    { id: 'cat-120', tab: 'remont-tehniki', title: 'Ремонт строительной техники', icon: 'ri-building-line' },
+    { id: 'cat-154', tab: 'remont-tehniki', title: 'Ремонт уходовой техники', icon: 'ri-t-shirt-air-line' },
+    { id: 'cat-94', tab: 'remont-tehniki', title: 'Ремонт цифровой техники', icon: 'ri-smartphone-line' },
+    { id: 'cat-148', tab: 'remont-tehniki', title: 'Ремонт часов', icon: 'ri-time-line' },
+    { id: 'cat-105', tab: 'remont-tehniki', title: 'Ремонт электротранспорта', icon: 'ri-roadster-line' },
+    { id: 'cat-255', tab: 'remont-tehniki', title: 'Сервисный центр', icon: 'ri-tools-line' },
+
     // Транспорт
+    { id: 'cat-859', tab: 'transport', title: 'Аренда транспорта', icon: 'ri-roadster-line' },
+    { id: 'cat-542', tab: 'transport', title: 'Перевозка авто', icon: 'ri-truck-line' },
     { id: 'cat-310', tab: 'transport', title: 'СТО', icon: 'ri-tools-line' },
-    { id: 'cat-320', tab: 'transport', title: 'Аренда транспорта', icon: 'ri-roadster-line' },
+    { id: 'cat-447', tab: 'transport', title: 'Спецтехника', icon: 'ri-car-line' },
+    { id: 'cat-858', tab: 'transport', title: 'Трансфер', icon: 'ri-guide-line' },
+
     // Бытовые услуги
+    { id: 'cat-506', tab: 'bytovye-uslugi', title: 'Ассенизатор', icon: 'ri-water-flash-line' },
+    { id: 'cat-165', tab: 'bytovye-uslugi', title: 'Ремонт ювелирных изделий', icon: 'ri-vip-diamond-line' },
+    { id: 'cat-463', tab: 'bytovye-uslugi', title: 'Видеонаблюдение', icon: 'ri-shield-check-line' },
+    { id: 'cat-419', tab: 'bytovye-uslugi', title: 'Вывоз мусора', icon: 'ri-truck-line' },
+    { id: 'cat-427', tab: 'bytovye-uslugi', title: 'Дезинсекция', icon: 'ri-bug-line' },
+    { id: 'cat-421', tab: 'bytovye-uslugi', title: 'Дезинфекция', icon: 'ri-virus-line' },
+    { id: 'cat-426', tab: 'bytovye-uslugi', title: 'Дератизация', icon: 'ri-skull-line' },
+    { id: 'cat-433', tab: 'bytovye-uslugi', title: 'Доставка воды', icon: 'ri-drop-line' },
     { id: 'cat-410', tab: 'bytovye-uslugi', title: 'Клининг', icon: 'ri-sparkling-line' },
+    { id: 'cat-505', tab: 'bytovye-uslugi', title: 'Муж на час', icon: 'ri-hammer-line' },
+    { id: 'cat-434', tab: 'bytovye-uslugi', title: 'Прачечная', icon: 'ri-water-flash-line' },
+    { id: 'cat-526', tab: 'bytovye-uslugi', title: 'Сварщик', icon: 'ri-tools-line' },
+    { id: 'cat-474', tab: 'bytovye-uslugi', title: 'Сигнализация', icon: 'ri-alarm-warning-line' },
+    { id: 'cat-461', tab: 'bytovye-uslugi', title: 'Услуги по мебели', icon: 'ri-sofa-line' },
     { id: 'cat-420', tab: 'bytovye-uslugi', title: 'Услуги сантехника', icon: 'ri-drop-line' },
+    { id: 'cat-163', tab: 'bytovye-uslugi', title: 'Услуги электрика', icon: 'ri-lightbulb-flash-line' },
+    { id: 'cat-420-chem', tab: 'bytovye-uslugi', title: 'Химчистка', icon: 'ri-shirt-line' },
+    { id: 'cat-437', tab: 'bytovye-uslugi', title: 'Ателье', icon: 'ri-scissors-line' },
+
     // Специалисты
+    { id: 'cat-713', tab: 'specialist', title: 'Няня', icon: 'ri-user-heart-line' },
+    { id: 'cat-668', tab: 'specialist', title: 'Подготовка к ЕНТ', icon: 'ri-graduation-cap-line' },
+    { id: 'cat-476', tab: 'specialist', title: 'Адвокат', icon: 'ri-scales-3-line' },
+    { id: 'cat-646', tab: 'specialist', title: 'Астролог', icon: 'ri-star-line' },
+    { id: 'cat-671', tab: 'specialist', title: 'Бухгалтер', icon: 'ri-money-dollar-circle-line' },
+    { id: 'cat-731', tab: 'specialist', title: 'Вокал', icon: 'ri-music-line' },
+    { id: 'cat-535', tab: 'specialist', title: 'Грузчики', icon: 'ri-truck-line' },
+    { id: 'cat-670', tab: 'specialist', title: 'Косметолог', icon: 'ri-sparkling-line' },
+    { id: 'cat-720', tab: 'specialist', title: 'Коуч по карьере', icon: 'ri-briefcase-line' },
+    { id: 'cat-704', tab: 'specialist', title: 'Курсы языка', icon: 'ri-translate' },
+    { id: 'cat-710', tab: 'specialist', title: 'Лазерная эпиляция', icon: 'ri-flashlight-line' },
+    { id: 'cat-652', tab: 'specialist', title: 'Маникюр', icon: 'ri-hand-heart-line' },
+    { id: 'cat-675', tab: 'specialist', title: 'Нотариус', icon: 'ri-file-text-line' },
+    { id: 'cat-680', tab: 'specialist', title: 'Нумеролог', icon: 'ri-hashtag' },
+    { id: 'cat-677', tab: 'specialist', title: 'Профориентолог', icon: 'ri-compass-line' },
+    { id: 'cat-690', tab: 'specialist', title: 'Репетитор начальных классов', icon: 'ri-book-open-line' },
     { id: 'cat-510', tab: 'specialist', title: 'Репетитор по математике', icon: 'ri-book-open-line' },
-    { id: 'cat-520', tab: 'specialist', title: 'Юрист', icon: 'ri-scales-line' },
+    { id: 'cat-716', tab: 'specialist', title: 'Рисование для детей', icon: 'ri-palette-line' },
+    { id: 'cat-658', tab: 'specialist', title: 'Таролог', icon: 'ri-star-line' },
+    { id: 'cat-649', tab: 'specialist', title: 'Тимбилдинг', icon: 'ri-team-line' },
+    { id: 'cat-241', tab: 'specialist', title: 'Трезвый водитель', icon: 'ri-car-line' },
+    { id: 'cat-824', tab: 'specialist', title: 'Шугаринг', icon: 'ri-sparkling-line' },
+    { id: 'cat-520-jur', tab: 'specialist', title: 'Юрист', icon: 'ri-scales-line' },
+    { id: 'cat-565', tab: 'specialist', title: 'Медицина', icon: 'ri-heart-pulse-line' },
+
     // Строительство
+    { id: 'cat-520-bur', tab: 'stroitelstvo-i-remont', title: 'Алмазное бурение', icon: 'ri-building-line' },
+    { id: 'cat-623', tab: 'stroitelstvo-i-remont', title: 'Аренда инструментов', icon: 'ri-tools-line' },
+    { id: 'cat-519', tab: 'stroitelstvo-i-remont', title: 'Асфальтирование', icon: 'ri-road-map-line' },
+    { id: 'cat-504', tab: 'stroitelstvo-i-remont', title: 'Бетон', icon: 'ri-building-line' },
+    { id: 'cat-823', tab: 'stroitelstvo-i-remont', title: 'Жалюзи', icon: 'ri-window-line' },
+    { id: 'cat-741', tab: 'stroitelstvo-i-remont', title: 'Москитные сетки', icon: 'ri-window-line' },
+    { id: 'cat-620', tab: 'stroitelstvo-i-remont', title: 'Пластиковые окна', icon: 'ri-window-line' },
     { id: 'cat-610', tab: 'stroitelstvo-i-remont', title: 'Ремонт квартир', icon: 'ri-building-line' },
-    { id: 'cat-620', tab: 'stroitelstvo-i-remont', title: 'Пластиковые окна', icon: 'ri-window-line' }
+    { id: 'cat-759', tab: 'stroitelstvo-i-remont', title: 'Решетки на окна', icon: 'ri-grid-line' },
+
+    // Туры
+    { id: 'cat-866', tab: 'tury', title: 'Походы', icon: 'ri-walk-line' },
+    { id: 'cat-882', tab: 'tury', title: 'Активный отдых', icon: 'ri-run-line' },
+    { id: 'cat-807', tab: 'tury', title: 'Виды туров', icon: 'ri-compass-line' },
+    { id: 'cat-853', tab: 'tury', title: 'Направления', icon: 'ri-map-pin-line' },
+
+    // Другое
+    { id: 'cat-497', tab: 'drugoe', title: 'Локальные сети', icon: 'ri-global-line' },
+    { id: 'cat-854', tab: 'drugoe', title: 'Наркологический центр', icon: 'ri-hospital-line' },
+    { id: 'cat-617', tab: 'drugoe', title: 'Партнерам', icon: 'ri-team-line' },
+    { id: 'cat-855', tab: 'drugoe', title: 'Психиатрическая клиника', icon: 'ri-hospital-line' },
+    { id: 'cat-168', tab: 'drugoe', title: 'Скупка техники', icon: 'ri-exchange-dollar-line' },
+    { id: 'cat-595', tab: 'drugoe', title: 'Спорт', icon: 'ri-run-line' },
+    { id: 'cat-570', tab: 'drugoe', title: 'Студия звукозаписи', icon: 'ri-mic-line' },
+    { id: 'cat-439', tab: 'drugoe', title: 'Типография', icon: 'ri-printer-line' },
+
+    // Мы в других странах
+    { id: 'cat-901', tab: 'countries', title: 'Россия', icon: 'ri-map-pin-line' },
+    { id: 'cat-902', tab: 'countries', title: 'Узбекистан', icon: 'ri-map-pin-line' },
+    { id: 'cat-903', tab: 'countries', title: 'Кыргызстан', icon: 'ri-map-pin-line' }
   ];
 
   const megaSubcategories = {
+    // Ремонт техники
     'cat-210': [
+      { id: 'sub-210-1', title: 'Интернет-магазин запчастей' },
+      { id: 'sub-210-2', title: 'Запчасти для стиральных машин' },
+      { id: 'sub-210-3', title: 'Запчасти для холодильников' }
+    ],
+    'cat-128': [
+      { id: 'sub-128-1', title: 'Ремонт аудиотехники' },
+      { id: 'sub-128-2', title: 'Ремонт усилителей' },
+      { id: 'sub-128-3', title: 'Ремонт колонок' }
+    ],
+    'cat-230': [
+      { id: 'sub-231', title: 'Ремонт пылесосов' },
+      { id: 'sub-232', title: 'Ремонт утюгов' },
+      { id: 'sub-233', title: 'Ремонт блендеров' }
+    ],
+    'cat-112': [
+      { id: 'sub-112-1', title: 'Ремонт климатической техники' },
+      { id: 'sub-112-2', title: 'Ремонт кондиционеров' },
+      { id: 'sub-112-3', title: 'Ремонт обогревателей' }
+    ],
+    'cat-15': [
+      { id: 'sub-15-1', title: 'Ремонт компьютерной техники' },
+      { id: 'sub-15-2', title: 'Ремонт ноутбуков' },
+      { id: 'sub-15-3', title: 'Ремонт моноблоков' }
+    ],
+    'cat-18': [
       { id: 'sub-211', title: 'Ремонт стиральных машин' },
       { id: 'sub-212', title: 'Ремонт холодильников' },
       { id: 'sub-213', title: 'Ремонт посудомоечных машин' }
@@ -163,43 +278,337 @@ export default function App() {
       { id: 'sub-222', title: 'Ремонт микроволновок' },
       { id: 'sub-223', title: 'Ремонт мультиварок' }
     ],
-    'cat-230': [
-      { id: 'sub-231', title: 'Ремонт пылесосов' },
-      { id: 'sub-232', title: 'Ремонт утюгов' },
-      { id: 'sub-233', title: 'Ремонт блендеров' }
+    'cat-17': [
+      { id: 'sub-17-1', title: 'Ремонт офисной техники' },
+      { id: 'sub-17-2', title: 'Ремонт принтеров' },
+      { id: 'sub-17-3', title: 'Ремонт МФУ' }
+    ],
+    'cat-135': [
+      { id: 'sub-135-1', title: 'Ремонт садовой техники' },
+      { id: 'sub-135-2', title: 'Ремонт газонокосилок' }
+    ],
+    'cat-120': [
+      { id: 'sub-120-1', title: 'Ремонт строительной техники' },
+      { id: 'sub-120-2', title: 'Ремонт перфораторов' }
+    ],
+    'cat-154': [
+      { id: 'sub-154-1', title: 'Ремонт уходовой техники' },
+      { id: 'sub-154-2', title: 'Ремонт фенов' }
+    ],
+    'cat-94': [
+      { id: 'sub-94-1', title: 'Ремонт цифровой техники' },
+      { id: 'sub-94-2', title: 'Ремонт телефонов' },
+      { id: 'sub-94-3', title: 'Ремонт планшетов' }
+    ],
+    'cat-148': [
+      { id: 'sub-148-1', title: 'Ремонт часов' },
+      { id: 'sub-148-2', title: 'Ремонт настенных часов' }
+    ],
+    'cat-105': [
+      { id: 'sub-105-1', title: 'Ремонт электротранспорта' },
+      { id: 'sub-105-2', title: 'Ремонт самокатов' }
+    ],
+    'cat-255': [
+      { id: 'sub-255-1', title: 'Сервисный центр' }
+    ],
+
+    // Транспорт
+    'cat-859': [
+      { id: 'sub-321', title: 'Аренда транспорта' },
+      { id: 'sub-859-2', title: 'Прокат авто' }
+    ],
+    'cat-542': [
+      { id: 'sub-542-1', title: 'Перевозка авто' },
+      { id: 'sub-542-2', title: 'Эвакуатор' }
     ],
     'cat-310': [
       { id: 'sub-311', title: 'СТО' },
-      { id: 'sub-312', title: 'Перевозка авто' }
+      { id: 'sub-312', title: 'Компьютерная диагностика' }
     ],
-    'cat-320': [
-      { id: 'sub-321', title: 'Аренда транспорта' },
-      { id: 'sub-322', title: 'Трансфер' }
+    'cat-447': [
+      { id: 'sub-447-1', title: 'Спецтехника' },
+      { id: 'sub-447-2', title: 'Аренда спецтехники' }
+    ],
+    'cat-858': [
+      { id: 'sub-322', title: 'Трансфер' },
+      { id: 'sub-858-2', title: 'Встреча в аэропорту' }
+    ],
+
+    // Бытовые услуги
+    'cat-506': [
+      { id: 'sub-506-1', title: 'Ассенизатор' },
+      { id: 'sub-506-2', title: 'Откачка септиков' }
+    ],
+    'cat-165': [
+      { id: 'sub-165-1', title: 'Ремонт ювелирных изделий' },
+      { id: 'sub-165-2', title: 'Пайка цепочек' }
+    ],
+    'cat-463': [
+      { id: 'sub-463-1', title: 'Видеонаблюдение' },
+      { id: 'sub-463-2', title: 'Установка камер' }
+    ],
+    'cat-419': [
+      { id: 'sub-419-1', title: 'Вывоз мусора' },
+      { id: 'sub-419-2', title: 'Вывоз строительного мусора' }
+    ],
+    'cat-427': [
+      { id: 'sub-427-1', title: 'Дезинсекция' },
+      { id: 'sub-427-2', title: 'Уничтожение насекомых' }
+    ],
+    'cat-421': [
+      { id: 'sub-421-1', title: 'Дезинфекция' },
+      { id: 'sub-421-2', title: 'Обработка помещений' }
+    ],
+    'cat-426': [
+      { id: 'sub-426-1', title: 'Дератизация' },
+      { id: 'sub-426-2', title: 'Уничтожение грызунов' }
+    ],
+    'cat-433': [
+      { id: 'sub-433-1', title: 'Доставка воды' },
+      { id: 'sub-433-2', title: 'Питьевая вода 19л' }
     ],
     'cat-410': [
       { id: 'sub-411', title: 'Уборка домов' },
       { id: 'sub-412', title: 'Генеральная уборка дома' },
       { id: 'sub-413', title: 'Химчистка диванов' }
     ],
+    'cat-505': [
+      { id: 'sub-422', title: 'Муж на час' },
+      { id: 'sub-505-2', title: 'Мелкий бытовой ремонт' }
+    ],
+    'cat-434': [
+      { id: 'sub-434-1', title: 'Прачечная' },
+      { id: 'sub-434-2', title: 'Стирка белья' }
+    ],
+    'cat-526': [
+      { id: 'sub-526-1', title: 'Сварщик' },
+      { id: 'sub-526-2', title: 'Сварочные работы' }
+    ],
+    'cat-474': [
+      { id: 'sub-474-1', title: 'Сигнализация' },
+      { id: 'sub-474-2', title: 'Охранная сигнализация' }
+    ],
+    'cat-461': [
+      { id: 'sub-461-1', title: 'Услуги по мебели' },
+      { id: 'sub-461-2', title: 'Сборка мебели' }
+    ],
     'cat-420': [
       { id: 'sub-421', title: 'Услуги сантехника' },
-      { id: 'sub-422', title: 'Муж на час' }
+      { id: 'sub-420-2', title: 'Устранение засоров' }
+    ],
+    'cat-163': [
+      { id: 'sub-163-1', title: 'Услуги электрика' },
+      { id: 'sub-163-2', title: 'Монтаж проводки' }
+    ],
+    'cat-420-chem': [
+      { id: 'sub-420-chem-1', title: 'Химчистка' },
+      { id: 'sub-420-chem-2', title: 'Химчистка ковров' }
+    ],
+    'cat-437': [
+      { id: 'sub-437-1', title: 'Ателье' },
+      { id: 'sub-437-2', title: 'Ремонт одежды' }
+    ],
+
+    // Специалисты
+    'cat-713': [
+      { id: 'sub-713-1', title: 'Няня' },
+      { id: 'sub-713-2', title: 'Няня для грудничка' }
+    ],
+    'cat-668': [
+      { id: 'sub-512', title: 'Подготовка к ЕНТ' },
+      { id: 'sub-668-2', title: 'ЕНТ по математике' }
+    ],
+    'cat-476': [
+      { id: 'sub-522', title: 'Адвокат' },
+      { id: 'sub-476-2', title: 'Уголовный адвокат' }
+    ],
+    'cat-646': [
+      { id: 'sub-646-1', title: 'Астролог' },
+      { id: 'sub-646-2', title: 'Натальная карта' }
+    ],
+    'cat-671': [
+      { id: 'sub-671-1', title: 'Бухгалтер' },
+      { id: 'sub-671-2', title: 'Бухгалтерское сопровождение' }
+    ],
+    'cat-731': [
+      { id: 'sub-731-1', title: 'Вокал' },
+      { id: 'sub-731-2', title: 'Уроки вокала' }
+    ],
+    'cat-535': [
+      { id: 'sub-535-1', title: 'Грузчики' },
+      { id: 'sub-535-2', title: 'Квартирный переезд' }
+    ],
+    'cat-670': [
+      { id: 'sub-670-1', title: 'Косметолог' },
+      { id: 'sub-670-2', title: 'Чистка лица' }
+    ],
+    'cat-720': [
+      { id: 'sub-720-1', title: 'Коуч по карьере' },
+      { id: 'sub-720-2', title: 'Карьерная консультация' }
+    ],
+    'cat-704': [
+      { id: 'sub-704-1', title: 'Курсы языка' },
+      { id: 'sub-704-2', title: 'Курсы английского' }
+    ],
+    'cat-710': [
+      { id: 'sub-710-1', title: 'Лазерная эпиляция' },
+      { id: 'sub-710-2', title: 'Эпиляция всего тела' }
+    ],
+    'cat-652': [
+      { id: 'sub-652-1', title: 'Маникюр' },
+      { id: 'sub-652-2', title: 'Маникюр с покрытием' }
+    ],
+    'cat-675': [
+      { id: 'sub-675-1', title: 'Нотариус' },
+      { id: 'sub-675-2', title: 'Оформление доверенности' }
+    ],
+    'cat-680': [
+      { id: 'sub-680-1', title: 'Нумеролог' },
+      { id: 'sub-680-2', title: 'Нумерологический расчет' }
+    ],
+    'cat-677': [
+      { id: 'sub-677-1', title: 'Профориентолог' },
+      { id: 'sub-677-2', title: 'Выбор профессии' }
+    ],
+    'cat-690': [
+      { id: 'sub-690-1', title: 'Репетитор начальных классов' },
+      { id: 'sub-690-2', title: 'Помощь с домашним заданием' }
     ],
     'cat-510': [
       { id: 'sub-511', title: 'Репетитор по математике' },
-      { id: 'sub-512', title: 'Подготовка к ЕНТ' }
+      { id: 'sub-510-2', title: 'Высшая математика' }
     ],
-    'cat-520': [
+    'cat-716': [
+      { id: 'sub-716-1', title: 'Рисование для детей' },
+      { id: 'sub-716-2', title: 'Художественная школа' }
+    ],
+    'cat-658': [
+      { id: 'sub-658-1', title: 'Таролог' },
+      { id: 'sub-658-2', title: 'Расклад Таро' }
+    ],
+    'cat-649': [
+      { id: 'sub-649-1', title: 'Тимбилдинг' },
+      { id: 'sub-649-2', title: 'Организация тимбилдинга' }
+    ],
+    'cat-241': [
+      { id: 'sub-241-1', title: 'Трезвый водитель' },
+      { id: 'sub-241-2', title: 'Перегон авто' }
+    ],
+    'cat-824': [
+      { id: 'sub-824-1', title: 'Шугаринг' },
+      { id: 'sub-824-2', title: 'Депиляция сахаром' }
+    ],
+    'cat-520-jur': [
       { id: 'sub-521', title: 'Юрист' },
-      { id: 'sub-522', title: 'Адвокат' }
+      { id: 'sub-520-jur-2', title: 'Юридическая консультация' }
     ],
-    'cat-610': [
-      { id: 'sub-611', title: 'Ремонт квартир' },
-      { id: 'sub-612', title: 'Асфальтирование' }
+    'cat-565': [
+      { id: 'sub-565-1', title: 'Медицина' },
+      { id: 'sub-565-2', title: 'Вызов врача на дом' }
+    ],
+
+    // Строительство
+    'cat-520-bur': [
+      { id: 'sub-622', title: 'Алмазное бурение' },
+      { id: 'sub-520-bur-2', title: 'Бурение отверстий в бетоне' }
+    ],
+    'cat-623': [
+      { id: 'sub-623-1', title: 'Аренда инструментов' },
+      { id: 'sub-623-2', title: 'Прокат генераторов' }
+    ],
+    'cat-519': [
+      { id: 'sub-612', title: 'Асфальтирование' },
+      { id: 'sub-519-2', title: 'Укладка асфальта' }
+    ],
+    'cat-504': [
+      { id: 'sub-504-1', title: 'Бетон' },
+      { id: 'sub-504-2', title: 'Доставка бетона' }
+    ],
+    'cat-823': [
+      { id: 'sub-823-1', title: 'Жалюзи' },
+      { id: 'sub-823-2', title: 'Рулонные шторы' }
+    ],
+    'cat-741': [
+      { id: 'sub-741-1', title: 'Москитные сетки' },
+      { id: 'sub-741-2', title: 'Сетки антикошка' }
     ],
     'cat-620': [
       { id: 'sub-621', title: 'Пластиковые окна' },
-      { id: 'sub-622', title: 'Алмазное бурение' }
+      { id: 'sub-620-2', title: 'Регулировка окон' }
+    ],
+    'cat-610': [
+      { id: 'sub-611', title: 'Ремонт квартир' },
+      { id: 'sub-610-2', title: 'Косметический ремонт' }
+    ],
+    'cat-759': [
+      { id: 'sub-759-1', title: 'Решетки на окна' },
+      { id: 'sub-759-2', title: 'Кованые решетки' }
+    ],
+
+    // Туры
+    'cat-866': [
+      { id: 'sub-866-1', title: 'Походы' },
+      { id: 'sub-866-2', title: 'Горные походы' }
+    ],
+    'cat-882': [
+      { id: 'sub-882-1', title: 'Активный отдых' },
+      { id: 'sub-882-2', title: 'Рафтинг' }
+    ],
+    'cat-807': [
+      { id: 'sub-807-1', title: 'Виды туров' },
+      { id: 'sub-807-2', title: 'Экскурсионные туры' }
+    ],
+    'cat-853': [
+      { id: 'sub-853-1', title: 'Направления' },
+      { id: 'sub-853-2', title: 'Туры по Казахстану' }
+    ],
+
+    // Другое
+    'cat-497': [
+      { id: 'sub-497-1', title: 'Локальные сети' },
+      { id: 'sub-497-2', title: 'Настройка сети' }
+    ],
+    'cat-854': [
+      { id: 'sub-854-1', title: 'Наркологический центр' },
+      { id: 'sub-854-2', title: 'Вывод из запоя' }
+    ],
+    'cat-617': [
+      { id: 'sub-617-1', title: 'Партнерам' },
+      { id: 'sub-617-2', title: 'Сотрудничество' }
+    ],
+    'cat-855': [
+      { id: 'sub-855-1', title: 'Психиатрическая клиника' },
+      { id: 'sub-855-2', title: 'Консультация психиатра' }
+    ],
+    'cat-168': [
+      { id: 'sub-168-1', title: 'Скупка техники' },
+      { id: 'sub-168-2', title: 'Скупка ноутбуков' }
+    ],
+    'cat-595': [
+      { id: 'sub-595-1', title: 'Спорт' },
+      { id: 'sub-595-2', title: 'Персональный тренер' }
+    ],
+    'cat-570': [
+      { id: 'sub-570-1', title: 'Студия звукозаписи' },
+      { id: 'sub-570-2', title: 'Запись песни' }
+    ],
+    'cat-439': [
+      { id: 'sub-439-1', title: 'Типография' },
+      { id: 'sub-439-2', title: 'Печать визиток' }
+    ],
+
+    // Мы в других странах
+    'cat-901': [
+      { id: 'sub-901-1', title: 'Россия' },
+      { id: 'sub-901-2', title: 'Москва' }
+    ],
+    'cat-902': [
+      { id: 'sub-902-1', title: 'Узбекистан' },
+      { id: 'sub-902-2', title: 'Ташкент' }
+    ],
+    'cat-903': [
+      { id: 'sub-903-1', title: 'Кыргызстан' },
+      { id: 'sub-903-2', title: 'Бишкек' }
     ]
   };
 
@@ -212,8 +621,12 @@ export default function App() {
     'sub-611': { title: 'Ремонт квартир', desc: 'Косметический, капитальный и дизайнерский ремонт квартир и офисов под ключ.', price: 'от 25 000 ₸/м²', time: 'Выезд: 45 мин', warr: 'Гарантия: 1 год' }
   };
 
+  const activeSubObj = Object.values(megaSubcategories).flat().find(s => s.id === activeMegaSub);
+  const activeCatObj = megaCategories.find(c => c.id === activeMegaCat);
+  const fallbackTitle = activeSubObj ? activeSubObj.title : (activeCatObj ? activeCatObj.title : 'Сервисный центр');
+
   const currentDetail = megaDetails[activeMegaSub] || {
-    title: 'Сервисный центр',
+    title: fallbackTitle,
     desc: 'Оформляйте заявку на данную услугу онлайн. Гарантия на работы до 12 месяцев, выезд мастера по Алматы в среднем за 45 минут.',
     price: 'от 2 500 ₸',
     time: 'Выезд: 45 мин',
