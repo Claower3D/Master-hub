@@ -12,6 +12,11 @@ export default function App() {
   const [activeMegaCat, setActiveMegaCat] = useState('cat-210');
   const [activeMegaSub, setActiveMegaSub] = useState('none');
   
+  // Dedicated Category Page & Modal States
+  const [activePage, setActivePage] = useState('home'); // 'home' | 'category'
+  const [selectedCategoryPageObj, setSelectedCategoryPageObj] = useState(null);
+  const [selectedModalItem, setSelectedModalItem] = useState(null); // { title, type: 'brand' | 'service', parentTitle }
+  
   // Catalog Pill state
   const [activeCatPill, setActiveCatPill] = useState('home');
   
@@ -665,6 +670,94 @@ export default function App() {
     { cat: 'ses', title: 'Услуги сантехника', desc: 'Устранение течей, монтаж труб, установка смесителей и унитазов.', price: 'от 2 500 ₸' }
   ];
 
+  // Dynamic Category Page Data Generator
+  const getCategoryPageData = (pageObj, currentLang) => {
+    if (!pageObj) return { brands: [], services: [], parentTabLabel: 'Ремонт техники', parentCatTitle: 'Сервисный центр' };
+    
+    const baseTitle = t(pageObj.title);
+    const parentCat = megaCategories.find(c => c.id === pageObj.parentCatId) || { title: 'Сервисный центр', tab: 'remont-tehniki' };
+    const parentTab = megaTabs.find(t => t.id === pageObj.parentTabId || t.id === parentCat.tab) || { label: 'Ремонт техники' };
+
+    // Custom overrides matching user prompt exactly
+    if (pageObj.id === 'sub-221' || pageObj.title.includes('кофемаш')) {
+      return {
+        parentTabLabel: parentTab.label,
+        parentCatTitle: parentCat.title,
+        brands: ['Delonghi', 'Bosch', 'Jura', 'Saeco', 'Krups', 'Philips'],
+        services: ['Капучинаторы для кофемашин', 'Помпы для кофемашин', 'Помпы для кофемашин Delonghi', 'ТЭНы и бойлеры', 'Плат управления', 'Уплотнители и клапаны']
+      };
+    }
+
+    if (pageObj.title.includes('стиральн')) {
+      return {
+        parentTabLabel: parentTab.label,
+        parentCatTitle: parentCat.title,
+        brands: ['LG', 'Samsung', 'Bosch', 'Indesit', 'Beko', 'Candy', 'Electrolux'],
+        services: ['Замена ТЭНа', 'Замена подшипников', 'Замена сливного насоса (помпы)', 'Ремонт модуля управления', 'Замена манжеты люка', 'Устранение протечек']
+      };
+    }
+
+    if (pageObj.title.includes('холодильн')) {
+      return {
+        parentTabLabel: parentTab.label,
+        parentCatTitle: parentCat.title,
+        brands: ['Samsung', 'LG', 'Atlant', 'Bosch', 'Liebherr', 'Beko', 'Haier'],
+        services: ['Заправка фреоном', 'Замена компрессора', 'Замена термостата', 'Ремонт системы No Frost', 'Устранение утечки хладагента', 'Замена уплотнительной резины']
+      };
+    }
+
+    if (pageObj.title.includes('телефон') || pageObj.title.includes('смартфон')) {
+      return {
+        parentTabLabel: parentTab.label,
+        parentCatTitle: parentCat.title,
+        brands: ['Apple iPhone', 'Samsung Galaxy', 'Xiaomi', 'Huawei', 'Honor', 'Realme', 'Google Pixel'],
+        services: ['Замена дисплея (оригинал)', 'Замена аккумулятора', 'Замена разъема зарядки', 'Восстановление после попадания воды', 'Замена стекла камеры', 'Пайка материнской платы']
+      };
+    }
+
+    if (pageObj.title.includes('ноутбук') || pageObj.title.includes('компьютер')) {
+      return {
+        parentTabLabel: parentTab.label,
+        parentCatTitle: parentCat.title,
+        brands: ['Apple MacBook', 'ASUS', 'Lenovo', 'HP', 'Acer', 'Dell', 'MSI'],
+        services: ['Чистка от пыли и замена термопасты', 'Замена клавиатуры', 'Замена матрицы (экрана)', 'Ремонт цепей питания', 'Установка SSD и настройка ОС', 'Восстановление данных']
+      };
+    }
+
+    // Dynamic generation for all other categories based on tab
+    let brands = [];
+    let services = [];
+
+    if (parentTab.id === 'remont-tehniki') {
+      brands = ['Apple', 'Samsung', 'LG', 'Bosch', 'Sony', 'Xiaomi', 'Philips', 'Panasonic'];
+      services = ['Диагностика: ' + baseTitle, 'Замена оригинальных деталей: ' + baseTitle, 'Экспресс-ремонт: ' + baseTitle, 'Обслуживание: ' + baseTitle, 'Ремонт плат управления: ' + baseTitle];
+    } else if (parentTab.id === 'transport') {
+      brands = ['Toyota', 'Hyundai', 'Kia', 'Mercedes-Benz', 'BMW', 'Lexus', 'Volkswagen'];
+      services = ['Полная диагностика', 'Экспресс-выезд мастера', 'Сезонное обслуживание', 'Замена расходников', 'Премиум сервис: ' + baseTitle];
+    } else if (parentTab.id === 'bytovye-uslugi') {
+      brands = ['Kärcher', 'Diversey', 'Pro-Brite', 'Grass', 'Eco-Clean'];
+      services = ['Генеральное выполнение: ' + baseTitle, 'Срочный выезд специалиста', 'Индивидуальный расчет стоимости', 'Договор на регулярное обслуживание'];
+    } else if (parentTab.id === 'specialist') {
+      brands = ['Сертифицированные специалисты', 'Высшая категория', 'Проверенные отзывы', 'Опыт от 5 лет', 'Гарантия результата'];
+      services = ['Первичная консультация', 'Индивидуальный план и проект', 'Полное сопровождение', 'Экспресс-услуга'];
+    } else if (parentTab.id === 'stroitelstvo-i-remont') {
+      brands = ['Knauf', 'Ceresit', 'Alina Paint', 'Rehau', 'Bosch', 'Makita'];
+      services = ['Бесплатный замер', 'Составление точной сметы', 'Работа под ключ', 'Авторский надзор', 'Гарантийное обслуживание'];
+    } else {
+      brands = ['Премиум качество', 'Проверенные партнеры', 'Официальная гарантия', 'Международные стандарты'];
+      services = ['Базовая услуга: ' + baseTitle, 'Расширенный сервис', 'Экспресс-обслуживание', 'Консультация эксперта'];
+    }
+
+    return {
+      parentTabLabel: parentTab.label,
+      parentCatTitle: parentCat.title,
+      brands,
+      services
+    };
+  };
+
+  const catPageData = getCategoryPageData(selectedCategoryPageObj, lang);
+
   return (
     <>
       {/* TOPBAR */}
@@ -773,7 +866,18 @@ export default function App() {
                 key={sub.id}
                 className={`mega-sub ${activeMegaSub === sub.id ? 'active' : ''}`}
                 onMouseEnter={() => setActiveMegaSub(sub.id)}
-                onClick={() => setActiveMegaSub(sub.id)}
+                onClick={() => {
+                  setActiveMegaSub(sub.id);
+                  setSelectedCategoryPageObj({
+                    id: sub.id,
+                    title: sub.title,
+                    parentCatId: activeMegaCat,
+                    parentTabId: activeMegaTab
+                  });
+                  setActivePage('category');
+                  setMegaMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
               >
                 <span className="mega-sub-link">{t(sub.title)}</span>
                 <i className="ri-arrow-right-s-line mega-sub-arrow"></i>
@@ -791,172 +895,292 @@ export default function App() {
                 <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
                 <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
               </div>
-              <a
-                href="#contact"
-                className="btn-primary"
-                style={{ display: 'inline-block', marginTop: '16px' }}
-                onClick={() => {
-                  setFormService(t(currentDetail.title));
-                  setMegaMenuOpen(false);
-                }}
-              >
-                {t('srv_btn')}
-              </a>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                <a
+                  href="#contact"
+                  className="btn-primary"
+                  onClick={() => {
+                    setFormService(t(currentDetail.title));
+                    setMegaMenuOpen(false);
+                  }}
+                >
+                  {t('srv_btn')}
+                </a>
+                <button
+                  className="btn-ghost"
+                  style={{ padding: '10px 20px', fontSize: '13px' }}
+                  onClick={() => {
+                    setSelectedCategoryPageObj({
+                      id: activeMegaSub,
+                      title: currentDetail.title,
+                      parentCatId: activeMegaCat,
+                      parentTabId: activeMegaTab
+                    });
+                    setActivePage('category');
+                    setMegaMenuOpen(false);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                >
+                  {t('srv_more_btn')}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div className={`mega-overlay ${megaMenuOpen ? 'open' : ''}`} onClick={() => setMegaMenuOpen(false)}></div>
 
-      {/* HERO */}
-      <section className="hero">
-        <div className="hero-content">
-          <div className="pill">{t('hero_pill')}</div>
-          <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t('hero_title') }}></h1>
-          <p className="lead">{t('hero_lead')}</p>
-          <div className="hero-actions">
-            <button className="btn-primary big" onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}>
-              {t('hero_btn1')}
-            </button>
-            <button className="btn-ghost" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
-              {t('hero_btn2')}
+      {/* HERO & MAIN SECTIONS CONDITIONAL */}
+      {activePage === 'category' && selectedCategoryPageObj ? (
+        <section className="category-page-container" style={{ padding: '40px 6vw', minHeight: '70vh', animation: 'fadeIn 0.3s ease' }}>
+          {/* Breadcrumbs */}
+          <div className="breadcrumbs" style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '14px', color: 'var(--muted)', flexWrap: 'wrap' }}>
+            <a href="#" onClick={(e) => { e.preventDefault(); setActivePage('home'); }} style={{ color: 'var(--accent)', fontWeight: '600' }}>Главная</a>
+            <span>/</span>
+            <span>{t(catPageData.parentTabLabel)}</span>
+            <span>/</span>
+            <span>{t(catPageData.parentCatTitle)}</span>
+            <span>/</span>
+            <span style={{ color: 'var(--text)', fontWeight: '700' }}>{t(selectedCategoryPageObj.title)}</span>
+            
+            <button className="btn-ghost" style={{ marginLeft: 'auto', padding: '6px 16px', fontSize: '12px' }} onClick={() => setActivePage('home')}>
+              ← Назад на главную
             </button>
           </div>
-          <ul className="hero-stats">
-            {statsData.map((st, idx) => (
-              <li key={idx}>
-                <strong>{t(st.num)}</strong>
-                <span>{t(st.label)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="hero-visual">
-          <div className="hero-card">
-            <div className="hero-card-head">
-              <div className="dot"></div>
-              <span>{t('hero_card_head')}</span>
-            </div>
-            <div className="master">
-              <div className="avatar"><i className="ri-user-star-line" style={{ fontSize: '24px' }}></i></div>
-              <div>
-                <div className="m-name">Мастер по ремонту</div>
-                <div className="m-role">бытовой техники (стаж 8 лет)</div>
-              </div>
-              <div className="rate">★ 4.9</div>
-            </div>
-            <div className="hero-card-foot">
-              <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* SERVICES CATALOG */}
-      <section id="services" className="services">
-        <div className="section-head">
-          <h2>{t('srv_title')}</h2>
-          <p>{t('srv_sub')}</p>
-        </div>
-        <div className="cat-nav-pills">
-          {catPills.map(p => (
-            <button
-              key={p.id}
-              className={`cat-pill ${activeCatPill === p.id ? 'active' : ''}`}
-              onClick={() => setActiveCatPill(p.id)}
-              dangerouslySetInnerHTML={{ __html: t(p.label) }}
-            ></button>
-          ))}
-        </div>
-        <div className="srv-cards-grid">
-          {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
-            <div className="srv-card" key={idx}>
-              <div className="srv-icon"><i className="ri-tools-line"></i></div>
-              <h3 className="srv-title">{t(card.title)}</h3>
-              <p className="srv-desc">{t(card.desc)}</p>
-              <div className="srv-foot">
-                <div className="srv-price">{t(card.price)}</div>
-                <button
-                  className="srv-btn"
+          {/* Hero Section for Category */}
+          <div className="cat-page-hero" style={{ background: 'linear-gradient(180deg, var(--surface), var(--surface-2))', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '48px', marginBottom: '48px', boxShadow: 'var(--shadow)', position: 'relative', overflow: 'hidden' }}>
+            <div className="pill" style={{ marginBottom: '16px' }}>{t(catPageData.parentCatTitle)}</div>
+            <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '800', marginBottom: '20px', color: 'var(--text)' }}>
+              {t(selectedCategoryPageObj.title)}
+            </h1>
+            <p style={{ fontSize: '18px', color: 'var(--muted)', maxWidth: '700px', marginBottom: '32px', lineHeight: '1.6' }}>
+              Профессиональные услуги и оригинальные комплектующие с гарантией до 12 месяцев. Среднее время выезда мастера или доставки по Алматы и другим городам — 45 минут.
+            </p>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+              <button className="btn-primary big" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
+                {t('cta_req')}
+              </button>
+            </div>
+          </div>
+
+          {/* Section: Бренды */}
+          <div className="cat-page-section" style={{ marginBottom: '56px' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <i className="ri-award-line" style={{ color: 'var(--accent)' }}></i> Бренды
+            </h2>
+            <div className="cat-page-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
+              {catPageData.brands.map((brand, idx) => {
+                const itemTitle = selectedCategoryPageObj.title.includes('кофемаш') ? `Запчасти для кофемашин ${brand}` : `${brand}`;
+                return (
+                  <div
+                    key={idx}
+                    className="cat-page-card"
+                    style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+                    onClick={() => {
+                      setFormService(itemTitle);
+                      setSelectedModalItem({ title: itemTitle, type: 'brand', parentTitle: t(selectedCategoryPageObj.title) });
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase' }}>Бренд</div>
+                      <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text)', marginBottom: '12px' }}>{itemTitle}</h3>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--line)', fontSize: '14px', color: 'var(--muted)', fontWeight: '600' }}>
+                      <span>от 2 500 ₸</span>
+                      <span style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>Открыть <i className="ri-arrow-right-line"></i></span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section: Услуги / Детали */}
+          <div className="cat-page-section" style={{ marginBottom: '48px' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <i className="ri-tools-line" style={{ color: 'var(--accent)' }}></i> Услуги и детали
+            </h2>
+            <div className="cat-page-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+              {catPageData.services.map((srv, idx) => (
+                <div
+                  key={idx}
+                  className="cat-page-card"
+                  style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
                   onClick={() => {
-                    setFormService(t(card.title));
-                    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                    setFormService(srv);
+                    setSelectedModalItem({ title: srv, type: 'service', parentTitle: t(selectedCategoryPageObj.title) });
                   }}
                 >
-                  {t('srv_btn')} <i className="ri-arrow-right-line"></i>
+                  <div>
+                    <div style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase' }}>Услуга / Деталь</div>
+                    <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text)', marginBottom: '12px' }}>{srv}</h3>
+                    <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: '1.5' }}>
+                      Быстрая диагностика, замена и ремонт с использованием профессионального оборудования.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--line)', fontSize: '14px', color: 'var(--muted)', fontWeight: '600' }}>
+                    <span>от 2 500 ₸</span>
+                    <span style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>Открыть <i className="ri-arrow-right-line"></i></span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <>
+          {/* HERO */}
+          <section className="hero">
+            <div className="hero-content">
+              <div className="pill">{t('hero_pill')}</div>
+              <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t('hero_title') }}></h1>
+              <p className="lead">{t('hero_lead')}</p>
+              <div className="hero-actions">
+                <button className="btn-primary big" onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}>
+                  {t('hero_btn1')}
+                </button>
+                <button className="btn-ghost" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
+                  {t('hero_btn2')}
                 </button>
               </div>
+              <ul className="hero-stats">
+                {statsData.map((st, idx) => (
+                  <li key={idx}>
+                    <strong>{t(st.num)}</strong>
+                    <span>{t(st.label)}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* WHY US */}
-      <section id="why">
-        <div className="section-head">
-          <h2>{t('why_title')}</h2>
-          <p>{t('why_sub')}</p>
-        </div>
-        <div className="timeline">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-            <div className="t-item" key={num}>
-              <div className="t-num">0{num}</div>
-              <h4>{t(`why${num}_h`)}</h4>
-              <p>{t(`why${num}_p`)}</p>
+            <div className="hero-visual">
+              <div className="hero-card">
+                <div className="hero-card-head">
+                  <div className="dot"></div>
+                  <span>{t('hero_card_head')}</span>
+                </div>
+                <div className="master">
+                  <div className="avatar"><i className="ri-user-star-line" style={{ fontSize: '24px' }}></i></div>
+                  <div>
+                    <div className="m-name">Мастер по ремонту</div>
+                    <div className="m-role">бытовой техники (стаж 8 лет)</div>
+                  </div>
+                  <div className="rate">★ 4.9</div>
+                </div>
+                <div className="hero-card-foot">
+                  <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      {/* MASTERS */}
-      <section id="masters" className="masters">
-        <div className="section-head">
-          <h2>{t('masters_title')}</h2>
-          <p>{t('masters_sub')}</p>
-        </div>
-        <div className="m-list">
-          <div className="m-card">
-            <div className="m-photo"><i className="ri-user-line"></i></div>
-            <h4>Александр В.</h4>
-            <span>{t('m_univ')}</span>
-            <div className="m-meta"><span>Опыт: 8 лет</span><span className="m-star">★ 4.9 (142 отзыва)</span></div>
-          </div>
-          <div className="m-card">
-            <div className="m-photo a2"><i className="ri-user-line"></i></div>
-            <h4>Кайрат Н.</h4>
-            <span>{t('m_eq')}</span>
-            <div className="m-meta"><span>Опыт: 6 лет</span><span className="m-star">★ 5.0 (98 отзывов)</span></div>
-          </div>
-          <div className="m-card">
-            <div className="m-photo a3"><i className="ri-user-line"></i></div>
-            <h4>Дмитрий С.</h4>
-            <span>{t('m_dez')}</span>
-            <div className="m-meta"><span>Опыт: 10 лет</span><span className="m-star">★ 4.9 (210 отзывов)</span></div>
-          </div>
-          <div className="m-card">
-            <div className="m-photo a4"><i className="ri-user-line"></i></div>
-            <h4>Ерлан А.</h4>
-            <span>{t('m_qc')}</span>
-            <div className="m-meta"><span>Опыт: 7 лет</span><span className="m-star">★ 4.9 (165 отзывов)</span></div>
-          </div>
-        </div>
-      </section>
+          {/* SERVICES CATALOG */}
+          <section id="services" className="services">
+            <div className="section-head">
+              <h2>{t('srv_title')}</h2>
+              <p>{t('srv_sub')}</p>
+            </div>
+            <div className="cat-nav-pills">
+              {catPills.map(p => (
+                <button
+                  key={p.id}
+                  className={`cat-pill ${activeCatPill === p.id ? 'active' : ''}`}
+                  onClick={() => setActiveCatPill(p.id)}
+                  dangerouslySetInnerHTML={{ __html: t(p.label) }}
+                ></button>
+              ))}
+            </div>
+            <div className="srv-cards-grid">
+              {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
+                <div className="srv-card" key={idx}>
+                  <div className="srv-icon"><i className="ri-tools-line"></i></div>
+                  <h3 className="srv-title">{t(card.title)}</h3>
+                  <p className="srv-desc">{t(card.desc)}</p>
+                  <div className="srv-foot">
+                    <div className="srv-price">{t(card.price)}</div>
+                    <button
+                      className="srv-btn"
+                      onClick={() => {
+                        setFormService(t(card.title));
+                        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      {t('srv_btn')} <i className="ri-arrow-right-line"></i>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
-      {/* REVIEWS */}
-      <section id="reviews">
-        <div className="section-head">
-          <h2>{t('reviews_title')}</h2>
-          <p>{t('reviews_sub')}</p>
-        </div>
-        <div className="r-grid">
-          {reviewsData.map((rev, idx) => (
-            <blockquote key={idx}>
-              <p>{t(rev.text)}</p>
-              <cite>{t(rev.author)}</cite>
-            </blockquote>
-          ))}
-        </div>
-      </section>
+          {/* WHY US */}
+          <section id="why">
+            <div className="section-head">
+              <h2>{t('why_title')}</h2>
+              <p>{t('why_sub')}</p>
+            </div>
+            <div className="timeline">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                <div className="t-item" key={num}>
+                  <div className="t-num">0{num}</div>
+                  <h4>{t(`why${num}_h`)}</h4>
+                  <p>{t(`why${num}_p`)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* MASTERS */}
+          <section id="masters" className="masters">
+            <div className="section-head">
+              <h2>{t('masters_title')}</h2>
+              <p>{t('masters_sub')}</p>
+            </div>
+            <div className="m-list">
+              <div className="m-card">
+                <div className="m-photo"><i className="ri-user-line"></i></div>
+                <h4>Александр В.</h4>
+                <span>{t('m_univ')}</span>
+                <div className="m-meta"><span>Опыт: 8 лет</span><span className="m-star">★ 4.9 (142 отзыва)</span></div>
+              </div>
+              <div className="m-card">
+                <div className="m-photo a2"><i className="ri-user-line"></i></div>
+                <h4>Кайрат Н.</h4>
+                <span>{t('m_eq')}</span>
+                <div className="m-meta"><span>Опыт: 6 лет</span><span className="m-star">★ 5.0 (98 отзывов)</span></div>
+              </div>
+              <div className="m-card">
+                <div className="m-photo a3"><i className="ri-user-line"></i></div>
+                <h4>Дмитрий С.</h4>
+                <span>{t('m_dez')}</span>
+                <div className="m-meta"><span>Опыт: 10 лет</span><span className="m-star">★ 4.9 (210 отзывов)</span></div>
+              </div>
+              <div className="m-card">
+                <div className="m-photo a4"><i className="ri-user-line"></i></div>
+                <h4>Ерлан А.</h4>
+                <span>{t('m_qc')}</span>
+                <div className="m-meta"><span>Опыт: 7 лет</span><span className="m-star">★ 4.9 (165 отзывов)</span></div>
+              </div>
+            </div>
+          </section>
+
+          {/* REVIEWS */}
+          <section id="reviews">
+            <div className="section-head">
+              <h2>{t('reviews_title')}</h2>
+              <p>{t('reviews_sub')}</p>
+            </div>
+            <div className="r-grid">
+              {reviewsData.map((rev, idx) => (
+                <blockquote key={idx}>
+                  <p>{t(rev.text)}</p>
+                  <cite>{t(rev.author)}</cite>
+                </blockquote>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
 
       {/* CALLBACK FORM */}
       <section id="contact" className="callback">
@@ -1069,6 +1293,52 @@ export default function App() {
           {t('f_bot')}
         </div>
       </footer>
+
+      {/* CATEGORY ITEM MODAL */}
+      {selectedModalItem && (
+        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(11, 16, 32, 0.85)', backdropFilter: 'blur(16px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.25s ease' }} onClick={() => setSelectedModalItem(null)}>
+          <div className="modal-content" style={{ background: 'linear-gradient(180deg, var(--surface), var(--surface-2))', border: '1px solid var(--accent)', borderRadius: 'var(--radius)', padding: '40px', maxWidth: '540px', width: '100%', boxShadow: '0 30px 70px rgba(0,0,0,0.8), 0 0 40px rgba(124,242,199,0.2)', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+            <button
+              style={{ position: 'absolute', top: '24px', right: '24px', background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--text)', width: '36px', height: '36px', borderRadius: '50%', display: 'grid', placeItems: 'center', fontSize: '18px', cursor: 'pointer', transition: 'all 0.2s' }}
+              onClick={() => setSelectedModalItem(null)}
+              aria-label="Закрыть"
+            >
+              <i className="ri-close-line"></i>
+            </button>
+            <div className="pill" style={{ marginBottom: '16px' }}>{selectedModalItem.type === 'brand' ? 'Бренд' : 'Услуга / Деталь'}</div>
+            <h3 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--text)', marginBottom: '16px' }}>{selectedModalItem.title}</h3>
+            <p style={{ fontSize: '16px', color: 'var(--muted)', lineHeight: '1.6', marginBottom: '24px' }}>
+              Вы выбрали {selectedModalItem.title} в категории «{selectedModalItem.parentTitle}». Мы предоставляем оригинальные комплектующие и профессиональные услуги с гарантией до 12 месяцев. Среднее время выезда мастера или доставки по городу — 45 минут.
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px', padding: '16px 24px', background: 'var(--surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
+              <div>
+                <div style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '4px' }}>Стоимость</div>
+                <div style={{ fontSize: '22px', fontWeight: '700', color: 'var(--accent)', fontFamily: 'Unbounded' }}>от 2 500 ₸</div>
+              </div>
+              <div style={{ borderLeft: '1px solid var(--line)', paddingLeft: '24px' }}>
+                <div style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '4px' }}>Выезд / Доставка</div>
+                <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text)' }}>~ 45 минут</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <button
+                className="btn-primary big"
+                style={{ flex: 1 }}
+                onClick={() => {
+                  setFormService(selectedModalItem.title);
+                  setSelectedModalItem(null);
+                  document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Оформить заявку
+              </button>
+              <button className="btn-ghost" onClick={() => setSelectedModalItem(null)}>
+                Закрыть
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FLOATING ACTION BUTTON */}
       <button className="fab" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })} aria-label="Оставить заявку">
