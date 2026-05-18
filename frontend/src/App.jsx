@@ -649,7 +649,12 @@ export default function App() {
     <>
       {/* TOPBAR */}
       <header className="topbar">
-        <div className="brand">
+        <div 
+          className="brand" 
+          style={{ cursor: 'pointer' }} 
+          onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          title="На главную"
+        >
           <div className="logo">MH</div>
           <div>
             <div className="brand-name">{t('brand_name')}</div>
@@ -1208,7 +1213,12 @@ export default function App() {
       {/* FOOTER */}
       <footer>
         <div className="f-col">
-          <div className="brand" style={{ marginBottom: '16px' }}>
+          <div 
+            className="brand" 
+            style={{ marginBottom: '16px', cursor: 'pointer' }} 
+            onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            title="На главную"
+          >
             <div className="logo">MH</div>
             <div>
               <div className="brand-name">{t('brand_name')}</div>
