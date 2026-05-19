@@ -12,6 +12,12 @@
   --radius:18px;
   --radius-sm:12px;
   --shadow:0 20px 60px -20px rgba(0,0,0,.6);
+  --hero-overlay: linear-gradient(180deg, rgba(11,16,32,0.1) 0%, rgba(11,16,32,0.85) 100%);
+  --hero-card-bg: rgba(20, 27, 52, 0.85);
+  --hero-card-border: rgba(124,242,199,0.3);
+  --callback-overlay: linear-gradient(90deg, var(--bg-2) 0%, rgba(15,21,43,0.85) 50%, var(--bg-2) 100%);
+  --callback-bg: linear-gradient(135deg, rgba(20,27,52,0.85), rgba(26,34,68,0.85));
+  --modal-backdrop: rgba(11, 16, 32, 0.85);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
@@ -118,6 +124,12 @@ body.light-theme {
   --accent-2: #2563eb; /* royal blue */
   --accent-3: #ea580c; /* vibrant orange */
   --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.12);
+  --hero-overlay: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(248,250,252,0.95) 100%);
+  --hero-card-bg: rgba(255, 255, 255, 0.92);
+  --hero-card-border: rgba(5,150,105,0.2);
+  --callback-overlay: linear-gradient(90deg, var(--bg-2) 0%, rgba(255,255,255,0.9) 50%, var(--bg-2) 100%);
+  --callback-bg: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(241,245,249,0.95));
+  --modal-backdrop: rgba(15, 23, 42, 0.6);
 }
 body.light-theme .theme-toggle:hover { color: #ffffff; }
 body.light-theme .lang-switch, body.light-theme .city-switch { background: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.1); }

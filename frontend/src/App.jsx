@@ -1019,9 +1019,9 @@ export default function App() {
             <div className="hero-visual">
               <div className="hero-img-container" style={{ position: 'relative', width: '100%', minHeight: '380px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(124,242,199,0.2)' }}>
                 <img src="./hero_bg.png" alt="Premium Home Services" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transform: 'scale(1.02)', transition: 'transform 0.5s ease' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(11,16,32,0.1) 0%, rgba(11,16,32,0.85) 100%)' }}></div>
+                <div style={{ position: 'absolute', inset: 0, background: 'var(--hero-overlay)' }}></div>
                 <div style={{ position: 'absolute', bottom: '24px', left: '24px', right: '24px' }}>
-                  <div className="hero-card" style={{ margin: 0, width: '100%', background: 'rgba(20, 27, 52, 0.85)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.3)' }}>
+                  <div className="hero-card" style={{ margin: 0, width: '100%', background: 'var(--hero-card-bg)', backdropFilter: 'blur(20px)', border: '1px solid var(--hero-card-border)' }}>
                     <div className="hero-card-head">
                       <div className="dot"></div>
                       <span>{t('hero_card_head')}</span>
@@ -1038,6 +1038,33 @@ export default function App() {
                       <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* QUICK STEPS */}
+          <section className="quick-steps" style={{ padding: '32px 6vw', background: 'var(--surface-2)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--surface)', border: '1px solid var(--accent)', display: 'grid', placeItems: 'center', fontSize: '22px', color: 'var(--accent)', flexShrink: 0 }}><i className="ri-hand-coin-line"></i></div>
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>1. Выбираете услугу</h4>
+                  <p style={{ fontSize: '13px', color: 'var(--muted)' }}>Фиксированный прайс без скрытых наценок</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--surface)', border: '1px solid var(--accent)', display: 'grid', placeItems: 'center', fontSize: '22px', color: 'var(--accent)', flexShrink: 0 }}><i className="ri-timer-flash-line"></i></div>
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>2. Выезд за 45 минут</h4>
+                  <p style={{ fontSize: '13px', color: 'var(--muted)' }}>Мастер прибудет в среднем за 45 минут</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--surface)', border: '1px solid var(--accent)', display: 'grid', placeItems: 'center', fontSize: '22px', color: 'var(--accent)', flexShrink: 0 }}><i className="ri-shield-star-line"></i></div>
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>3. Гарантия 1 год</h4>
+                  <p style={{ fontSize: '13px', color: 'var(--muted)' }}>Официальная гарантия и страхование работ</p>
                 </div>
               </div>
             </div>
@@ -1082,23 +1109,6 @@ export default function App() {
             </div>
           </section>
 
-          {/* WHY US */}
-          <section id="why">
-            <div className="section-head">
-              <h2>{t('why_title')}</h2>
-              <p>{t('why_sub')}</p>
-            </div>
-            <div className="timeline">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-                <div className="t-item" key={num}>
-                  <div className="t-num">0{num}</div>
-                  <h4>{t(`why${num}_h`)}</h4>
-                  <p>{t(`why${num}_p`)}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* MASTERS */}
           <section id="masters" className="masters">
             <div className="section-head">
@@ -1133,6 +1143,23 @@ export default function App() {
             </div>
           </section>
 
+          {/* WHY US */}
+          <section id="why">
+            <div className="section-head">
+              <h2>{t('why_title')}</h2>
+              <p>{t('why_sub')}</p>
+            </div>
+            <div className="timeline">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                <div className="t-item" key={num}>
+                  <div className="t-num">0{num}</div>
+                  <h4>{t(`why${num}_h`)}</h4>
+                  <p>{t(`why${num}_p`)}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* REVIEWS */}
           <section id="reviews">
             <div className="section-head">
@@ -1155,9 +1182,9 @@ export default function App() {
       <section id="contact" className="callback" style={{ position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
           <img src="./why_bg.png" alt="Smart Home Interior" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, filter: 'blur(3px)' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, var(--bg-2) 0%, rgba(15,21,43,0.85) 50%, var(--bg-2) 100%)' }}></div>
+          <div style={{ position: 'absolute', inset: 0, background: 'var(--callback-overlay)' }}></div>
         </div>
-        <div className="callback-inner" style={{ position: 'relative', zIndex: 2, background: 'linear-gradient(135deg, rgba(20,27,52,0.85), rgba(26,34,68,0.85))', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.2)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
+        <div className="callback-inner" style={{ position: 'relative', zIndex: 2, background: 'var(--callback-bg)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.2)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
           <div>
             <h2>{t('call_title')}</h2>
             <p>{t('call_sub')}</p>
@@ -1290,7 +1317,7 @@ export default function App() {
 
       {/* CATEGORY ITEM MODAL */}
       {selectedModalItem && (
-        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(11, 16, 32, 0.85)', backdropFilter: 'blur(16px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.25s ease' }} onClick={() => setSelectedModalItem(null)}>
+        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'var(--modal-backdrop)', backdropFilter: 'blur(16px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.25s ease' }} onClick={() => setSelectedModalItem(null)}>
           <div className="modal-content" style={{ background: 'linear-gradient(180deg, var(--surface), var(--surface-2))', border: '1px solid var(--accent)', borderRadius: 'var(--radius)', padding: '40px', maxWidth: '540px', width: '100%', boxShadow: '0 30px 70px rgba(0,0,0,0.8), 0 0 40px rgba(124,242,199,0.2)', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
             <button
               style={{ position: 'absolute', top: '24px', right: '24px', background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--text)', width: '36px', height: '36px', borderRadius: '50%', display: 'grid', placeItems: 'center', fontSize: '18px', cursor: 'pointer', transition: 'all 0.2s' }}
