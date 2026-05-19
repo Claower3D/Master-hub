@@ -69,8 +69,40 @@ section{padding:88px 6vw}
   color:var(--text);background:rgba(255,255,255,0.06);transform:translateY(-1px);
 }
 .top-cta{display:flex;align-items:center;gap:12px;flex-shrink:0;white-space:nowrap}
-.phone{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;color:var(--text);transition:color .2s;white-space:nowrap}
-.phone:hover{color:var(--accent)}
+.phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(124, 242, 199, 0.06);
+  border: 1px solid rgba(124, 242, 199, 0.2);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--accent);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(124, 242, 199, 0.05);
+}
+.phone:hover {
+  background: rgba(124, 242, 199, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(124, 242, 199, 0.2);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+body.light-theme .phone {
+  background: rgba(249, 115, 22, 0.06);
+  border-color: rgba(249, 115, 22, 0.2);
+  color: #ea580c;
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.05);
+}
+body.light-theme .phone:hover {
+  background: rgba(249, 115, 22, 0.12);
+  border-color: #ea580c;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
+  color: #ea580c;
+}
 .btn-primary{
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
   color:#0b1020;font-weight:700;
@@ -1182,8 +1214,8 @@ footer{
     width: 36px !important;
     height: 36px !important;
     border-radius: 50% !important;
-    background: var(--surface-2) !important;
-    border: 1px solid var(--line) !important;
+    background: rgba(124, 242, 199, 0.08) !important;
+    border: 1px solid rgba(124, 242, 199, 0.25) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
