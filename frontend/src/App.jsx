@@ -1139,15 +1139,12 @@ const pageDataMap = {
                     }}
                   >
                     {heroSlides.map((slide, slideIdx) => (
-                      <div 
+                                            <div 
                         key={slideIdx} 
                         className="hero-slide-container" 
                         style={{ 
                           width: '33.3333%', 
                           flexShrink: 0, 
-                          display: 'grid', 
-                          gridTemplateColumns: '1.2fr 1fr', 
-                          gap: '60px', 
                           position: 'relative', 
                           filter: slideIdx === currentHeroSlide ? 'none' : 'blur(6px)', 
                           opacity: slideIdx === currentHeroSlide ? 1 : 0.3, 
@@ -1158,8 +1155,8 @@ const pageDataMap = {
                           <div className="pill" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                             {slide.pill}
                           </div>
-                          <h1 className="hero-title" style={{ minHeight: '120px' }} dangerouslySetInnerHTML={{ __html: slide.title }}></h1>
-                          <p className="lead" style={{ minHeight: '75px' }}>{slide.lead}</p>
+                          <h1 className="hero-title" className="hero-title" dangerouslySetInnerHTML={{ __html: slide.title }}></h1>
+                          <p className="lead" className="hero-lead">{slide.lead}</p>
                           <div className="hero-actions">
                             <button className="btn-primary big" onClick={() => {
                               setActiveCatPill(slide.cat);
