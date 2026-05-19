@@ -20,6 +20,7 @@ export default function App() {
   // Catalog Pill state
   const [activeCatPill, setActiveCatPill] = useState('okna');
   const [activeSlide, setActiveSlide] = useState(0);
+  const [activeMasterCat, setActiveMasterCat] = useState('okna');
   
   // Callback form state
   const [formName, setFormName] = useState('');
@@ -1282,31 +1283,40 @@ export default function App() {
               <h2>{t('masters_title')}</h2>
               <p>{t('masters_sub')}</p>
             </div>
+            <div className="cat-nav-pills" style={{ marginBottom: '32px' }}>
+              {catPills.map(p => (
+                <button
+                  key={p.id}
+                  className={`cat-pill ${activeMasterCat === p.id ? 'active' : ''}`}
+                  onClick={() => setActiveMasterCat(p.id)}
+                  dangerouslySetInnerHTML={{ __html: t(p.label) }}
+                ></button>
+              ))}
+            </div>
             <div className="m-list">
-              <div className="m-card">
-                <div className="m-photo"><i className="ri-user-line"></i></div>
-                <h4>Александр В.</h4>
-                <span>{t('m_univ')}</span>
-                <div className="m-meta"><span>Опыт: 8 лет</span><span className="m-star">★ 4.9 (142 отзыва)</span></div>
-              </div>
-              <div className="m-card">
-                <div className="m-photo a2"><i className="ri-user-line"></i></div>
-                <h4>Кайрат Н.</h4>
-                <span>{t('m_eq')}</span>
-                <div className="m-meta"><span>Опыт: 6 лет</span><span className="m-star">★ 5.0 (98 отзывов)</span></div>
-              </div>
-              <div className="m-card">
-                <div className="m-photo a3"><i className="ri-user-line"></i></div>
-                <h4>Дмитрий С.</h4>
-                <span>{t('m_dez')}</span>
-                <div className="m-meta"><span>Опыт: 10 лет</span><span className="m-star">★ 4.9 (210 отзывов)</span></div>
-              </div>
-              <div className="m-card">
-                <div className="m-photo a4"><i className="ri-user-line"></i></div>
-                <h4>Ерлан А.</h4>
-                <span>{t('m_qc')}</span>
-                <div className="m-meta"><span>Опыт: 7 лет</span><span className="m-star">★ 4.9 (165 отзывов)</span></div>
-              </div>
+              {[
+                { cat: 'okna', name: 'Александр В.', role: 'Мастер по окнам', exp: '8 лет', rating: '4.9', reviews: 142, photo: 'a1' },
+                { cat: 'okna', name: 'Дмитрий С.', role: 'Остекление и балконы', exp: '10 лет', rating: '4.9', reviews: 210, photo: 'a3' },
+                { cat: 'okna', name: 'Тимур Р.', role: 'Ремонт и фурнитура', exp: '5 лет', rating: '4.8', reviews: 85, photo: 'a4' },
+                { cat: 'okna', name: 'Сергей М.', role: 'Монтажник', exp: '12 лет', rating: '5.0', reviews: 310, photo: 'a2' },
+
+                { cat: 'servis', name: 'Кайрат Н.', role: 'Мастер по быт. технике', exp: '6 лет', rating: '5.0', reviews: 98, photo: 'a2' },
+                { cat: 'servis', name: 'Ерлан А.', role: 'Ремонт кондиционеров', exp: '7 лет', rating: '4.9', reviews: 165, photo: 'a4' },
+                { cat: 'servis', name: 'Максим Д.', role: 'Стиральные машины', exp: '9 лет', rating: '4.8', reviews: 190, photo: 'a1' },
+                { cat: 'servis', name: 'Асет К.', role: 'Электрик', exp: '11 лет', rating: '5.0', reviews: 275, photo: 'a3' },
+
+                { cat: 'mebel', name: 'Иван П.', role: 'Сборщик мебели', exp: '5 лет', rating: '4.8', reviews: 112, photo: 'a1' },
+                { cat: 'mebel', name: 'Азамат Т.', role: 'Реставратор мебели', exp: '12 лет', rating: '5.0', reviews: 245, photo: 'a2' },
+                { cat: 'mebel', name: 'Руслан Б.', role: 'Мягкая мебель', exp: '8 лет', rating: '4.9', reviews: 134, photo: 'a4' },
+                { cat: 'mebel', name: 'Денис В.', role: 'Корпусная мебель', exp: '6 лет', rating: '4.7', reviews: 95, photo: 'a3' },
+              ].filter(m => m.cat === activeMasterCat).map((m, idx) => (
+                <div className="m-card" key={idx}>
+                  <div className={`m-photo ${m.photo === 'a1' ? '' : m.photo}`}><i className="ri-user-line"></i></div>
+                  <h4>{m.name}</h4>
+                  <span>{m.role}</span>
+                  <div className="m-meta"><span>Опыт: {m.exp}</span><span className="m-star">★ {m.rating} ({m.reviews} отзывов)</span></div>
+                </div>
+              ))}
             </div>
           </section>
 
