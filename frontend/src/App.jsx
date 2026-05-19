@@ -999,21 +999,190 @@ const pageDataMap = {
             </button>
           </div>
 
-          {/* Hero Section for Category */}
-          <div className="cat-page-hero">
-            <div className="pill" style={{ marginBottom: '16px' }}>{t(catPageData.parentCatTitle)}</div>
-            <h1 className="cat-page-title">
-              {t(selectedCategoryPageObj.title)}
-            </h1>
-            <p className="cat-page-desc">
-              Профессиональные услуги и оригинальные комплектующие с гарантией до 12 месяцев. Среднее время выезда мастера или доставки по Алматы и другим городам — 45 минут.
-            </p>
-            <div className="cat-page-actions">
-              <button className="btn-primary big" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
-                {t('cta_req')}
-              </button>
-            </div>
-          </div>
+          {/* Custom Rich Themed Category Block */}
+          {(() => {
+            const catId = selectedCategoryPageObj.parentCatId || selectedCategoryPageObj.id;
+            
+            // Map category data specifically
+            const categoryMetaMap = {
+              'cat-okna-1': {
+                img: './cat_moskit.png',
+                desc: 'Профессиональное изготовление и качественный монтаж москитных сеток любого типа: Стандартные рамные сетки, усиленные Антикошка (для безопасности питомцев), гипоаллергенные Антипыль (защита от мелкодисперсной пыли и пыльцы) и удобные раздвижные дверные сетки.',
+                features: ['Защита питомцев от падения (высокопрочное полотно PetScreen)', 'Задержка мелкодисперсной пыльцы растений (мембрана Poll-Tex)', 'Усиленный цельнотянутый алюминиевый профиль рамки', 'Бесплатный точный замер и выезд при установке'],
+                specs: [
+                  { label: 'Изготовление', value: 'за 24 часа' },
+                  { label: 'Материал полотна', value: 'Нейлон / ПЭ' },
+                  { label: 'Профиль рамки', value: 'Алюминий 1мм' }
+                ]
+              },
+              'cat-okna-2': {
+                img: './cat_child.png',
+                desc: 'Комплексная защита ваших окон от случайного открывания детьми и выпадения домашних животных. Установка надежных детских замков-блокираторов с ключом, защитных замков с гибким стальным тросом Jackloc, а также прочных сварных и раздвижных металлических решеток на окна.',
+                features: ['Блокираторы BSL с прочным стальным ключом в комплекте', 'Усиленные многожильные стальные тросики безопасности (нагрузка до 500кг)', 'Качественные стальные оконные решетки по ГОСТу с порошковой покраской', 'Установка на любые типы окон без нарушения герметичности профиля'],
+                specs: [
+                  { label: 'Время установки', value: 'от 20 минут' },
+                  { label: 'Защитный трос', value: 'Сталь в ПВХ' },
+                  { label: 'Прочность замка', value: 'усиленный сплав' }
+                ]
+              },
+              'cat-okna-3': {
+                img: './cat_win_repair.png',
+                desc: 'Профессиональный ремонт, сложная регулировка и техническое обслуживание оконных систем любых производителей. Быстрое устранение продувания и промерзания, замена изношенного уплотнителя, регулировка провисания створки, замена треснувших стеклопакетов и сломанной фурнитуры.',
+                features: ['Устранение сквозняков, свиста и наледи на окнах', 'Замена уплотнителя на премиальный EPDM (Германия) или Q-Lon Schlegel', 'Регулировка фурнитуры в режим повышенного зимнего/летнего прижима', 'Ремонт и замена запирающих механизмов (Maco, Roto, Siegenia)'],
+                specs: [
+                  { label: 'Выезд мастера', value: 'за 45 минут' },
+                  { label: 'Гарантия на ремонт', value: '12 месяцев' },
+                  { label: 'Диагностика', value: 'Бесплатно' }
+                ]
+              },
+              'cat-okna-4': {
+                img: './cat_win_make.png',
+                desc: 'Проектирование, производство и профессиональный монтаж современных оконных систем под ключ. Используем исключительно оригинальные профили ведущих европейских брендов: Rehau, Veka, KBE, Salamander с качественной фурнитурой Maco и Roto. Полное соответствие стандартам ГОСТ.',
+                features: ['Качественные 3-, 5- и 7-камерные пластиковые профили', 'Энергосберегающие мультифункциональные стеклопакеты с аргоном', 'Герметичный монтаж с использованием гидро- и пароизоляционных лент', 'Собственное современное автоматизированное производство окон'],
+                specs: [
+                  { label: 'Срок изготовления', value: '3-5 дней' },
+                  { label: 'Гарантия на профиль', value: 'до 5 лет' },
+                  { label: 'Замер проемов', value: 'Бесплатно' }
+                ]
+              },
+              'cat-okna-5': {
+                img: './cat_blinds.png',
+                desc: 'Индивидуальный пошив, изготовление и монтаж стильных солнцезащитных систем: ролл-шторы (рулонные шторы), горизонтальные и вертикальные жалюзи, кассетные системы Зебра (День-Ночь) и шторы с электроприводом. Огромный каталог качественных европейских тканей высокой плотности.',
+                features: ['Ткани со 100% светоблокировкой Blackout для крепкого сна', 'Компактные кассетные системы UNI-1 и UNI-2 с направляющими', 'Монтаж на створки без сверления пластикового профиля окон', 'Широкая цветовая гамма коробов и комплектующих жалюзи'],
+                specs: [
+                  { label: 'Изготовление', value: '1-2 дня' },
+                  { label: 'Защита от солнца', value: 'до 100%' },
+                  { label: 'Выезд с каталогом', value: 'Бесплатно' }
+                ]
+              },
+              'cat-srv-1': {
+                img: './cat_washing.png',
+                desc: 'Срочный ремонт автоматических стиральных машин всех марок и моделей на дому. Выполняем устранение любых неисправностей: замену сгоревших ТЭНов, сливных помп и манжет, перепрессовку подшипников бака, ремонт и перепрошивку сгоревших электронных модулей управления.',
+                features: ['Срочный выезд мастера по городу в течение 45 минут', 'Использование оригинальных итальянских ТЭНов Thermowatt', 'Установка надежных износостойких шведских подшипников SKF', 'Официальная письменная гарантия на выполненный ремонт до 1 года'],
+                specs: [
+                  { label: 'Время ремонта', value: 'от 40 минут' },
+                  { label: 'Запчасти в наличии', value: 'Оригинал 100%' },
+                  { label: 'Выезд на дом', value: 'Бесплатно' }
+                ]
+              },
+              'cat-srv-2': {
+                img: './cat_fridge.png',
+                desc: 'Качественная диагностика и профессиональный ремонт бытовых холодильников на дому за один визит. Устранение утечек хладагента и заправка фреоном R600a/R134a, замена заклинивших мотор-компрессоров, замена термостатов, пусковых реле и ремонт системы No Frost (оттайка, вентиляторы).',
+                features: ['Замена компрессоров на новые оригинальные Secop (Danfoss) и Embraco', 'Точная опрессовка контура азотом для надежного поиска микроутечек', 'Замена сгоревших ТЭНов оттайки испарителя и датчиков дефроста', 'Выезд мастера и полная компьютерная диагностика системы'],
+                specs: [
+                  { label: 'Срок ремонта', value: 'за 1 визит' },
+                  { label: 'Марка фреона', value: 'R600a / R134a' },
+                  { label: 'Гарантийный акт', value: '12 месяцев' }
+                ]
+              },
+              'cat-srv-3': {
+                img: './slide_appliances.png',
+                desc: 'Профессиональный ремонт кондиционеров и посудомоечных машин всех популярных брендов. Полное устранение протечек, засоров гидравлики, замена циркуляционных насосов и ТЭНов нагрева воды посудомоек, а также качественный ремонт инверторных плат управления сплит-систем.',
+                features: ['Замена циркуляционных насосов и ТЭНов в сборе (Bosch, Electrolux)', 'Устранение системных ошибок посудомоечных машин (E15, E24, i30)', 'Глубокая антибактериальная мойка испарителя кондиционера', 'Точная дозаправка сплит-систем качественным фреоном R410a/R32'],
+                specs: [
+                  { label: 'Выезд мастера', value: 'за 45 минут' },
+                  { label: 'Запчасти', value: 'Оригинал' },
+                  { label: 'Гарантия', value: 'до 1 года' }
+                ]
+              },
+              'cat-srv-4': {
+                img: './why_bg.png',
+                desc: 'Монтаж кухонных вытяжек, подключение их к вентиляционной шахте и профессиональный ремонт. Быстрое устранение неисправностей: замена кнопочных и сенсорных блоков управления, ремонт сгоревших обмоток двигателя вентилятора, подбор и замена угольных и жировых фильтров.',
+                features: ['Разметка, прочное крепление к стене или интеграция в шкаф под ключ', 'Прокладка герметичных воздуховодов из эстетичного ПВХ или гофры', 'Установка обратного клапана для защиты от посторонних запахов', 'Деликатное подключение вытяжки к электросети без видимых проводов'],
+                specs: [
+                  { label: 'Установка', value: 'за 1.5 часа' },
+                  { label: 'Воздуховоды', value: 'Пластик / Гофра' },
+                  { label: 'Фильтры в наличии', value: 'Угольные / Жировые' }
+                ]
+              },
+              'cat-srv-5': {
+                img: './slide_appliances.png',
+                desc: 'Профессиональная установка, чистка, обслуживание и дозаправка кондиционеров всех классов. Гарантируем идеальную герметичность фреонового контура, надежное крепление блоков на фасаде здания, вакуумирование магистрали и бережное бурение стен без лишней пыли.',
+                features: ['Бурение отверстий профессиональным инструментом без сколов фасада', 'Прокладка толстостенной медной трассы в защитной теплоизоляции K-Flex', 'Обязательное глубокое вакуумирование контура перед пуском фреона', 'Демонтаж оборудования с полной перекачкой хладагента в компрессор'],
+                specs: [
+                  { label: 'Время монтажа', value: 'от 2 часов' },
+                  { label: 'Материал трассы', value: 'Медь Majdanpek' },
+                  { label: 'Сервис', value: 'Чистка / Заправка' }
+                ]
+              },
+              'cat-srv-8': {
+                img: './cat_electric.png',
+                desc: 'Полный перечень электромонтажных работ любой сложности в жилых и коммерческих помещениях. Квалифицированные электрики с допусками выполнят штробление стен без пыли, монтаж и перенос розеток, сборку электрических щитов с защитой от скачков напряжения и устранят замыкания.',
+                features: ['Выполнение штробления стен штроборезом со строительным пылесосом', 'Сборка и монтаж щитов на оригинальных автоматах ABB и Schneider Electric', 'Быстрый поиск скрытого обрыва провода или КЗ с помощью трассоискателя', 'Полное соблюдение правил ПУЭ и использование кабелей по ГОСТу'],
+                specs: [
+                  { label: 'Мастер в пути', value: '45 минут' },
+                  { label: 'Стандарты', value: 'ПУЭ / ГОСТ' },
+                  { label: 'Марка кабелей', value: 'ВВГнг-LS (ГОСТ)' }
+                ]
+              }
+            };
+            
+            const meta = categoryMetaMap[catId] || {
+              img: './slide_windows.png',
+              desc: 'Профессиональные услуги и оригинальные комплектующие от сервисного центра MasterHub. Выезд квалифицированного специалиста по городу в течение 45 минут. Письменная официальная гарантия на все выполненные работы до 12 месяцев.',
+              features: ['Бесплатный выезд специалиста на дом при проведении работ', 'Только проверенные оригинальные запчасти и комплектующие', 'Использование современного профессионального инструмента', 'Прозрачный прайс-лист без скрытых доплат и наценок'],
+              specs: [
+                { label: 'Выезд мастера', value: 'за 45 минут' },
+                { label: 'Диагностика', value: 'Бесплатно' },
+                { label: 'Гарантия', value: 'до 12 месяцев' }
+              ]
+            };
+            
+            return (
+              <div className="cat-page-split-hero" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '40px', alignItems: 'center', marginBottom: '56px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: '24px', padding: '40px', overflow: 'hidden', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }}></div>
+                
+                {/* Left details */}
+                <div>
+                  <div className="pill" style={{ marginBottom: '16px', display: 'inline-block', background: 'rgba(124, 242, 199, 0.08)', border: '1px solid rgba(124, 242, 199, 0.2)', color: 'var(--accent)', padding: '6px 14px', borderRadius: '8px', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>
+                    {t(catPageData.parentCatTitle)}
+                  </div>
+                  <h1 className="cat-page-title" style={{ fontSize: '36px', fontWeight: '850', marginBottom: '20px', lineHeight: '1.15', letterSpacing: '-0.02em' }}>
+                    {t(selectedCategoryPageObj.title)}
+                  </h1>
+                  <p className="cat-page-desc" style={{ fontSize: '15px', color: 'var(--muted)', lineHeight: '1.7', marginBottom: '28px' }}>
+                    {meta.desc}
+                  </p>
+                  
+                  {/* Category Features list */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px', marginBottom: '32px' }}>
+                    {meta.features.map((feat, fIdx) => (
+                      <div key={fIdx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '14px', fontWeight: '600' }}>
+                        <i className="ri-checkbox-circle-fill" style={{ color: 'var(--accent)', fontSize: '18px', marginTop: '1px' }}></i>
+                        <span style={{ color: 'var(--text)' }}>{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <button className="btn-primary big" style={{ padding: '16px 36px', fontSize: '15px' }} onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
+                      Вызвать мастера на дом <i className="ri-arrow-right-line"></i>
+                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'pulse 1.5s infinite' }}></span>
+                      <span style={{ fontSize: '13px', color: 'var(--muted)', fontWeight: '600' }}>14 мастеров рядом</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Right theme photo with HUD specs */}
+                <div className="cat-page-hero-img-container" style={{ position: 'relative', width: '100%', height: '100%', minHeight: '380px', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', border: '1px solid var(--line)' }}>
+                  <img src={meta.img} alt={t(selectedCategoryPageObj.title)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'all 0.5s ease' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,16,32,0.9) 0%, rgba(11,16,32,0.1) 60%)' }}></div>
+                  
+                  {/* Floating HUD metrics on image */}
+                  <div className="cat-page-hud" style={{ position: 'absolute', bottom: '24px', left: '24px', right: '24px', background: 'rgba(20, 27, 52, 0.85)', backdropFilter: 'blur(16px)', border: '1px solid rgba(124, 242, 199, 0.25)', borderRadius: '12px', padding: '16px 20px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', zIndex: 5 }}>
+                    {meta.specs.map((spec, sIdx) => (
+                      <div key={sIdx} style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'center', borderRight: sIdx < 2 ? '1px solid var(--line)' : 'none' }}>
+                        <span style={{ fontSize: '9px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', letterSpacing: '0.5px' }}>{spec.label}</span>
+                        <span style={{ fontSize: '13px', fontWeight: '800', color: 'var(--accent)' }}>{spec.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Section: Бренды */}
           <div className="cat-page-section">
