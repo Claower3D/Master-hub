@@ -681,6 +681,22 @@ export default function App() {
               <option value="astana">{t('city_astana')}</option>
               <option value="shymkent">{t('city_shymkent')}</option>
               <option value="karaganda">{t('city_karaganda')}</option>
+              <option value="aktobe">{t('city_aktobe')}</option>
+              <option value="taraz">{t('city_taraz')}</option>
+              <option value="pavlodar">{t('city_pavlodar')}</option>
+              <option value="oskemen">{t('city_oskemen')}</option>
+              <option value="semey">{t('city_semey')}</option>
+              <option value="atyrau">{t('city_atyrau')}</option>
+              <option value="aktau">{t('city_aktau')}</option>
+              <option value="kostanay">{t('city_kostanay')}</option>
+              <option value="kyzylorda">{t('city_kyzylorda')}</option>
+              <option value="oral">{t('city_oral')}</option>
+              <option value="petropavl">{t('city_petropavl')}</option>
+              <option value="taldykorgan">{t('city_taldykorgan')}</option>
+              <option value="kokshetau">{t('city_kokshetau')}</option>
+              <option value="turkistan">{t('city_turkistan')}</option>
+              <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
+              <option value="konaev">{t('city_konaev')}</option>
             </select>
           </div>
           <div className="lang-switch">
@@ -1185,6 +1201,22 @@ export default function App() {
                   <option value="astana">{t('city_astana')}</option>
                   <option value="shymkent">{t('city_shymkent')}</option>
                   <option value="karaganda">{t('city_karaganda')}</option>
+                  <option value="aktobe">{t('city_aktobe')}</option>
+                  <option value="taraz">{t('city_taraz')}</option>
+                  <option value="pavlodar">{t('city_pavlodar')}</option>
+                  <option value="oskemen">{t('city_oskemen')}</option>
+                  <option value="semey">{t('city_semey')}</option>
+                  <option value="atyrau">{t('city_atyrau')}</option>
+                  <option value="aktau">{t('city_aktau')}</option>
+                  <option value="kostanay">{t('city_kostanay')}</option>
+                  <option value="kyzylorda">{t('city_kyzylorda')}</option>
+                  <option value="oral">{t('city_oral')}</option>
+                  <option value="petropavl">{t('city_petropavl')}</option>
+                  <option value="taldykorgan">{t('city_taldykorgan')}</option>
+                  <option value="kokshetau">{t('city_kokshetau')}</option>
+                  <option value="turkistan">{t('city_turkistan')}</option>
+                  <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
+                  <option value="konaev">{t('city_konaev')}</option>
                 </select>
               </label>
               <label>
