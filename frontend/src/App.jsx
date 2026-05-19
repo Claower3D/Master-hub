@@ -947,15 +947,15 @@ export default function App() {
           </div>
 
           {/* Hero Section for Category */}
-          <div className="cat-page-hero" style={{ background: 'linear-gradient(180deg, var(--surface), var(--surface-2))', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '48px', marginBottom: '48px', boxShadow: 'var(--shadow)', position: 'relative', overflow: 'hidden' }}>
+          <div className="cat-page-hero">
             <div className="pill" style={{ marginBottom: '16px' }}>{t(catPageData.parentCatTitle)}</div>
-            <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: '800', marginBottom: '20px', color: 'var(--text)' }}>
+            <h1 className="cat-page-title">
               {t(selectedCategoryPageObj.title)}
             </h1>
-            <p style={{ fontSize: '18px', color: 'var(--muted)', maxWidth: '700px', marginBottom: '32px', lineHeight: '1.6' }}>
+            <p className="cat-page-desc">
               Профессиональные услуги и оригинальные комплектующие с гарантией до 12 месяцев. Среднее время выезда мастера или доставки по Алматы и другим городам — 45 минут.
             </p>
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div className="cat-page-actions">
               <button className="btn-primary big" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
                 {t('cta_req')}
               </button>
@@ -963,18 +963,17 @@ export default function App() {
           </div>
 
           {/* Section: Бренды */}
-          <div className="cat-page-section" style={{ marginBottom: '56px' }}>
-            <h2 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="cat-page-section">
+            <h2 className="cat-page-section-title">
               <i className="ri-award-line" style={{ color: 'var(--accent)' }}></i> Бренды
             </h2>
-            <div className="cat-page-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
+            <div className="cat-page-grid">
               {catPageData.brands.map((brand, idx) => {
                 const itemTitle = selectedCategoryPageObj.title.includes('кофемаш') ? `Запчасти для кофемашин ${brand}` : `${brand}`;
                 return (
                   <div
                     key={idx}
                     className="cat-page-card"
-                    style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
                     onClick={() => {
                       setFormService(itemTitle);
                       setSelectedModalItem({ title: itemTitle, type: 'brand', parentTitle: t(selectedCategoryPageObj.title) });
@@ -984,9 +983,9 @@ export default function App() {
                       <div style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase' }}>Бренд</div>
                       <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text)', marginBottom: '12px' }}>{itemTitle}</h3>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--line)', fontSize: '14px', color: 'var(--muted)', fontWeight: '600' }}>
+                    <div className="cat-page-card-foot">
                       <span>от 2 500 ₸</span>
-                      <span style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>Открыть <i className="ri-arrow-right-line"></i></span>
+                      <span className="cat-page-card-link">Открыть <i className="ri-arrow-right-line"></i></span>
                     </div>
                   </div>
                 );
@@ -995,16 +994,15 @@ export default function App() {
           </div>
 
           {/* Section: Услуги / Детали */}
-          <div className="cat-page-section" style={{ marginBottom: '48px' }}>
-            <h2 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="cat-page-section">
+            <h2 className="cat-page-section-title">
               <i className="ri-tools-line" style={{ color: 'var(--accent)' }}></i> Услуги и детали
             </h2>
-            <div className="cat-page-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+            <div className="cat-page-grid">
               {catPageData.services.map((srv, idx) => (
                 <div
                   key={idx}
                   className="cat-page-card"
-                  style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '24px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 4px 20px rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
                   onClick={() => {
                     setFormService(srv);
                     setSelectedModalItem({ title: srv, type: 'service', parentTitle: t(selectedCategoryPageObj.title) });
@@ -1017,9 +1015,9 @@ export default function App() {
                       Быстрая диагностика, замена и ремонт с использованием профессионального оборудования.
                     </p>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--line)', fontSize: '14px', color: 'var(--muted)', fontWeight: '600' }}>
+                  <div className="cat-page-card-foot" style={{ marginTop: '20px' }}>
                     <span>от 2 500 ₸</span>
-                    <span style={{ color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>Открыть <i className="ri-arrow-right-line"></i></span>
+                    <span className="cat-page-card-link">Открыть <i className="ri-arrow-right-line"></i></span>
                   </div>
                 </div>
               ))}
@@ -1079,41 +1077,41 @@ export default function App() {
           </section>
 
           {/* QUICK STEPS */}
-          <section className="quick-steps" style={{ padding: '32px 6vw', background: 'var(--surface-2)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--surface)', border: '1px solid var(--accent)', display: 'grid', placeItems: 'center', fontSize: '22px', color: 'var(--accent)', flexShrink: 0 }}><i className="ri-hand-coin-line"></i></div>
+          <section className="quick-steps">
+            <div className="quick-steps-grid">
+              <div className="quick-step-item">
+                <div className="quick-step-icon"><i className="ri-hand-coin-line"></i></div>
                 <div>
-                  <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>1. Выбираете услугу</h4>
-                  <p style={{ fontSize: '13px', color: 'var(--muted)' }}>Фиксированный прайс без скрытых наценок</p>
+                  <h4 className="quick-step-title">1. Выбираете услугу</h4>
+                  <p className="quick-step-desc">Фиксированный прайс без скрытых наценок</p>
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--surface)', border: '1px solid var(--accent)', display: 'grid', placeItems: 'center', fontSize: '22px', color: 'var(--accent)', flexShrink: 0 }}><i className="ri-timer-flash-line"></i></div>
+              <div className="quick-step-item">
+                <div className="quick-step-icon"><i className="ri-timer-flash-line"></i></div>
                 <div>
-                  <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>2. Выезд за 45 минут</h4>
-                  <p style={{ fontSize: '13px', color: 'var(--muted)' }}>Мастер прибудет в среднем за 45 минут</p>
+                  <h4 className="quick-step-title">2. Выезд за 45 минут</h4>
+                  <p className="quick-step-desc">Мастер прибудет в среднем за 45 минут</p>
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--surface)', border: '1px solid var(--accent)', display: 'grid', placeItems: 'center', fontSize: '22px', color: 'var(--accent)', flexShrink: 0 }}><i className="ri-shield-star-line"></i></div>
+              <div className="quick-step-item">
+                <div className="quick-step-icon"><i className="ri-shield-star-line"></i></div>
                 <div>
-                  <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>3. Гарантия 1 год</h4>
-                  <p style={{ fontSize: '13px', color: 'var(--muted)' }}>Официальная гарантия и страхование работ</p>
+                  <h4 className="quick-step-title">3. Гарантия 1 год</h4>
+                  <p className="quick-step-desc">Официальная гарантия и страхование работ</p>
                 </div>
               </div>
             </div>
           </section>
 
           {/* WHAT WE DO SLIDER */}
-          <section id="about" className="what-we-do" style={{ padding: '88px 6vw', background: 'var(--surface)', borderBottom: '1px solid var(--line)' }}>
+          <section id="about" className="what-we-do">
             <div className="section-head" style={{ marginBottom: '40px' }}>
               <h2>Чем мы занимаемся</h2>
               <p>Три ключевых направления нашего мультисервиса с гарантией качества и фиксированным прайсом.</p>
             </div>
             
             {/* Slider Tabs */}
-            <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', overflowX: 'auto', paddingBottom: '8px' }}>
+            <div className="what-we-do-tabs">
               {[
                 {
                   id: 'okna',
@@ -1143,23 +1141,7 @@ export default function App() {
                 <button
                   key={slide.id}
                   onClick={() => setActiveSlide(idx)}
-                  style={{
-                    padding: '14px 28px',
-                    background: activeSlide === idx ? 'var(--accent)' : 'var(--surface-2)',
-                    color: activeSlide === idx ? '#0b1020' : 'var(--text)',
-                    border: '1px solid',
-                    borderColor: activeSlide === idx ? 'var(--accent)' : 'var(--line)',
-                    borderRadius: 'var(--radius-sm)',
-                    fontWeight: '700',
-                    fontSize: '15px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    whiteSpace: 'nowrap',
-                    boxShadow: activeSlide === idx ? '0 10px 25px rgba(124,242,199,0.3)' : 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}
+                  className={`what-we-do-tab-btn ${activeSlide === idx ? 'active' : ''}`}
                 >
                   <i className={slide.id === 'okna' ? 'ri-window-line' : (slide.id === 'servis' ? 'ri-tools-line' : 'ri-sofa-line')}></i>
                   {slide.title}
@@ -1197,21 +1179,21 @@ export default function App() {
               ];
               const currentSlide = slides[activeSlide];
               return (
-                <div style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
-                  <div style={{ padding: '40px 40px 40px 6vw' }}>
-                    <div style={{ display: 'inline-block', padding: '6px 14px', background: 'rgba(124,242,199,0.15)', color: 'var(--accent)', borderRadius: '8px', fontSize: '13px', fontWeight: '700', marginBottom: '16px', textTransform: 'uppercase' }}>
+                <div className="what-we-do-slide">
+                  <div className="what-we-do-content">
+                    <div className="what-we-do-tag">
                       Направление 0{activeSlide + 1}
                     </div>
-                    <h3 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '16px', color: 'var(--text)' }}>
+                    <h3 className="what-we-do-title">
                       {currentSlide.title}
                     </h3>
-                    <p style={{ fontSize: '16px', color: 'var(--muted)', lineHeight: '1.6', marginBottom: '24px' }}>
+                    <p className="what-we-do-subtitle">
                       {currentSlide.subtitle}
                     </p>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <ul className="what-we-do-features">
                       {currentSlide.features.map((feat, fIdx) => (
-                        <li key={fIdx} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '15px', color: 'var(--text)', fontWeight: '600' }}>
-                          <i className="ri-checkbox-circle-fill" style={{ color: 'var(--accent)', fontSize: '20px' }}></i> {feat}
+                        <li key={fIdx} className="what-we-do-feature-item">
+                          <i className="ri-checkbox-circle-fill"></i> {feat}
                         </li>
                       ))}
                     </ul>
@@ -1226,11 +1208,12 @@ export default function App() {
                       Перейти в каталог услуг <i className="ri-arrow-right-line"></i>
                     </button>
                   </div>
-                  <div style={{ position: 'relative', height: '100%', minHeight: '360px', overflow: 'hidden' }}>
+                  <div className="what-we-do-image-wrapper">
                     <img
                       src={currentSlide.img}
                       alt={currentSlide.title}
-                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', animation: 'fadeIn 0.5s ease' }}
+                      className="what-we-do-image"
+                      style={{ animation: 'fadeIn 0.5s ease' }}
                     />
                   </div>
                 </div>
