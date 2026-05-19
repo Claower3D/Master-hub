@@ -28,6 +28,39 @@ export default function App() {
   const [formCity, setFormCity] = useState(city);
   const [callbackStatus, setCallbackStatus] = useState(null);
 
+  // Assistant Modal State
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [assistantMessages, setAssistantMessages] = useState([
+    { sender: 'ai', text: 'Здравствуйте! Я виртуальный ассистент MasterHub. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
+  ]);
+  const [assistantInput, setAssistantInput] = useState('');
+
+  const handleAssistantSend = (textToSend) => {
+    const query = textToSend || assistantInput;
+    if (!query.trim()) return;
+
+    const newMsgs = [...assistantMessages, { sender: 'user', text: query }];
+    setAssistantMessages(newMsgs);
+    if (!textToSend) setAssistantInput('');
+
+    // Simulate AI response after a short delay
+    setTimeout(() => {
+      let aiReply = "Спасибо за обращение! Наш специалист свяжется с вами в течение 5 минут для точного расчета.";
+      const qLower = query.toLowerCase();
+      if (qLower.includes('цен') || qLower.includes('стоим') || qLower.includes('прайс')) {
+        aiReply = "Стоимость большинства услуг начинается от 2 500 ₸. Выезд мастера и диагностика при продолжении работ — бесплатно! Хотите оставить заявку на точный расчет?";
+      } else if (qLower.includes('срочн') || qLower.includes('быстр') || qLower.includes('выезд')) {
+        aiReply = "Среднее время прибытия мастера по городу — всего 45 минут! У нас 14 дежурных мастеров онлайн. Оформим срочный выезд?";
+      } else if (qLower.includes('гарант')) {
+        aiReply = "Мы предоставляем официальную гарантию до 12 месяцев на все виды работ и комплектующие. Выдаем акт выполненных работ!";
+      } else if (qLower.includes('график') || qLower.includes('работ')) {
+        aiReply = "Мы работаем ежедневно, без выходных с 08:00 до 23:00. Готовы принять вашу заявку прямо сейчас!";
+      }
+
+      setAssistantMessages(prev => [...prev, { sender: 'ai', text: aiReply }]);
+    }, 600);
+  };
+
   // Backend data states
   const [statsData, setStatsData] = useState([]);
   const [reviewsData, setReviewsData] = useState([]);
@@ -1495,10 +1528,105 @@ export default function App() {
         </div>
       )}
 
-      {/* FLOATING ACTION BUTTON */}
-      <button className="fab" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })} aria-label="Оставить заявку">
-        <i className="ri-phone-line"></i>
-      </button>
+      {/* FLOATING ASSISTANT BUTTON & POPUP */}
+      <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 999, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+        {/* Assistant Popup Window */}
+        {isAssistantOpen && (
+          <div style={{ width: '360px', background: 'var(--surface)', border: '1px solid var(--accent)', borderRadius: 'var(--radius)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', marginBottom: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', animation: 'fadeIn 0.25s ease' }}>
+            {/* Header */}
+            <div style={{ padding: '16px 20px', background: 'var(--surface-2)', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--accent)', color: '#0b1020', display: 'grid', placeItems: 'center', fontSize: '20px', fontWeight: '700' }}>
+                  <i className="ri-robot-2-fill"></i>
+                </div>
+                <div>
+                  <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text)' }}>Айя · Ассистент</div>
+                  <div style={{ fontSize: '12px', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'pulse 2s infinite' }}></span> Онлайн
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setIsAssistantOpen(false)} style={{ background: 'transparent', border: 'none', color: 'var(--muted)', fontSize: '20px', cursor: 'pointer' }}>
+                <i className="ri-close-line"></i>
+              </button>
+            </div>
+
+            {/* Messages Area */}
+            <div style={{ padding: '20px', maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', background: 'var(--surface)' }}>
+              {assistantMessages.map((m, idx) => (
+                <div key={idx} style={{ alignSelf: m.sender === 'ai' ? 'flex-start' : 'flex-end', background: m.sender === 'ai' ? 'var(--surface-2)' : 'var(--accent)', color: m.sender === 'ai' ? 'var(--text)' : '#0b1020', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: m.sender === 'ai' ? '4px' : '16px', borderTopRightRadius: m.sender === 'user' ? '4px' : '16px', maxWidth: '85%', lineHeight: '1.5', fontWeight: m.sender === 'user' ? '600' : '500' }}>
+                  {m.text}
+                </div>
+              ))}
+            </div>
+
+            {/* Quick Chips */}
+            <div style={{ padding: '0 20px 12px 20px', display: 'flex', gap: '8px', overflowX: 'auto' }}>
+              {['⚡ Срочный выезд', '💰 Узнать цены', '📅 График работы', '🔧 Гарантия'].map((chip, cIdx) => (
+                <button key={cIdx} onClick={() => handleAssistantSend(chip)} style={{ padding: '6px 12px', background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: '999px', fontSize: '12px', whiteSpace: 'nowrap', cursor: 'pointer', flexShrink: 0 }}>
+                  {chip}
+                </button>
+              ))}
+            </div>
+
+            {/* CTA Button in Chat */}
+            <div style={{ padding: '0 20px 16px 20px' }}>
+              <button
+                className="btn-primary"
+                style={{ width: '100%', padding: '10px', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                onClick={() => {
+                  setIsAssistantOpen(false);
+                  document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Оформить заявку <i className="ri-arrow-right-line"></i>
+              </button>
+            </div>
+
+            {/* Input Area */}
+            <div style={{ padding: '12px 20px', borderTop: '1px solid var(--line)', display: 'flex', gap: '8px', background: 'var(--surface-2)' }}>
+              <input
+                type="text"
+                placeholder="Напишите вопрос..."
+                value={assistantInput}
+                onChange={(e) => setAssistantInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAssistantSend()}
+                style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--line)', color: 'var(--text)', padding: '8px 14px', borderRadius: '999px', fontSize: '13px', outline: 'none' }}
+              />
+              <button
+                onClick={() => handleAssistantSend()}
+                style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--accent)', color: '#0b1020', border: 'none', display: 'grid', placeItems: 'center', cursor: 'pointer', flexShrink: 0 }}
+              >
+                <i className="ri-send-plane-fill"></i>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Floating Button */}
+        <button
+          onClick={() => setIsAssistantOpen(prev => !prev)}
+          style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '50%',
+            background: 'var(--accent)',
+            color: '#0b1020',
+            border: 'none',
+            display: 'grid',
+            placeItems: 'center',
+            fontSize: '28px',
+            cursor: 'pointer',
+            boxShadow: '0 10px 25px rgba(124,242,199,0.5)',
+            transition: 'all 0.3s ease',
+            transform: isAssistantOpen ? 'scale(0.9)' : 'scale(1)'
+          }}
+          aria-label="Ассистент по сайту"
+          title="Ассистент по сайту"
+        >
+          <i className={isAssistantOpen ? "ri-close-line" : "ri-robot-2-line"}></i>
+        </button>
+      </div>
     </>
   );
 }
