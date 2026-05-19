@@ -69,6 +69,7 @@ section{padding:88px 6vw}
   color:var(--text);background:rgba(255,255,255,0.06);transform:translateY(-1px);
 }
 .top-cta{display:flex;align-items:center;gap:12px;flex-shrink:0;white-space:nowrap}
+.top-cta > * { flex-shrink: 0 !important; }
 .phone {
   display: inline-flex;
   align-items: center;
@@ -1105,7 +1106,7 @@ footer{
   .btn-primary { padding: 8px 16px; font-size: 12px; }
 }
 
-@media (max-width: 1380px) {
+@media (max-width: 1440px) {
   /* Hide text links in top navigation on laptops to avoid overflow, Catalog Button remains visible */
   .top-nav a:not(.catalog-btn) { display: none !important; }
   .topbar { justify-content: space-between; }
@@ -1661,11 +1662,11 @@ body.light-theme .assistant-tooltip-arrow::after {
 /* Widescreen constraints to remove stretched look */
 @media (min-width: 1440px) {
   section:not(.hero) {
-    padding-left: calc((100vw - 1320px) / 2) !important;
-    padding-right: calc((100vw - 1320px) / 2) !important;
+    padding-left: calc((100vw - 1420px) / 2) !important;
+    padding-right: calc((100vw - 1420px) / 2) !important;
   }
   .topbar {
-    max-width: 1320px !important;
+    max-width: 1420px !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
