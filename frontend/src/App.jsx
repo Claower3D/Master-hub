@@ -345,24 +345,24 @@ export default function App() {
   // Service cards data
   const srvCards = [
     // Окна
-    { cat: 'okna', title: 'Москитные сетки', desc: 'Надежная защита от насекомых, тополиного пуха и пыли. Быстрое изготовление и установка.', price: 'от 2 500 ₸' },
-    { cat: 'okna', title: 'Детская защита и решетки', desc: 'Блокираторы с ключом, детские замки и прочные металлические решетки для безопасности детей.', price: 'от 2 000 ₸' },
-    { cat: 'okna', title: 'Ремонт окон (Регулировка, замена стеклопакетов, замена уплотнителей, замена ручек, навесов, сложное открывание, детский замок, замок курильщика)', desc: 'Устранение продуваний, замена уплотнителей, ручек, стеклопакетов и сложного открывания.', price: 'от 1 500 ₸' },
-    { cat: 'okna', title: 'Изготовление окон', desc: 'Производство и профессиональный монтаж окон из немецких профилей Rehau, Veka, KBE.', price: 'от 35 000 ₸' },
-    { cat: 'okna', title: 'Ролл-шторы и жалюзи', desc: 'Огромный выбор тканей и текстур (блэкаут, день-ночь). Индивидуальный замер и установка.', price: 'от 5 000 ₸' },
+    { cat: 'okna', title: 'Москитные сетки', desc: 'Надежная защита от насекомых, тополиного пуха и пыли. Быстрое изготовление и установка.', price: 'от 2 500 ₸', img: './cat_moskit.png' },
+    { cat: 'okna', title: 'Детская защита и решетки', desc: 'Блокираторы с ключом, детские замки и прочные металлические решетки для безопасности детей.', price: 'от 2 000 ₸', img: './cat_child.png' },
+    { cat: 'okna', title: 'Ремонт окон (Регулировка, замена стеклопакетов, замена уплотнителей, замена ручек, навесов, сложное открывание, детский замок, замок курильщика)', desc: 'Устранение продуваний, замена уплотнителей, ручек, стеклопакетов и сложного открывания.', price: 'от 1 500 ₸', img: './cat_win_repair.png' },
+    { cat: 'okna', title: 'Изготовление окон', desc: 'Производство и профессиональный монтаж окон из немецких профилей Rehau, Veka, KBE.', price: 'от 35 000 ₸', img: './cat_win_make.png' },
+    { cat: 'okna', title: 'Ролл-шторы и жалюзи', desc: 'Огромный выбор тканей и текстур (блэкаут, день-ночь). Индивидуальный замер и установка.', price: 'от 5 000 ₸', img: './cat_blinds.png' },
 
     // Сервис
-    { cat: 'servis', title: 'Ремонт стиральных машин', desc: 'Замена ТЭНа, подшипников, сливных помп, ремонт модулей управления с гарантией.', price: 'от 3 000 ₸' },
-    { cat: 'servis', title: 'Ремонт холодильников', desc: 'Заправка фреоном, замена компрессора, термостата, ремонт системы No Frost.', price: 'от 4 000 ₸' },
-    { cat: 'servis', title: 'Ремонт кондиционеров и посудомоечных машин', desc: 'Чистка, заправка сплит-систем, устранение засоров и замена насосов посудомоечных машин.', price: 'от 5 000 ₸' },
-    { cat: 'servis', title: 'Установка/Ремонт вытяжек', desc: 'Монтаж кухонных вытяжек, подключение к вентиляции, замена фильтров и ремонт двигателей.', price: 'от 4 000 ₸' },
-    { cat: 'servis', title: 'Установка/Ремонт кондиционеров', desc: 'Профессиональный монтаж, демонтаж и сервисное обслуживание климатической техники.', price: 'от 15 000 ₸' },
-    { cat: 'servis', title: 'Сварка', desc: 'Услуги квалифицированного сварщика с выездом. Сварка труб, петель, каркасов.', price: 'от 5 000 ₸' },
-    { cat: 'servis', title: 'Металлоконструкции', desc: 'Изготовление навесов, козырьков, лестниц, заборов, ворот и стеллажей на заказ.', price: 'от 15 000 ₸/м²' },
-    { cat: 'servis', title: 'Электрика', desc: 'Монтаж проводки, установка розеток, выключателей, сборка щитов, устранение замыканий.', price: 'от 2 000 ₸' },
+    { cat: 'servis', title: 'Ремонт стиральных машин', desc: 'Замена ТЭНа, подшипников, сливных помп, ремонт модулей управления с гарантией.', price: 'от 3 000 ₸', img: './cat_washing.png' },
+    { cat: 'servis', title: 'Ремонт холодильников', desc: 'Заправка фреоном, замена компрессора, термостата, ремонт системы No Frost.', price: 'от 4 000 ₸', img: './cat_fridge.png' },
+    { cat: 'servis', title: 'Ремонт кондиционеров и посудомоечных машин', desc: 'Чистка, заправка сплит-систем, устранение засоров и замена насосов посудомоечных машин.', price: 'от 5 000 ₸', img: './cat_washing.png' },
+    { cat: 'servis', title: 'Установка/Ремонт вытяжек', desc: 'Монтаж кухонных вытяжек, подключение к вентиляции, замена фильтров и ремонт двигателей.', price: 'от 4 000 ₸', img: './slide_appliances.png' },
+    { cat: 'servis', title: 'Установка/Ремонт кондиционеров', desc: 'Профессиональный монтаж, демонтаж и сервисное обслуживание климатической техники.', price: 'от 15 000 ₸', img: './cat_washing.png' },
+    { cat: 'servis', title: 'Сварка', desc: 'Услуги квалифицированного сварщика с выездом. Сварка труб, петель, каркасов.', price: 'от 5 000 ₸', img: './cat_win_repair.png' },
+    { cat: 'servis', title: 'Металлоконструкции', desc: 'Изготовление навесов, козырьков, лестниц, заборов, ворот и стеллажей на заказ.', price: 'от 15 000 ₸/м²', img: './cat_win_make.png' },
+    { cat: 'servis', title: 'Электрика', desc: 'Монтаж проводки, установка розеток, выключателей, сборка щитов, устранение замыканий.', price: 'от 2 000 ₸', img: './cat_electric.png' },
 
     // Мебель
-    { cat: 'mebel', title: 'Мебель на заказ (корпусная, мягкая)', desc: 'Индивидуальный дизайн и изготовление кухонь, шкафов-купе, гардеробных, диванов и кроватей.', price: 'от 45 000 ₸' }
+    { cat: 'mebel', title: 'Мебель на заказ (корпусная, мягкая)', desc: 'Индивидуальный дизайн и изготовление кухонь, шкафов-купе, гардеробных, диванов и кроватей.', price: 'от 45 000 ₸', img: './slide_furniture.png' }
   ];
 
   // Dynamic Category Page Data Generator
@@ -1441,21 +1441,35 @@ const pageDataMap = {
             </div>
             <div className="srv-cards-grid">
               {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
-                <div className="srv-card" key={idx}>
-                  <div className="srv-icon"><i className="ri-tools-line"></i></div>
-                  <h3 className="srv-title">{t(card.title)}</h3>
-                  <p className="srv-desc">{t(card.desc)}</p>
-                  <div className="srv-foot">
-                    <div className="srv-price">{t(card.price)}</div>
-                    <button
-                      className="srv-btn"
-                      onClick={() => {
-                        setFormService(t(card.title));
-                        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-                      }}
-                    >
-                      {t('srv_btn')} <i className="ri-arrow-right-line"></i>
-                    </button>
+                <div className="srv-card" key={idx} style={{ overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
+                  {card.img && (
+                    <div className="srv-img-wrapper" style={{ width: '100%', height: '180px', overflow: 'hidden', position: 'relative' }}>
+                      <img 
+                        src={card.img} 
+                        alt={t(card.title)} 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                        className="srv-card-img"
+                      />
+                      <div style={{ position: 'absolute', top: '16px', left: '16px', background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--accent)', width: '36px', height: '36px', borderRadius: '50%', display: 'grid', placeItems: 'center', fontSize: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 5 }}>
+                        <i className="ri-tools-line"></i>
+                      </div>
+                    </div>
+                  )}
+                  <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <h3 className="srv-title" style={{ marginTop: 0 }}>{t(card.title)}</h3>
+                    <p className="srv-desc" style={{ flex: 1 }}>{t(card.desc)}</p>
+                    <div className="srv-foot">
+                      <div className="srv-price">{t(card.price)}</div>
+                      <button
+                        className="srv-btn"
+                        onClick={() => {
+                          setFormService(t(card.title));
+                          document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                        }}
+                      >
+                        {t('srv_btn')} <i className="ri-arrow-right-line"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1695,48 +1709,139 @@ const pageDataMap = {
         </div>
       </footer>
 
-      {/* CATEGORY ITEM MODAL */}
+      {/* CATEGORY ITEM MODAL - CYBERNETIC COCKPIT LAYOUT */}
       {selectedModalItem && (
-        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'var(--modal-backdrop)', backdropFilter: 'blur(16px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.25s ease' }} onClick={() => setSelectedModalItem(null)}>
-          <div className="modal-content" style={{ background: 'linear-gradient(180deg, var(--surface), var(--surface-2))', border: '1px solid var(--accent)', borderRadius: 'var(--radius)', padding: '40px', maxWidth: '540px', width: '100%', boxShadow: '0 30px 70px rgba(0,0,0,0.8), 0 0 40px rgba(124,242,199,0.2)', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
-            <button
-              style={{ position: 'absolute', top: '24px', right: '24px', background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--text)', width: '36px', height: '36px', borderRadius: '50%', display: 'grid', placeItems: 'center', fontSize: '18px', cursor: 'pointer', transition: 'all 0.2s' }}
-              onClick={() => setSelectedModalItem(null)}
-              aria-label="Закрыть"
-            >
-              <i className="ri-close-line"></i>
-            </button>
-            <div className="pill" style={{ marginBottom: '16px' }}>{selectedModalItem.type === 'brand' ? 'Бренд' : 'Услуга / Деталь'}</div>
-            <h3 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--text)', marginBottom: '16px' }}>{selectedModalItem.title}</h3>
-            <p style={{ fontSize: '16px', color: 'var(--muted)', lineHeight: '1.6', marginBottom: '24px' }}>
-              Вы выбрали {selectedModalItem.title} в категории «{selectedModalItem.parentTitle}». Мы предоставляем оригинальные комплектующие и профессиональные услуги с гарантией до 12 месяцев. Среднее время выезда мастера или доставки по городу — 45 минут.
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px', padding: '16px 24px', background: 'var(--surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line)' }}>
+        <div className="cyber-modal-overlay" onClick={() => setSelectedModalItem(null)}>
+          <div className="cyber-modal-container" onClick={(e) => e.stopPropagation()}>
+            
+            {/* Left Column: Tech Status Panel */}
+            <div className="cyber-tech-panel">
               <div>
-                <div style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '4px' }}>Стоимость</div>
-                <div style={{ fontSize: '22px', fontWeight: '700', color: 'var(--accent)', fontFamily: 'Unbounded' }}>от 2 500 ₸</div>
+                <div className="cyber-panel-header">
+                  <div className="cyber-status-pulse"></div>
+                  <span>STATUS: ACTIVE</span>
+                </div>
+                
+                <div className="cyber-metric-list">
+                  <div className="cyber-metric-item">
+                    <span className="cyber-metric-label">{lang === 'ru' ? 'Свободные мастера' : (lang === 'kz' ? 'Бос шеберлер' : 'Free Masters')}</span>
+                    <span className="cyber-metric-value">
+                      <i className="ri-team-line"></i>
+                      {lang === 'ru' ? '3 мастера в сети' : (lang === 'kz' ? 'Желіде 3 шебер' : '3 masters online')}
+                    </span>
+                    <div className="cyber-progress-track">
+                      <div className="cyber-progress-fill"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="cyber-metric-item">
+                    <span className="cyber-metric-label">{lang === 'ru' ? 'Комплектующие' : (lang === 'kz' ? 'Қосалқы бөлшектер' : 'Components')}</span>
+                    <span className="cyber-metric-value">
+                      <i className="ri-shield-check-line"></i>
+                      {lang === 'ru' ? 'Оригинал 100%' : (lang === 'kz' ? 'Түпнұсқа 100%' : '100% Original')}
+                    </span>
+                  </div>
+
+                  <div className="cyber-metric-item">
+                    <span className="cyber-metric-label">{lang === 'ru' ? 'Диагностика' : (lang === 'kz' ? 'Диагностика' : 'Diagnostics')}</span>
+                    <span className="cyber-metric-value" style={{ color: 'var(--accent)' }}>
+                      <i className="ri-flashlight-line"></i>
+                      {lang === 'ru' ? '0 ₸ Бесплатно' : (lang === 'kz' ? '0 ₸ Тегін' : '0 ₸ Free')}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div style={{ borderLeft: '1px solid var(--line)', paddingLeft: '24px' }}>
-                <div style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '4px' }}>Выезд / Доставка</div>
-                <div style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text)' }}>~ 45 минут</div>
+
+              <div style={{ marginTop: 'auto', borderTop: '1px solid var(--line)', paddingTop: '20px' }}>
+                <div style={{ fontSize: '10px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  System ID
+                </div>
+                <div style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text)', opacity: 0.7, marginTop: '4px' }}>
+                  MH-SERV-P2{selectedModalItem.parentTitle ? selectedModalItem.parentTitle.substring(0,2).toUpperCase() : 'XX'}
+                </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '16px' }}>
+
+            {/* Right Column: Console Details */}
+            <div className="cyber-content-console">
               <button
-                className="btn-primary big"
-                style={{ flex: 1 }}
-                onClick={() => {
-                  setFormService(selectedModalItem.title);
-                  setSelectedModalItem(null);
-                  document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-                }}
+                className="cyber-close-btn"
+                onClick={() => setSelectedModalItem(null)}
+                aria-label="Закрыть"
               >
-                Оформить заявку
+                <i className="ri-close-line"></i>
               </button>
-              <button className="btn-ghost" onClick={() => setSelectedModalItem(null)}>
-                Закрыть
-              </button>
+              
+              <div className="cyber-tag">
+                {selectedModalItem.type === 'brand' 
+                  ? (lang === 'ru' ? 'Бренд / Производитель' : (lang === 'kz' ? 'Бренд / Өндіруші' : 'Brand / Manufacturer'))
+                  : (lang === 'ru' ? 'Услуга / Ремонтная деталь' : (lang === 'kz' ? 'Қызмет / Жөндеу бөлшегі' : 'Service / Spare Part'))
+                }
+              </div>
+              
+              <h3 className="cyber-title">{selectedModalItem.title}</h3>
+              
+              <p className="cyber-desc">
+                {lang === 'ru' ? (
+                  `Вы выбрали «${selectedModalItem.title}» в категории «${selectedModalItem.parentTitle}». Мы обеспечиваем профессиональный ремонт, настройку и замену деталей с официальной письменной гарантией до 12 месяцев.`
+                ) : (lang === 'kz' ? (
+                  `Сіз «${selectedModalItem.parentTitle}» санатындағы «${selectedModalItem.title}» таңдадыңыз. Біз 12 айға дейінгі ресми жазбаша кепілдікпен кәсіби жөндеуді, баптауды және бөлшектерді ауыстыруды қамтамасыз етеміз.`
+                ) : (
+                  `You selected "${selectedModalItem.title}" under "${selectedModalItem.parentTitle}". We provide expert repair, tuning, and parts replacement with a formal written guarantee of up to 12 months.`
+                ))}
+              </p>
+
+              {/* Unique Interactive Feature Checklist */}
+              <div className="cyber-features-grid">
+                <div className="cyber-feature-check">
+                  <i className="ri-checkbox-circle-fill"></i>
+                  <span>{lang === 'ru' ? 'Выезд опытного мастера' : (lang === 'kz' ? 'Тәжірибелі шебердің келуі' : 'Experienced master arrival')}</span>
+                </div>
+                <div className="cyber-feature-check">
+                  <i className="ri-checkbox-circle-fill"></i>
+                  <span>{lang === 'ru' ? 'Диагностика на спец. оборудовании' : (lang === 'kz' ? 'Арнайы жабдықта диагностикалау' : 'Diagnostics on specialized equipment')}</span>
+                </div>
+                <div className="cyber-feature-check">
+                  <i className="ri-checkbox-circle-fill"></i>
+                  <span>{lang === 'ru' ? 'Премиум комплектующие' : (lang === 'kz' ? 'Премиум қосалқы бөлшектер' : 'Premium spare parts')}</span>
+                </div>
+              </div>
+
+              {/* Data Row Card */}
+              <div className="cyber-data-card">
+                <div className="cyber-data-col">
+                  <span className="cyber-data-label">{lang === 'ru' ? 'Стоимость' : (lang === 'kz' ? 'Құны' : 'Cost')}</span>
+                  <span className="cyber-data-value">{lang === 'ru' ? 'от 2 500 ₸' : (lang === 'kz' ? '2 500 ₸ бастап' : 'from 2,500 ₸')}</span>
+                </div>
+                <div className="cyber-data-col" style={{ borderLeft: '1px solid var(--line)', paddingLeft: '20px' }}>
+                  <span className="cyber-data-label">{lang === 'ru' ? 'Быстрый выезд' : (lang === 'kz' ? 'Жылдам келу' : 'Quick Arrival')}</span>
+                  <span className="cyber-data-sub">~ {lang === 'ru' ? '45 минут' : (lang === 'kz' ? '45 минут' : '45 minutes')}</span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <button
+                  className="btn-primary big"
+                  style={{ flex: 2, minWidth: '200px' }}
+                  onClick={() => {
+                    setFormService(selectedModalItem.title);
+                    setSelectedModalItem(null);
+                    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  {lang === 'ru' ? 'Оформить быструю заявку' : (lang === 'kz' ? 'Жылдам өтінім беру' : 'Submit Quick Request')}
+                </button>
+                <button 
+                  className="btn-ghost" 
+                  style={{ flex: 1, minWidth: '100px' }}
+                  onClick={() => setSelectedModalItem(null)}
+                >
+                  {lang === 'ru' ? 'Закрыть' : (lang === 'kz' ? 'Жабу' : 'Close')}
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
       )}
