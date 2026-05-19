@@ -1155,8 +1155,8 @@ const pageDataMap = {
                           <div className="pill" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                             {slide.pill}
                           </div>
-                          <h1 className="hero-title" className="hero-title" dangerouslySetInnerHTML={{ __html: slide.title }}></h1>
-                          <p className="lead" className="hero-lead">{slide.lead}</p>
+                          <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: slide.title }}></h1>
+                          <p className="hero-lead">{slide.lead}</p>
                           <div className="hero-actions">
                             <button className="btn-primary big" onClick={() => {
                               setActiveCatPill(slide.cat);
