@@ -35,6 +35,14 @@ export default function App() {
     { sender: 'ai', text: 'Здравствуйте! Я виртуальный ассистент MasterHub. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
   ]);
   const [assistantInput, setAssistantInput] = useState('');
+  const [showAssistantTooltip, setShowAssistantTooltip] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAssistantTooltip(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleAssistantSend = (textToSend) => {
     const query = textToSend || assistantInput;
@@ -1028,6 +1036,12 @@ export default function App() {
         <>
           {/* HERO */}
           <section className="hero">
+            {/* Ambient High-Tech Visual Layers */}
+            <div className="hero-glow hero-glow-1"></div>
+            <div className="hero-glow hero-glow-2"></div>
+            <div className="hero-glow hero-glow-3"></div>
+            <div className="hero-grid-overlay"></div>
+
             <div className="hero-content">
               <div className="pill">{t('hero_pill')}</div>
               <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t('hero_title') }}></h1>
@@ -1049,26 +1063,57 @@ export default function App() {
                 ))}
               </ul>
             </div>
+            
             <div className="hero-visual">
-              <div className="hero-img-container" style={{ position: 'relative', width: '100%', minHeight: '380px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.6), 0 0 40px rgba(124,242,199,0.2)' }}>
-                <img src="./hero_bg.png" alt="Premium Home Services" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', transform: 'scale(1.02)', transition: 'transform 0.5s ease' }} />
-                <div style={{ position: 'absolute', inset: 0, background: 'var(--hero-overlay)' }}></div>
-                <div style={{ position: 'absolute', bottom: '24px', left: '24px', right: '24px' }}>
-                  <div className="hero-card" style={{ margin: 0, width: '100%', background: 'var(--hero-card-bg)', backdropFilter: 'blur(20px)', border: '1px solid var(--hero-card-border)' }}>
-                    <div className="hero-card-head">
-                      <div className="dot"></div>
-                      <span>{t('hero_card_head')}</span>
-                    </div>
-                    <div className="master">
-                      <div className="avatar"><i className="ri-user-star-line" style={{ fontSize: '24px' }}></i></div>
-                      <div>
-                        <div className="m-name">Мастер по ремонту</div>
-                        <div className="m-role">бытовой техники (стаж 8 лет)</div>
+              <div className="hero-visual-stack">
+                {/* Floating Interactive Widget 1 */}
+                <div className="hero-floating-widget widget-1">
+                  <div className="widget-icon"><i className="ri-flashlight-line"></i></div>
+                  <div>
+                    <div className="widget-label">Средний выезд</div>
+                    <div className="widget-value">~ 45 минут</div>
+                  </div>
+                </div>
+
+                {/* Floating Interactive Widget 2 */}
+                <div className="hero-floating-widget widget-2">
+                  <div className="widget-icon"><i className="ri-shield-check-line"></i></div>
+                  <div>
+                    <div className="widget-label">Официально</div>
+                    <div className="widget-value">Гарантия 1 год</div>
+                  </div>
+                </div>
+
+                {/* Floating Interactive Widget 3 */}
+                <div className="hero-floating-widget widget-3">
+                  <div className="widget-icon"><i className="ri-star-smile-line"></i></div>
+                  <div>
+                    <div className="widget-label">Рейтинг мастеров</div>
+                    <div className="widget-value">★ 4.9 / 5.0</div>
+                  </div>
+                </div>
+
+                {/* Main Premium Dashboard Visual Container */}
+                <div className="hero-img-container">
+                  <img src="./hero_bg.png" alt="Premium Home Services" className="hero-main-img" />
+                  <div className="hero-img-overlay"></div>
+                  <div className="hero-card-container">
+                    <div className="hero-card">
+                      <div className="hero-card-head">
+                        <div className="dot"></div>
+                        <span>{t('hero_card_head')}</span>
                       </div>
-                      <div className="rate">★ 4.9</div>
-                    </div>
-                    <div className="hero-card-foot">
-                      <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
+                      <div className="master">
+                        <div className="avatar"><i className="ri-user-star-line"></i></div>
+                        <div>
+                          <div className="m-name">Мастер по ремонту</div>
+                          <div className="m-role">бытовой техники (стаж 8 лет)</div>
+                        </div>
+                        <div className="rate">★ 4.9</div>
+                      </div>
+                      <div className="hero-card-foot">
+                        <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1596,9 +1641,36 @@ export default function App() {
           </div>
         )}
 
+        {/* Floating Greeting Bubble */}
+        {showAssistantTooltip && !isAssistantOpen && (
+          <div
+            className="assistant-tooltip"
+            onClick={() => {
+              setIsAssistantOpen(true);
+              setShowAssistantTooltip(false);
+            }}
+          >
+            <div className="assistant-tooltip-arrow"></div>
+            <i className="ri-robot-line" style={{ color: 'var(--accent)', marginRight: '6px' }}></i>
+            <span>Айя: Нужна помощь с выбором услуги? 🤖</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowAssistantTooltip(false);
+              }}
+              style={{ background: 'transparent', border: 'none', color: 'var(--muted)', marginLeft: '8px', cursor: 'pointer', fontSize: '14px' }}
+            >
+              <i className="ri-close-line"></i>
+            </button>
+          </div>
+        )}
+
         {/* Floating Button */}
         <button
-          onClick={() => setIsAssistantOpen(prev => !prev)}
+          onClick={() => {
+            setIsAssistantOpen(prev => !prev);
+            setShowAssistantTooltip(false);
+          }}
           style={{
             width: '64px',
             height: '64px',
