@@ -26,7 +26,7 @@ export default function App() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentHeroSlide(prev => (prev + 1) % 3);
-    }, 5000);
+    }, 10000);
     return () => clearInterval(timer);
   }, []);
   
@@ -1360,44 +1360,66 @@ const pageDataMap = {
                   pillCat: 'mebel'
                 }
               ];
-              const currentSlide = slides[activeSlide];
               return (
-                <div className="what-we-do-slide">
-                  <div className="what-we-do-content">
-                    <div className="what-we-do-tag">
-                      Направление 0{activeSlide + 1}
-                    </div>
-                    <h3 className="what-we-do-title">
-                      {currentSlide.title}
-                    </h3>
-                    <p className="what-we-do-subtitle">
-                      {currentSlide.subtitle}
-                    </p>
-                    <ul className="what-we-do-features">
-                      {currentSlide.features.map((feat, fIdx) => (
-                        <li key={fIdx} className="what-we-do-feature-item">
-                          <i className="ri-checkbox-circle-fill"></i> {feat}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      className="btn-primary"
-                      onClick={() => {
-                        setActiveCatPill(currentSlide.pillCat);
-                        document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '16px 32px', fontSize: '16px' }}
-                    >
-                      Перейти в каталог услуг <i className="ri-arrow-right-line"></i>
-                    </button>
-                  </div>
-                  <div className="what-we-do-image-wrapper">
-                    <img
-                      src={currentSlide.img}
-                      alt={currentSlide.title}
-                      className="what-we-do-image"
-                      style={{ animation: 'fadeIn 0.5s ease' }}
-                    />
+                <div className="what-we-do-viewport">
+                  <div 
+                    className="what-we-do-wrapper" 
+                    style={{ 
+                      display: 'flex', 
+                      width: '300%', 
+                      transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)', 
+                      transform: `translateX(-${activeSlide * 33.3333}%)` 
+                    }}
+                  >
+                    {slides.map((currentSlide, sIdx) => (
+                      <div 
+                        key={currentSlide.id} 
+                        className="what-we-do-slide" 
+                        style={{ 
+                          width: '33.3333%', 
+                          flexShrink: 0,
+                          display: 'grid',
+                          gridTemplateColumns: '1.1fr 1fr',
+                          alignItems: 'stretch'
+                        }}
+                      >
+                        <div className="what-we-do-content">
+                          <div className="what-we-do-tag">
+                            Направление 0{sIdx + 1}
+                          </div>
+                          <h3 className="what-we-do-title">
+                            {currentSlide.title}
+                          </h3>
+                          <p className="what-we-do-subtitle">
+                            {currentSlide.subtitle}
+                          </p>
+                          <ul className="what-we-do-features">
+                            {currentSlide.features.map((feat, fIdx) => (
+                              <li key={fIdx} className="what-we-do-feature-item">
+                                <i className="ri-checkbox-circle-fill"></i> {feat}
+                              </li>
+                            ))}
+                          </ul>
+                          <button
+                            className="btn-primary"
+                            onClick={() => {
+                              setActiveCatPill(currentSlide.pillCat);
+                              document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '16px 32px', fontSize: '16px', alignSelf: 'flex-start' }}
+                          >
+                            Перейти в каталог услуг <i className="ri-arrow-right-line"></i>
+                          </button>
+                        </div>
+                        <div className="what-we-do-image-wrapper">
+                          <img
+                            src={currentSlide.img}
+                            alt={currentSlide.title}
+                            className="what-we-do-image"
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               );
