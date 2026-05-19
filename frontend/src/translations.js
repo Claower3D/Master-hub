@@ -80,7 +80,7 @@ export const translations = {
     call_ok: "✓ Спасибо! Перезвоним в течение 15 минут.",
     f_contact: "Контакты", f_sections: "Разделы", f_payment: "Оплата",
     f_desc: "Мультисервис бытовых и бизнес-услуг. ТОО «МастерХаб», БИН 000000000000.",
-    f_hours: "пн–вс: 08:00 – 23:00",
+    f_hours: "пн–вс: 09:00 – 21:00",
     f_address: "пр. Аль-Фараби, 77/1",
     f_bot: "© 2026 МастерХаб. Все права защищены."
   },
@@ -165,7 +165,7 @@ export const translations = {
     call_ok: "✓ Рақмет! 15 минут ішінде хабарласамыз.",
     f_contact: "Байланыс", f_sections: "Бөлімдер", f_payment: "Төлем",
     f_desc: "Тұрмыстық және бизнес-қызметтер мультисервисі. «МастерХаб» ЖШС, БСН 000000000000.",
-    f_hours: "дс–жс: 08:00 – 23:00",
+    f_hours: "дс–жс: 09:00 – 21:00",
     f_address: "Әл-Фараби даңғылы, 77/1",
     f_bot: "© 2026 МастерХаб. Барлық құқықтар қорғалған."
   },
@@ -250,7 +250,7 @@ export const translations = {
     call_ok: "✓ Thank you! We will call you back within 15 minutes.",
     f_contact: "Contact", f_sections: "Sections", f_payment: "Payment",
     f_desc: "Multiservice for home & business. MasterHub LLP, BIN 000000000000.",
-    f_hours: "Mon–Sun: 08:00 – 23:00",
+    f_hours: "Mon–Sun: 09:00 – 21:00",
     f_address: "Al-Farabi Ave, 77/1",
     f_bot: "© 2026 MasterHub. All rights reserved."
   },
