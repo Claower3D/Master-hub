@@ -21,6 +21,14 @@ export default function App() {
   const [activeCatPill, setActiveCatPill] = useState('okna');
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeMasterCat, setActiveMasterCat] = useState('okna');
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentHeroSlide(prev => (prev + 1) % 3);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
   
   // Callback form state
   const [formName, setFormName] = useState('');
@@ -358,14 +366,15 @@ export default function App() {
   ];
 
   // Dynamic Category Page Data Generator
-  const getCategoryPageData = (pageObj, currentLang) => {
+    const getCategoryPageData = (pageObj, currentLang) => {
     if (!pageObj) return { brands: [], services: [], parentTabLabel: 'Окна', parentCatTitle: 'Москитные сетки' };
     
     const baseTitle = t(pageObj.title);
     const parentCat = megaCategories.find(c => c.id === pageObj.parentCatId) || { title: 'Москитные сетки', tab: 'okna' };
     const parentTab = megaTabs.find(t => t.id === pageObj.parentTabId || t.id === parentCat.tab) || { label: 'Окна' };
 
-    const pageDataMap = {
+    
+const pageDataMap = {
       // --- ОКНА ---
       'cat-okna-1': {
         brands: ['Фибергласс (Стандарт)', 'PetScreen (Антикошка)', 'MicroMesh (Антипыль)', 'Алюминиевый профиль', 'Усиленные крепления'],
@@ -634,6 +643,7 @@ export default function App() {
         brands: ['МДФ фасады AGT / Alvic Luxe / Эмаль RAL', 'Столешницы Egger / Кедр / Искусственный камень', 'Подъемные механизмы Blum Aventos', 'Выдвижные системы Tandembox / Направляющие скрытого монтажа'],
         services: ['Замер помещения с учетом выводов сантехники и электрики', 'Создание фотореалистичного 3D-проекта кухни', 'Изготовление кухонного гарнитура под ключ', 'Врезка мойки, варочной панели и подключение вытяжки']
       },
+      
       'sub-meb-1-4': {
         brands: ['Качественный пенополиуретан (ППУ)', 'Специальные мебельные ткани с пропиткой Easy Clean', 'Мебельные скобы Bea / Prebena', 'Оригинальные механизмы трансформации (Книжка, Дельфин, Аккордеон)'],
         services: ['Полная или частичная перетяжка диванов, кресел, стульев', 'Замена просевшего поролона и пружинных блоков', 'Ремонт и замена механизмов раскладывания дивана', 'Реставрация деревянных элементов и столярные работы']
@@ -641,7 +651,6 @@ export default function App() {
     };
 
     const specificData = pageDataMap[pageObj.id] || pageDataMap[pageObj.parentCatId];
-
     if (specificData) {
       return {
         parentTabLabel: parentTab.label,
@@ -1034,91 +1043,184 @@ export default function App() {
         </section>
       ) : (
         <>
-          {/* HERO */}
-          <section className="hero">
+            {/* HERO */}
+          <section className="hero" style={{ position: 'relative', overflow: 'hidden', padding: '100px 0 60px 0' }}>
             {/* Ambient High-Tech Visual Layers */}
             <div className="hero-glow hero-glow-1"></div>
             <div className="hero-glow hero-glow-2"></div>
             <div className="hero-glow hero-glow-3"></div>
             <div className="hero-grid-overlay"></div>
 
-            <div className="hero-content">
-              <div className="pill">{t('hero_pill')}</div>
-              <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t('hero_title') }}></h1>
-              <p className="lead">{t('hero_lead')}</p>
-              <div className="hero-actions">
-                <button className="btn-primary big" onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}>
-                  {t('hero_btn1')}
-                </button>
-                <button className="btn-ghost" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
-                  {t('hero_btn2')}
-                </button>
-              </div>
-              <ul className="hero-stats">
-                {statsData.map((st, idx) => (
-                  <li key={idx}>
-                    <strong>{t(st.num)}</strong>
-                    <span>{t(st.label)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="hero-visual">
-              <div className="hero-visual-stack">
-                {/* Floating Interactive Widget 1 */}
-                <div className="hero-floating-widget widget-1">
-                  <div className="widget-icon"><i className="ri-flashlight-line"></i></div>
-                  <div>
-                    <div className="widget-label">Средний выезд</div>
-                    <div className="widget-value">~ 45 минут</div>
-                  </div>
-                </div>
+            {(() => {
+              const heroSlides = [
+                {
+                  pill: lang === 'ru' ? '🔧 Направление: Окна и оконные системы' : (lang === 'kz' ? '🔧 Бағыт: Терезе және окон жүйелері' : '🔧 Category: Windows and window systems'),
+                  title: lang === 'ru' ? 'Профессиональный ремонт и<br/>регулировка <span class="accent">окон под ключ</span>' : (lang === 'kz' ? 'Терезелерді кәсіби жөндеу және<br/><span class="accent">реттеу</span>' : 'Professional repair and<br/>adjustment of <span class="accent">windows</span>'),
+                  lead: lang === 'ru' ? 'Устраним продувание, заменим уплотнитель, отрегулируем фурнитуру с гарантией до 12 месяцев. Быстрый выезд мастера.' : (lang === 'kz' ? 'Соғуды жоямыз, тығыздауышты ауыстырамыз, 12 айға дейінгі кепілдікпен фурнитураны реттейміз. Шебердің жылдам келуі.' : 'We eliminate drafts, replace seals, and adjust hardware under a 12-month warranty. Fast master arrival.'),
+                  btnText: lang === 'ru' ? 'Вызвать оконщика' : (lang === 'kz' ? 'Шеберді шақыру' : 'Call a window master'),
+                  img: './slide_windows.png',
+                  cat: 'okna',
+                  widget1: { icon: 'ri-window-line', label: lang === 'ru' ? 'Регулировка' : (lang === 'kz' ? 'Реттеу' : 'Adjustment'), value: lang === 'ru' ? 'от 2 500 ₸' : (lang === 'kz' ? '2 500 ₸ бастап' : 'from 2,500 ₸') },
+                  widget2: { icon: 'ri-shield-check-line', label: lang === 'ru' ? 'Гарантия' : (lang === 'kz' ? 'Кепілдік' : 'Warranty'), value: lang === 'ru' ? 'до 12 месяцев' : (lang === 'kz' ? '12 айға дейін' : 'up to 12 months') },
+                  widget3: { icon: 'ri-flashlight-line', label: lang === 'ru' ? 'Устранение' : (lang === 'kz' ? 'Жою' : 'Drafts'), value: lang === 'ru' ? 'Продуваний' : (lang === 'kz' ? 'Соғуды жою' : 'Elimination') },
+                  master: { name: 'Александр В.', role: lang === 'ru' ? 'Мастер по окнам (стаж 8 лет)' : (lang === 'kz' ? 'Терезе шебері (өтілі 8 жыл)' : 'Window Master (8 yrs exp)'), rating: '4.9' }
+                },
+                {
+                  pill: lang === 'ru' ? '⚡ Направление: Бытовая техника' : (lang === 'kz' ? '⚡ Бағыт: Тұрмыстық техника' : '⚡ Category: Home Appliances'),
+                  title: lang === 'ru' ? 'Срочный и надежный ремонт<br/><span class="accent">бытовой техники</span> на дому' : (lang === 'kz' ? 'Тұрмыстық техниканы үйге<br/>барып <span class="accent">шұғыл жөндеу</span>' : 'Urgent and reliable repair of<br/><span class="accent">home appliances</span> at home'),
+                  lead: lang === 'ru' ? 'Ремонт холодильников, стиральных и посудомоечных машин. Оригинальные запчасти в наличии, выезд мастера за 45 минут.' : (lang === 'kz' ? 'Тоңазытқыштарды, кір жуғыш және ыдыс жуғыш машиналарды жөндеу. Түпнұсқа бөлшектер бар, шебер 45 минутта келеді.' : 'Repair of refrigerators, washing machines, and dishwashewers. Original parts in stock, master arrival in 45 minutes.'),
+                  btnText: lang === 'ru' ? 'Вызвать мастера' : (lang === 'kz' ? 'Шеберді шақыру' : 'Call a master'),
+                  img: './slide_appliances.png',
+                  cat: 'servis',
+                  widget1: { icon: 'ri-tools-line', label: lang === 'ru' ? 'Диагностика' : (lang === 'kz' ? 'Диагностика' : 'Diagnostics'), value: lang === 'ru' ? 'Бесплатно' : (lang === 'kz' ? 'Тегін' : 'Free') },
+                  widget2: { icon: 'ri-speed-mini-fill', label: lang === 'ru' ? 'Срочный выезд' : (lang === 'kz' ? 'Шұғыл келу' : 'Urgent Arrival'), value: lang === 'ru' ? 'за 45 минут' : (lang === 'kz' ? '45 минутта' : 'in 45 mins') },
+                  widget3: { icon: 'ri-heart-pulse-line', label: lang === 'ru' ? 'Запчасти' : (lang === 'kz' ? 'Бөлшектер' : 'Parts'), value: lang === 'ru' ? 'Оригиналы' : (lang === 'kz' ? 'Түпнұсқалар' : 'Originals') },
+                  master: { name: 'Кайрат Н.', role: lang === 'ru' ? 'Мастер по быт. технике (стаж 6 лет)' : (lang === 'kz' ? 'Тұрмыстық техника шебері (өтілі 6 жыл)' : 'Appliances Master (6 yrs exp)'), rating: '5.0' }
+                },
+                {
+                  pill: lang === 'ru' ? '🛋️ Направление: Ремонт и сборка мебели' : (lang === 'kz' ? '🛋️ Бағыт: Жиһаз құрастыру және жөндеу' : '🛋️ Category: Furniture Assembly & Repair'),
+                  title: lang === 'ru' ? 'Качественная сборка и<br/>реставрация <span class="accent">вашей мебели</span>' : (lang === 'kz' ? 'Жиһаздарды сапалы құрастыру<br/>және <span class="accent">қалпына келтіру</span>' : 'High-quality assembly and<br/>restoration of <span class="accent">your furniture</span>'),
+                  lead: lang === 'ru' ? 'Сборка кухонь, шкафов-купе, ремонт каркасов и перетяжка мягкой мебели с премиальной фурнитурой и гарантией качества.' : (lang === 'kz' ? 'Асүй жиһазын, шкафтарды құрастыру, қаңқаларды жөндеу және сапалы фурнитурамен жұмсақ жиһазды қаптау.' : 'Assembly of kitchens, sliding wardrobes, frame repairs, and reupholstering of upholstered furniture with premium hardware.'),
+                  btnText: lang === 'ru' ? 'Вызвать мебельщика' : (lang === 'kz' ? 'Шеберді шақыру' : 'Call a furniture master'),
+                  img: './slide_furniture.png',
+                  cat: 'mebel',
+                  widget1: { icon: 'ri-sofa-line', label: lang === 'ru' ? 'Перетяжка' : (lang === 'kz' ? 'Қаптау' : 'Reupholstery'), value: lang === 'ru' ? 'от 8 000 ₸' : (lang === 'kz' ? '8 000 ₸ бастап' : 'from 8,000 ₸') },
+                  widget2: { icon: 'ri-pantone-line', label: lang === 'ru' ? 'Дизайн-проект' : (lang === 'kz' ? 'Дизайн-жоба' : 'Design Project'), value: lang === 'ru' ? '3D бесплатно' : (lang === 'kz' ? '3D тегін' : '3D free') },
+                  widget3: { icon: 'ri-compasses-2-line', label: lang === 'ru' ? 'Сборка' : (lang === 'kz' ? 'Құрастыру' : 'Assembly'), value: lang === 'ru' ? 'Любая сложность' : (lang === 'kz' ? 'Кез келген қиындық' : 'Any complexity') },
+                  master: { name: 'Азамат Т.', role: lang === 'ru' ? 'Реставратор мебели (стаж 12 лет)' : (lang === 'kz' ? 'Жиһаз реставраторы (өтілі 12 жыл)' : 'Furniture Restorer (12 yrs exp)'), rating: '5.0' }
+                }
+              ];
 
-                {/* Floating Interactive Widget 2 */}
-                <div className="hero-floating-widget widget-2">
-                  <div className="widget-icon"><i className="ri-shield-check-line"></i></div>
-                  <div>
-                    <div className="widget-label">Официально</div>
-                    <div className="widget-value">Гарантия 1 год</div>
-                  </div>
-                </div>
+              return (
+                <div className="hero-slides-viewport" style={{ overflow: 'hidden', width: '100%', padding: '0 6vw' }}>
+                  <div 
+                    className="hero-slides-wrapper" 
+                    style={{ 
+                      display: 'flex', 
+                      width: '300%', 
+                      transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)', 
+                      transform: `translateX(-${currentHeroSlide * 33.3333}%)` 
+                    }}
+                  >
+                    {heroSlides.map((slide, slideIdx) => (
+                      <div 
+                        key={slideIdx} 
+                        className="hero-slide-container" 
+                        style={{ 
+                          width: '33.3333%', 
+                          flexShrink: 0, 
+                          display: 'grid', 
+                          gridTemplateColumns: '1.2fr 1fr', 
+                          gap: '60px', 
+                          position: 'relative', 
+                          filter: slideIdx === currentHeroSlide ? 'none' : 'blur(6px)', 
+                          opacity: slideIdx === currentHeroSlide ? 1 : 0.3, 
+                          transition: 'filter 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1)' 
+                        }}
+                      >
+                        <div className="hero-content">
+                          <div className="pill" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                            {slide.pill}
+                          </div>
+                          <h1 className="hero-title" style={{ minHeight: '120px' }} dangerouslySetInnerHTML={{ __html: slide.title }}></h1>
+                          <p className="lead" style={{ minHeight: '75px' }}>{slide.lead}</p>
+                          <div className="hero-actions">
+                            <button className="btn-primary big" onClick={() => {
+                              setActiveCatPill(slide.cat);
+                              document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+                            }}>
+                              {slide.btnText}
+                            </button>
+                            <button className="btn-ghost" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
+                              {t('hero_btn2')}
+                            </button>
+                          </div>
 
-                {/* Floating Interactive Widget 3 */}
-                <div className="hero-floating-widget widget-3">
-                  <div className="widget-icon"><i className="ri-star-smile-line"></i></div>
-                  <div>
-                    <div className="widget-label">Рейтинг мастеров</div>
-                    <div className="widget-value">★ 4.9 / 5.0</div>
-                  </div>
-                </div>
+                          {/* Hero Slide Navigation Dots */}
+                          <div className="hero-dots">
+                            {heroSlides.map((_, dotIdx) => (
+                              <button
+                                key={dotIdx}
+                                onClick={() => setCurrentHeroSlide(dotIdx)}
+                                className={`hero-dot ${currentHeroSlide === dotIdx ? 'active' : ''}`}
+                                aria-label={`Перейти к слайду ${dotIdx + 1}`}
+                              ></button>
+                            ))}
+                          </div>
 
-                {/* Main Premium Dashboard Visual Container */}
-                <div className="hero-img-container">
-                  <img src="./hero_bg.png" alt="Premium Home Services" className="hero-main-img" />
-                  <div className="hero-img-overlay"></div>
-                  <div className="hero-card-container">
-                    <div className="hero-card">
-                      <div className="hero-card-head">
-                        <div className="dot"></div>
-                        <span>{t('hero_card_head')}</span>
-                      </div>
-                      <div className="master">
-                        <div className="avatar"><i className="ri-user-star-line"></i></div>
-                        <div>
-                          <div className="m-name">Мастер по ремонту</div>
-                          <div className="m-role">бытовой техники (стаж 8 лет)</div>
+                          <ul className="hero-stats">
+                            {statsData.map((st, idx) => (
+                              <li key={idx}>
+                                <strong>{t(st.num)}</strong>
+                                <span>{t(st.label)}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <div className="rate">★ 4.9</div>
+
+                        <div className="hero-visual">
+                          <div className="hero-visual-stack">
+                            {/* Floating Interactive Widget 1 */}
+                            <div className="hero-floating-widget widget-1">
+                              <div className="widget-icon"><i className={slide.widget1.icon}></i></div>
+                              <div>
+                                <div className="widget-label">{slide.widget1.label}</div>
+                                <div className="widget-value">{slide.widget1.value}</div>
+                              </div>
+                            </div>
+
+                            {/* Floating Interactive Widget 2 */}
+                            <div className="hero-floating-widget widget-2">
+                              <div className="widget-icon"><i className={slide.widget2.icon}></i></div>
+                              <div>
+                                <div className="widget-label">{slide.widget2.label}</div>
+                                <div className="widget-value">{slide.widget2.value}</div>
+                              </div>
+                            </div>
+
+                            {/* Floating Interactive Widget 3 */}
+                            <div className="hero-floating-widget widget-3">
+                              <div className="widget-icon"><i className={slide.widget3.icon}></i></div>
+                              <div>
+                                <div className="widget-label">{slide.widget3.label}</div>
+                                <div className="widget-value">{slide.widget3.value}</div>
+                              </div>
+                            </div>
+
+                            {/* Main Premium Category Visual Illustration Container */}
+                            <div className="hero-img-container" style={{ position: 'relative', overflow: 'visible' }}>
+                              <div className="hero-img-inner-wrapper" style={{ position: 'absolute', inset: 0, borderRadius: '24px', overflow: 'hidden' }}>
+                                <img src={slide.img} alt="MasterHub Premium Service" className="hero-main-img" style={{ transform: 'scale(1.02)', transition: 'all 0.5s ease' }} />
+                                <div className="hero-img-overlay"></div>
+                              </div>
+                              <div className="hero-card-container" style={{ bottom: '-35px' }}>
+                                <div className="hero-card">
+                                  <div className="hero-card-head">
+                                    <div className="dot"></div>
+                                    <span>{t('hero_card_head')}</span>
+                                  </div>
+                                  <div className="master">
+                                    <div className="avatar"><i className="ri-user-star-line"></i></div>
+                                    <div>
+                                      <div className="m-name">{slide.master.name}</div>
+                                      <div className="m-role">{slide.master.role}</div>
+                                    </div>
+                                    <div className="rate">★ {slide.master.rating}</div>
+                                  </div>
+                                  <div className="hero-card-foot">
+                                    <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="hero-card-foot">
-                        <i className="ri-map-pin-line"></i> {getCityDisplay(city)} · {t('hero_card_foot')}
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
-              </div>
-            </div>
+              );
+            })()}
           </section>
 
           {/* QUICK STEPS */}
@@ -1349,21 +1451,39 @@ export default function App() {
           </section>
 
           {/* WHY US */}
-          <section id="why">
+          <section id="why" className="why">
             <div className="section-head">
               <h2>{t('why_title')}</h2>
               <p>{t('why_sub')}</p>
             </div>
             <div className="timeline">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-                <div className="t-item" key={num}>
-                  <div className="t-num">0{num}</div>
-                  <h4>{t(`why${num}_h`)}</h4>
-                  <p>{t(`why${num}_p`)}</p>
+              {[
+                { num: 1, icon: 'ri-stack-line' },
+                { num: 2, icon: 'ri-speed-mini-fill' },
+                { num: 3, icon: 'ri-shield-star-line' },
+                { num: 4, icon: 'ri-user-heart-line' },
+                { num: 5, icon: 'ri-verified-badge-line' },
+                { num: 6, icon: 'ri-camera-lens-line' },
+                { num: 7, icon: 'ri-wallet-3-line' },
+                { num: 8, icon: 'ri-hand-heart-line' },
+                { num: 9, icon: 'ri-safe-2-line' }
+              ].map(item => (
+                <div className="t-item" key={item.num}>
+                  <div className="t-item-icon-wrapper">
+                    <div className="t-item-icon">
+                      <i className={item.icon}></i>
+                    </div>
+                    <div className="t-num">0{item.num}</div>
+                  </div>
+                  <h4>{t(`why${item.num}_h`)}</h4>
+                  <p>{t(`why${item.num}_p`)}</p>
                 </div>
               ))}
             </div>
           </section>
+
+          {/* REVIEWS */}
+          
 
           {/* REVIEWS */}
           <section id="reviews">
