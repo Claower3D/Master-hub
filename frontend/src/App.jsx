@@ -19,6 +19,7 @@ export default function App() {
   
   // Catalog Pill state
   const [activeCatPill, setActiveCatPill] = useState('okna');
+  const [activeSlide, setActiveSlide] = useState(0);
   
   // Callback form state
   const [formName, setFormName] = useState('');
@@ -1068,6 +1069,139 @@ export default function App() {
                 </div>
               </div>
             </div>
+          </section>
+
+          {/* WHAT WE DO SLIDER */}
+          <section id="about" className="what-we-do" style={{ padding: '88px 6vw', background: 'var(--surface)', borderBottom: '1px solid var(--line)' }}>
+            <div className="section-head" style={{ marginBottom: '40px' }}>
+              <h2>Чем мы занимаемся</h2>
+              <p>Три ключевых направления нашего мультисервиса с гарантией качества и фиксированным прайсом.</p>
+            </div>
+            
+            {/* Slider Tabs */}
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', overflowX: 'auto', paddingBottom: '8px' }}>
+              {[
+                {
+                  id: 'okna',
+                  title: 'Окна и оконные системы',
+                  subtitle: 'Москитные сетки, детская защита, регулировка и сложный ремонт окон любой конфигурации.',
+                  img: './slide_windows.png',
+                  features: ['Замена стеклопакетов и уплотнителей', 'Установка детских замков и решеток', 'Изготовление и монтаж под ключ'],
+                  pillCat: 'okna'
+                },
+                {
+                  id: 'servis',
+                  title: 'Сервис и ремонт техники',
+                  subtitle: 'Профессиональный ремонт стиральных машин, холодильников, кондиционеров и посудомоечных машин.',
+                  img: './slide_appliances.png',
+                  features: ['Срочный выезд мастера за 45 минут', 'Оригинальные запчасти в наличии', 'Гарантия на все работы до 12 месяцев'],
+                  pillCat: 'servis'
+                },
+                {
+                  id: 'mebel',
+                  title: 'Мебель на заказ и реставрация',
+                  subtitle: 'Изготовление корпусной и мягкой мебели по индивидуальным проектам, перетяжка и ремонт.',
+                  img: './slide_furniture.png',
+                  features: ['Разработка 3D-дизайн проекта', 'Премиальные материалы и фурнитура', 'Распил, кромление и сборка'],
+                  pillCat: 'mebel'
+                }
+              ].map((slide, idx, arr) => (
+                <button
+                  key={slide.id}
+                  onClick={() => setActiveSlide(idx)}
+                  style={{
+                    padding: '14px 28px',
+                    background: activeSlide === idx ? 'var(--accent)' : 'var(--surface-2)',
+                    color: activeSlide === idx ? '#0b1020' : 'var(--text)',
+                    border: '1px solid',
+                    borderColor: activeSlide === idx ? 'var(--accent)' : 'var(--line)',
+                    borderRadius: 'var(--radius-sm)',
+                    fontWeight: '700',
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    whiteSpace: 'nowrap',
+                    boxShadow: activeSlide === idx ? '0 10px 25px rgba(124,242,199,0.3)' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <i className={slide.id === 'okna' ? 'ri-window-line' : (slide.id === 'servis' ? 'ri-tools-line' : 'ri-sofa-line')}></i>
+                  {slide.title}
+                </button>
+              ))}
+            </div>
+
+            {/* Slide Content */}
+            {(() => {
+              const slides = [
+                {
+                  id: 'okna',
+                  title: 'Окна и оконные системы',
+                  subtitle: 'Москитные сетки, детская защита, регулировка и сложный ремонт окон любой конфигурации.',
+                  img: './slide_windows.png',
+                  features: ['Замена стеклопакетов и уплотнителей', 'Установка детских замков и решеток', 'Изготовление и монтаж под ключ'],
+                  pillCat: 'okna'
+                },
+                {
+                  id: 'servis',
+                  title: 'Сервис и ремонт техники',
+                  subtitle: 'Профессиональный ремонт стиральных машин, холодильников, кондиционеров и посудомоечных машин.',
+                  img: './slide_appliances.png',
+                  features: ['Срочный выезд мастера за 45 минут', 'Оригинальные запчасти в наличии', 'Гарантия на все работы до 12 месяцев'],
+                  pillCat: 'servis'
+                },
+                {
+                  id: 'mebel',
+                  title: 'Мебель на заказ и реставрация',
+                  subtitle: 'Изготовление корпусной и мягкой мебели по индивидуальным проектам, перетяжка и ремонт.',
+                  img: './slide_furniture.png',
+                  features: ['Разработка 3D-дизайн проекта', 'Премиальные материалы и фурнитура', 'Распил, кромление и сборка'],
+                  pillCat: 'mebel'
+                }
+              ];
+              const currentSlide = slides[activeSlide];
+              return (
+                <div style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
+                  <div style={{ padding: '40px 40px 40px 6vw' }}>
+                    <div style={{ display: 'inline-block', padding: '6px 14px', background: 'rgba(124,242,199,0.15)', color: 'var(--accent)', borderRadius: '8px', fontSize: '13px', fontWeight: '700', marginBottom: '16px', textTransform: 'uppercase' }}>
+                      Направление 0{activeSlide + 1}
+                    </div>
+                    <h3 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '16px', color: 'var(--text)' }}>
+                      {currentSlide.title}
+                    </h3>
+                    <p style={{ fontSize: '16px', color: 'var(--muted)', lineHeight: '1.6', marginBottom: '24px' }}>
+                      {currentSlide.subtitle}
+                    </p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {currentSlide.features.map((feat, fIdx) => (
+                        <li key={fIdx} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '15px', color: 'var(--text)', fontWeight: '600' }}>
+                          <i className="ri-checkbox-circle-fill" style={{ color: 'var(--accent)', fontSize: '20px' }}></i> {feat}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className="btn-primary"
+                      onClick={() => {
+                        setActiveCatPill(currentSlide.pillCat);
+                        document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '16px 32px', fontSize: '16px' }}
+                    >
+                      Перейти в каталог услуг <i className="ri-arrow-right-line"></i>
+                    </button>
+                  </div>
+                  <div style={{ position: 'relative', height: '100%', minHeight: '360px', overflow: 'hidden' }}>
+                    <img
+                      src={currentSlide.img}
+                      alt={currentSlide.title}
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block', animation: 'fadeIn 0.5s ease' }}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
           </section>
 
           {/* SERVICES CATALOG */}
