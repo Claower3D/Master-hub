@@ -59,6 +59,9 @@ type DB interface {
 	GetAllCallbacks() ([]CallbackRecord, error)
 	UpdateCallbackStatus(id int, status string) error
 	UpdateUser(id int, name, phone, city, password string) (*User, error)
+	AddTelegramSubscriber(chatID int64, name string) error
+	RemoveTelegramSubscriber(chatID int64) error
+	GetTelegramSubscribers() ([]int64, error)
 	Close() error
 }
 
@@ -110,6 +113,11 @@ func NewPostgresDB(connStr string) (*PostgresDB, error) {
 			city VARCHAR(255) NOT NULL,
 			status VARCHAR(50) NOT NULL DEFAULT 'pending',
 			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS tg_subscribers (
+			chat_id BIGINT PRIMARY KEY,
+			name VARCHAR(255) NOT NULL
 		);
 	`)
 	if err != nil {
@@ -335,14 +343,52 @@ func (p *PostgresDB) Close() error {
 	return p.db.Close()
 }
 
+func (p *PostgresDB) AddTelegramSubscriber(chatID int64, name string) error {
+	_, err := p.db.Exec(`
+		INSERT INTO tg_subscribers (chat_id, name)
+		VALUES ($1, $2)
+		ON CONFLICT (chat_id) DO NOTHING
+	`, chatID, name)
+	return err
+}
+
+func (p *PostgresDB) RemoveTelegramSubscriber(chatID int64) error {
+	_, err := p.db.Exec("DELETE FROM tg_subscribers WHERE chat_id = $1", chatID)
+	return err
+}
+
+func (p *PostgresDB) GetTelegramSubscribers() ([]int64, error) {
+	rows, err := p.db.Query("SELECT chat_id FROM tg_subscribers")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var list []int64
+	for rows.Next() {
+		var cid int64
+		if err := rows.Scan(&cid); err != nil {
+			return nil, err
+		}
+		list = append(list, cid)
+	}
+	return list, nil
+}
+
+type TgSubscriber struct {
+	ChatID int64  `json:"chat_id"`
+	Name   string `json:"name"`
+}
+
 // JsonDB implements DB interface using a single JSON file
 type JsonDB struct {
 	filePath string
 	mu       sync.Mutex
 	Data     struct {
-		Users     []User           `json:"users"`
-		Sessions  []Session        `json:"sessions"`
-		Callbacks []CallbackRecord `json:"callbacks"`
+		Users         []User           `json:"users"`
+		Sessions      []Session        `json:"sessions"`
+		Callbacks     []CallbackRecord `json:"callbacks"`
+		TgSubscribers []TgSubscriber   `json:"tg_subscribers"`
 	}
 }
 
@@ -356,6 +402,7 @@ func NewJsonDB(filePath string) (*JsonDB, error) {
 		db.Data.Users = []User{}
 		db.Data.Sessions = []Session{}
 		db.Data.Callbacks = []CallbackRecord{}
+		db.Data.TgSubscribers = []TgSubscriber{}
 		err = db.save()
 		if err != nil {
 			return nil, err
@@ -574,6 +621,37 @@ func (j *JsonDB) UpdateCallbackStatus(id int, status string) error {
 		}
 	}
 	return errors.New("callback not found")
+}
+
+func (j *JsonDB) AddTelegramSubscriber(chatID int64, name string) error {
+	j.load()
+	for _, s := range j.Data.TgSubscribers {
+		if s.ChatID == chatID {
+			return nil // already exists
+		}
+	}
+	j.Data.TgSubscribers = append(j.Data.TgSubscribers, TgSubscriber{ChatID: chatID, Name: name})
+	return j.save()
+}
+
+func (j *JsonDB) RemoveTelegramSubscriber(chatID int64) error {
+	j.load()
+	for idx, s := range j.Data.TgSubscribers {
+		if s.ChatID == chatID {
+			j.Data.TgSubscribers = append(j.Data.TgSubscribers[:idx], j.Data.TgSubscribers[idx+1:]...)
+			return j.save()
+		}
+	}
+	return nil
+}
+
+func (j *JsonDB) GetTelegramSubscribers() ([]int64, error) {
+	j.load()
+	var list []int64
+	for _, s := range j.Data.TgSubscribers {
+		list = append(list, s.ChatID)
+	}
+	return list, nil
 }
 
 func (j *JsonDB) Close() error {

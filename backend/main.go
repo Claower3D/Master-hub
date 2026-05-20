@@ -86,6 +86,9 @@ func main() {
 	}
 	defer dbInstance.Close()
 
+	// Start Telegram bot notifications
+	StartTelegramBot(dbInstance)
+
 	mux := http.NewServeMux()
 
 	// Health check endpoint
@@ -165,6 +168,9 @@ func main() {
 		}
 
 		log.Printf("Новая заявка: Имя: %s, Тел: %s, Услуга: %s, Город: %s (UserID: %v)\n", req.Name, req.Phone, req.Service, req.City, userID)
+
+		// Send Telegram notification to all subscribers
+		go NotifyNewOrder(dbInstance, record)
 
 		resp := CallbackResponse{
 			Status:  "success",
