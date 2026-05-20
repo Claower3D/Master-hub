@@ -12,3 +12,6 @@ backend/masterhub-backend.exe
 # OS
 .DS_Store
 Thumbs.db
+
+# Databases
+masterhub_data.json

@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { translations } from './translations';
 
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8080'
+  : '';
+
 export default function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('lang') || 'ru');
   const [city, setCity] = useState(() => localStorage.getItem('city') || 'almaty');
@@ -51,6 +55,189 @@ export default function App() {
     }, 4000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Auth & Cabinet states
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [token, setToken] = useState(() => localStorage.getItem('token') || '');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authTab, setAuthTab] = useState('login'); // 'login' | 'register'
+  const [authError, setAuthError] = useState('');
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authName, setAuthName] = useState('');
+  const [authPhone, setAuthPhone] = useState('');
+  const [authCity, setAuthCity] = useState(city);
+
+  const [isCabinetOpen, setIsCabinetOpen] = useState(false);
+  const [myCallbacks, setMyCallbacks] = useState([]);
+  const [callbacksLoading, setCallbacksLoading] = useState(false);
+  const [cabinetTab, setCabinetTab] = useState('dashboard'); // 'dashboard' | 'profile' | 'support'
+  const [editName, setEditName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editCity, setEditCity] = useState('');
+  const [editPassword, setEditPassword] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+  const [profileError, setProfileError] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setEditName(user.name);
+      setEditPhone(user.phone);
+      setEditCity(user.city);
+    }
+  }, [user]);
+
+  const handleUpdateProfile = (e) => {
+    e.preventDefault();
+    setProfileSuccess('');
+    setProfileError('');
+    fetch(API_BASE + '/api/auth/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name: editName,
+        phone: editPhone,
+        city: editCity,
+        password: editPassword
+      })
+    })
+      .then(async res => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Profile update failed');
+        return data;
+      })
+      .then(data => {
+        setUser(data.user);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setProfileSuccess(t('cab_profile_updated'));
+        setEditPassword('');
+      })
+      .catch(err => setProfileError(err.message));
+  };
+
+  const fetchMyCallbacks = () => {
+    if (!token) return;
+    setCallbacksLoading(true);
+    fetch(API_BASE + '/api/callbacks', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch callbacks');
+        return res.json();
+      })
+      .then(data => {
+        setMyCallbacks(data || []);
+      })
+      .catch(err => console.log('Error fetching callbacks:', err))
+      .finally(() => setCallbacksLoading(false));
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchMyCallbacks();
+    } else {
+      setMyCallbacks([]);
+    }
+  }, [token]);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setAuthError('');
+    fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: authEmail, password: authPassword })
+    })
+      .then(async res => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Login failed');
+        return data;
+      })
+      .then(data => {
+        setToken(data.token);
+        setUser(data.user);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsAuthModalOpen(false);
+        setAuthEmail('');
+        setAuthPassword('');
+      })
+      .catch(err => setAuthError(err.message));
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    setAuthError('');
+    fetch(API_BASE + '/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: authName,
+        email: authEmail,
+        phone: authPhone,
+        city: authCity,
+        password: authPassword
+      })
+    })
+      .then(async res => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Registration failed');
+        return data;
+      })
+      .then(data => {
+        setToken(data.token);
+        setUser(data.user);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsAuthModalOpen(false);
+        setAuthName('');
+        setAuthEmail('');
+        setAuthPhone('');
+        setAuthPassword('');
+      })
+      .catch(err => setAuthError(err.message));
+  };
+
+  const handleLogout = () => {
+    fetch(API_BASE + '/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).finally(() => {
+      setToken('');
+      setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setIsCabinetOpen(false);
+    });
+  };
+
+  const handleUpdateStatus = (callbackId, newStatus) => {
+    fetch(API_BASE + '/api/callbacks/status', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ id: callbackId, status: newStatus })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to update status');
+        fetchMyCallbacks();
+      })
+      .catch(err => console.error(err));
+  };
 
   const handleAssistantSend = (textToSend) => {
     const query = textToSend || assistantInput;
@@ -105,7 +292,7 @@ export default function App() {
 
   // Fetch data from Go backend
   useEffect(() => {
-    fetch('http://localhost:8080/api/stats')
+    fetch(API_BASE + '/api/stats')
       .then(res => res.json())
       .then(data => setStatsData(data))
       .catch(err => {
@@ -118,7 +305,7 @@ export default function App() {
         ]);
       });
 
-    fetch('http://localhost:8080/api/reviews')
+    fetch(API_BASE + '/api/reviews')
       .then(res => res.json())
       .then(data => setReviewsData(data))
       .catch(err => {
@@ -161,9 +348,14 @@ export default function App() {
       city: formCity
     };
 
-    fetch('http://localhost:8080/api/callback', {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    fetch(API_BASE + '/api/callback', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify(payload)
     })
       .then(res => res.json())
@@ -171,6 +363,9 @@ export default function App() {
         setCallbackStatus({ type: 'success', message: data.message || t('call_ok') });
         setFormName('');
         setFormPhone('');
+        if (token) {
+          fetchMyCallbacks();
+        }
       })
       .catch(err => {
         console.log('Backend callback failed, simulating success');
@@ -762,6 +957,17 @@ const pageDataMap = {
           <a href="tel:+77780211316" className="phone" aria-label="Позвонить">
             <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>+7 (778) 021-13-16</span>
           </a>
+          
+          {user ? (
+            <button className="auth-trigger-btn" onClick={() => setIsCabinetOpen(true)}>
+              <i className="ri-user-line"></i> <span>{t('nav_cabinet')}</span>
+            </button>
+          ) : (
+            <button className="auth-trigger-btn" onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); }}>
+              <i className="ri-login-box-line"></i> <span>{t('nav_login')}</span>
+            </button>
+          )}
+
           <button className="btn-primary" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
             {t('cta_req')}
           </button>
@@ -846,6 +1052,16 @@ const pageDataMap = {
             <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему">
               <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
             </button>
+
+            {user ? (
+              <button className="auth-trigger-btn mobile-only" onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }} style={{ padding: '8px 12px', fontSize: '12px' }}>
+                <i className="ri-user-line"></i> <span>{t('nav_cabinet')}</span>
+              </button>
+            ) : (
+              <button className="auth-trigger-btn mobile-only" onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }} style={{ padding: '8px 12px', fontSize: '12px' }}>
+                <i className="ri-login-box-line"></i> <span>{t('nav_login')}</span>
+              </button>
+            )}
           </div>
           {/* Col 1: Categories */}
           <div className="mega-col1">
@@ -2141,6 +2357,415 @@ const pageDataMap = {
           <i className={isAssistantOpen ? "ri-close-line" : "ri-robot-2-line"}></i>
         </button>
       </div>
+
+      {/* AUTH MODAL */}
+      {isAuthModalOpen && (
+        <div className="auth-modal" onClick={() => setIsAuthModalOpen(false)}>
+          <div className="auth-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="auth-modal-close" onClick={() => setIsAuthModalOpen(false)} aria-label="Закрыть">
+              <i className="ri-close-line"></i>
+            </button>
+            <div className="auth-tabs">
+              <button 
+                className={`auth-tab ${authTab === 'login' ? 'active' : ''}`} 
+                onClick={() => { setAuthTab('login'); setAuthError(''); }}
+              >
+                {t('auth_title_login')}
+              </button>
+              <button 
+                className={`auth-tab ${authTab === 'register' ? 'active' : ''}`} 
+                onClick={() => { setAuthTab('register'); setAuthError(''); }}
+              >
+                {t('auth_title_register')}
+              </button>
+            </div>
+            
+            {authError && <div className="auth-error">{authError}</div>}
+
+            {authTab === 'login' ? (
+              <form className="auth-form" onSubmit={handleLogin}>
+                <div className="auth-form-group">
+                  <label>{t('auth_email')}</label>
+                  <input 
+                    type="email" 
+                    className="auth-input" 
+                    required 
+                    placeholder="email@example.com" 
+                    value={authEmail}
+                    onChange={(e) => setAuthEmail(e.target.value)}
+                  />
+                </div>
+                <div className="auth-form-group">
+                  <label>{t('auth_password')}</label>
+                  <input 
+                    type="password" 
+                    className="auth-input" 
+                    required 
+                    placeholder="••••••••" 
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                  />
+                </div>
+                <button type="submit" className="auth-submit-btn">
+                  {t('auth_btn_login')}
+                </button>
+                <button 
+                  type="button" 
+                  className="auth-switch" 
+                  onClick={() => { setAuthTab('register'); setAuthError(''); }}
+                >
+                  {t('auth_switch_to_register')}
+                </button>
+              </form>
+            ) : (
+              <form className="auth-form" onSubmit={handleRegister}>
+                <div className="auth-form-group">
+                  <label>{t('auth_name')}</label>
+                  <input 
+                    type="text" 
+                    className="auth-input" 
+                    required 
+                    placeholder="Алексей" 
+                    value={authName}
+                    onChange={(e) => setAuthName(e.target.value)}
+                  />
+                </div>
+                <div className="auth-form-group">
+                  <label>{t('auth_email')}</label>
+                  <input 
+                    type="email" 
+                    className="auth-input" 
+                    required 
+                    placeholder="email@example.com" 
+                    value={authEmail}
+                    onChange={(e) => setAuthEmail(e.target.value)}
+                  />
+                </div>
+                <div className="auth-form-group">
+                  <label>{t('auth_phone')}</label>
+                  <input 
+                    type="tel" 
+                    className="auth-input" 
+                    required 
+                    placeholder="+7 (707) 123-45-67" 
+                    value={authPhone}
+                    onChange={(e) => setAuthPhone(e.target.value)}
+                  />
+                </div>
+                <div className="auth-form-group">
+                  <label>{t('auth_city')}</label>
+                  <select 
+                    className="auth-select" 
+                    value={authCity} 
+                    onChange={(e) => setAuthCity(e.target.value)}
+                  >
+                    <option value="almaty">{t('city_almaty')}</option>
+                    <option value="astana">{t('city_astana')}</option>
+                    <option value="shymkent">{t('city_shymkent')}</option>
+                    <option value="karaganda">{t('city_karaganda')}</option>
+                    <option value="aktobe">{t('city_aktobe')}</option>
+                    <option value="taraz">{t('city_taraz')}</option>
+                    <option value="pavlodar">{t('city_pavlodar')}</option>
+                    <option value="oskemen">{t('city_oskemen')}</option>
+                    <option value="semey">{t('city_semey')}</option>
+                    <option value="atyrau">{t('city_atyrau')}</option>
+                    <option value="aktau">{t('city_aktau')}</option>
+                    <option value="kostanay">{t('city_kostanay')}</option>
+                    <option value="kyzylorda">{t('city_kyzylorda')}</option>
+                    <option value="oral">{t('city_oral')}</option>
+                    <option value="petropavl">{t('city_petropavl')}</option>
+                    <option value="taldykorgan">{t('city_taldykorgan')}</option>
+                    <option value="kokshetau">{t('city_kokshetau')}</option>
+                    <option value="turkistan">{t('city_turkistan')}</option>
+                    <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
+                    <option value="konaev">{t('city_konaev')}</option>
+                  </select>
+                </div>
+                <div className="auth-form-group">
+                  <label>{t('auth_password')}</label>
+                  <input 
+                    type="password" 
+                    className="auth-input" 
+                    required 
+                    placeholder="••••••••" 
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                  />
+                </div>
+                <button type="submit" className="auth-submit-btn">
+                  {t('auth_btn_register')}
+                </button>
+                <button 
+                  type="button" 
+                  className="auth-switch" 
+                  onClick={() => { setAuthTab('login'); setAuthError(''); }}
+                >
+                  {t('auth_switch_to_login')}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* USER CABINET */}
+      {isCabinetOpen && user && (
+        <div className="cabinet-modal" onClick={() => setIsCabinetOpen(false)}>
+          <div className="cabinet-content" onClick={(e) => e.stopPropagation()}>
+            <div className="cabinet-header">
+              <div className="cabinet-user-info">
+                <div className="cabinet-avatar">{user.name[0].toUpperCase()}</div>
+                <div>
+                  <div className="cabinet-name">{user.name}</div>
+                  <div className="cabinet-meta">
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+              <button className="auth-modal-close" onClick={() => setIsCabinetOpen(false)} style={{ position: 'static' }} aria-label="Закрыть">
+                <i className="ri-close-line"></i>
+              </button>
+            </div>
+            
+            {/* CABINET NAVIGATION TABS */}
+            <div className="cabinet-tabs">
+              <button 
+                className={`cabinet-tab-btn ${cabinetTab === 'dashboard' ? 'active' : ''}`}
+                onClick={() => setCabinetTab('dashboard')}
+              >
+                <i className="ri-dashboard-3-line"></i> Панель
+              </button>
+              <button 
+                className={`cabinet-tab-btn ${cabinetTab === 'profile' ? 'active' : ''}`}
+                onClick={() => { setCabinetTab('profile'); setProfileSuccess(''); setProfileError(''); }}
+              >
+                <i className="ri-user-settings-line"></i> {t('cab_edit_profile')}
+              </button>
+              <button 
+                className={`cabinet-tab-btn ${cabinetTab === 'support' ? 'active' : ''}`}
+                onClick={() => setCabinetTab('support')}
+              >
+                <i className="ri-customer-service-2-line"></i> Поддержка
+              </button>
+              <button 
+                className="cabinet-tab-btn logout-tab-btn"
+                onClick={handleLogout}
+              >
+                <i className="ri-logout-box-r-line"></i> {t('auth_logout')}
+              </button>
+            </div>
+
+            <div className="cabinet-body">
+              {cabinetTab === 'dashboard' && (
+                <div className="cabinet-tab-content">
+                  {/* Bonus Balance Card */}
+                  <div className="bonus-card">
+                    <div className="bonus-card-glow"></div>
+                    <div className="bonus-header">
+                      <div>
+                        <div className="bonus-title">{t('cab_bonus_balance')}</div>
+                        <div className="bonus-amount">{user.bonuses || 0} ✨</div>
+                      </div>
+                      <div className="bonus-coin-icon">
+                        <i className="ri-copper-coin-line"></i>
+                      </div>
+                    </div>
+                    <div className="bonus-details">
+                      <div className="bonus-desc">{t('cab_bonus_earn_desc')}</div>
+                      <div className="bonus-qr-placeholder">
+                        <i className="ri-qr-code-line"></i> {t('cab_bonus_qr_coming')}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Active Request Tracker */}
+                  {myCallbacks.length > 0 && myCallbacks[0].status !== 'completed' && (
+                    <div className="request-tracker">
+                      <h4 className="tracker-title">Отслеживание текущей заявки #{myCallbacks[0].id}</h4>
+                      <div className="tracker-service-name">{myCallbacks[0].service}</div>
+                      
+                      <div className="tracker-steps">
+                        <div className={`tracker-step ${myCallbacks[0].status === 'pending' || myCallbacks[0].status === 'in_progress' ? 'active' : ''}`}>
+                          <div className="step-circle"><i className="ri-file-list-3-line"></i></div>
+                          <div className="step-label">Заявка принята</div>
+                        </div>
+                        <div className={`tracker-line ${myCallbacks[0].status === 'in_progress' ? 'active' : ''}`}></div>
+                        <div className={`tracker-step ${myCallbacks[0].status === 'in_progress' ? 'active' : ''}`}>
+                          <div className="step-circle"><i className="ri-user-shared-line"></i></div>
+                          <div className="step-label">Назначен мастер</div>
+                        </div>
+                        <div className="tracker-line"></div>
+                        <div className="tracker-step">
+                          <div className="step-circle"><i className="ri-checkbox-circle-line"></i></div>
+                          <div className="step-label">Выполнено</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Requests History List */}
+                  <div style={{ marginTop: '30px' }}>
+                    <h3 className="cabinet-section-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '18px', fontWeight: '850', marginBottom: '16px' }}>
+                      {t('cab_my_callbacks')}
+                      {callbacksLoading && <i className="ri-loader-4-line ri-spin" style={{ color: 'var(--accent)' }}></i>}
+                    </h3>
+
+                    {myCallbacks.length === 0 ? (
+                      <div style={{ padding: '30px', textAlign: 'center', background: 'var(--surface-2)', borderRadius: '12px', color: 'var(--muted)', fontSize: '14px' }}>
+                        {t('cab_no_callbacks')}
+                      </div>
+                    ) : (
+                      <div className="cabinet-table-wrapper">
+                        <table className="cabinet-table">
+                          <thead>
+                            <tr>
+                              <th>{t('cab_col_id')}</th>
+                              <th>{t('cab_col_service')}</th>
+                              <th>{t('cab_col_city')}</th>
+                              <th>{t('cab_col_status')}</th>
+                              <th>{t('cab_col_date')}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {myCallbacks.map((cb) => (
+                              <tr key={cb.id}>
+                                <td>#{cb.id}</td>
+                                <td>{cb.service}</td>
+                                <td>{getCityDisplay(cb.city)}</td>
+                                <td>
+                                  <span className={`status-pill status-${cb.status}`}>
+                                    {t(`cab_status_${cb.status}`)}
+                                  </span>
+                                </td>
+                                <td>
+                                  {new Date(cb.created_at).toLocaleDateString(lang === 'ru' ? 'ru-RU' : lang === 'kz' ? 'kk-KZ' : 'en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {cabinetTab === 'profile' && (
+                <div className="cabinet-tab-content">
+                  <h3 className="cabinet-section-title" style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px' }}>
+                    {t('cab_edit_profile')}
+                  </h3>
+
+                  {profileSuccess && <div className="profile-alert alert-success">{profileSuccess}</div>}
+                  {profileError && <div className="profile-alert alert-danger">{profileError}</div>}
+
+                  <form onSubmit={handleUpdateProfile} className="profile-form">
+                    <div className="profile-form-group">
+                      <label>Имя</label>
+                      <input 
+                        type="text" 
+                        className="profile-input" 
+                        required
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                      />
+                    </div>
+                    <div className="profile-form-group">
+                      <label>Телефон</label>
+                      <input 
+                        type="tel" 
+                        className="profile-input" 
+                        required
+                        value={editPhone}
+                        onChange={(e) => setEditPhone(e.target.value)}
+                      />
+                    </div>
+                    <div className="profile-form-group">
+                      <label>Город</label>
+                      <select 
+                        className="profile-select" 
+                        value={editCity} 
+                        onChange={(e) => setEditCity(e.target.value)}
+                      >
+                        <option value="almaty">{t('city_almaty')}</option>
+                        <option value="astana">{t('city_astana')}</option>
+                        <option value="shymkent">{t('city_shymkent')}</option>
+                        <option value="karaganda">{t('city_karaganda')}</option>
+                        <option value="aktobe">{t('city_aktobe')}</option>
+                        <option value="taraz">{t('city_taraz')}</option>
+                        <option value="pavlodar">{t('city_pavlodar')}</option>
+                        <option value="oskemen">{t('city_oskemen')}</option>
+                        <option value="semey">{t('city_semey')}</option>
+                        <option value="atyrau">{t('city_atyrau')}</option>
+                        <option value="aktau">{t('city_aktau')}</option>
+                        <option value="kostanay">{t('city_kostanay')}</option>
+                        <option value="kyzylorda">{t('city_kyzylorda')}</option>
+                        <option value="oral">{t('city_oral')}</option>
+                        <option value="petropavl">{t('city_petropavl')}</option>
+                        <option value="taldykorgan">{t('city_taldykorgan')}</option>
+                        <option value="kokshetau">{t('city_kokshetau')}</option>
+                        <option value="turkistan">{t('city_turkistan')}</option>
+                        <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
+                        <option value="konaev">{t('city_konaev')}</option>
+                      </select>
+                    </div>
+                    <div className="profile-form-group">
+                      <label>{t('cab_new_password')}</label>
+                      <input 
+                        type="password" 
+                        className="profile-input" 
+                        placeholder="••••••••" 
+                        value={editPassword}
+                        onChange={(e) => setEditPassword(e.target.value)}
+                      />
+                    </div>
+                    <button type="submit" className="profile-save-btn">
+                      {t('cab_save_changes')}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {cabinetTab === 'support' && (
+                <div className="cabinet-tab-content">
+                  <h3 className="cabinet-section-title" style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px' }}>
+                    Служба поддержки
+                  </h3>
+                  <p style={{ color: 'var(--muted)', fontSize: '14px', lineHeight: '1.6', marginBottom: '24px' }}>
+                    Есть вопросы по качеству услуг, стоимости или ходу выполнения работы? Свяжитесь с нами удобным способом:
+                  </p>
+
+                  <div className="support-actions">
+                    <a href="https://wa.me/77780211316" target="_blank" rel="noopener noreferrer" className="support-btn whatsapp-btn">
+                      <i className="ri-whatsapp-line"></i> Написать в WhatsApp
+                    </a>
+                    <a href="tel:+77780211316" className="support-btn phone-btn">
+                      <i className="ri-phone-line"></i> Позвонить оператору
+                    </a>
+                  </div>
+
+                  <div className="faq-section" style={{ marginTop: '30px' }}>
+                    <h4 style={{ fontSize: '15px', fontWeight: '750', marginBottom: '12px' }}>Часто задаваемые вопросы:</h4>
+                    <div className="faq-item" style={{ marginBottom: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                      <strong style={{ display: 'block', fontSize: '13px', marginBottom: '4px' }}>Как быстро приедет мастер?</strong>
+                      <span style={{ fontSize: '13px', color: 'var(--muted)' }}>Среднее время выезда — 45 минут, в зависимости от дорожной ситуации и вашего района.</span>
+                    </div>
+                    <div className="faq-item" style={{ marginBottom: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                      <strong style={{ display: 'block', fontSize: '13px', marginBottom: '4px' }}>Какая гарантия на работу?</strong>
+                      <span style={{ fontSize: '13px', color: 'var(--muted)' }}>Мы предоставляем официальную письменную гарантию до 12 месяцев на все услуги.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
