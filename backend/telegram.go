@@ -66,12 +66,16 @@ func NotifyNewOrder(db DB, record *CallbackRecord) {
 	}
 
 	msg := fmt.Sprintf(
-		"🔔 <b>Новая заявка #%d</b>\n\n"+
+		"🌐 <b>МастерХаб — Новая заявка с сайта</b>\n"+
+			"━━━━━━━━━━━━━━━━━━━━\n"+
+			"🔔 <b>Заявка #%d</b>\n\n"+
 			"👤 <b>Имя:</b> %s\n"+
 			"📞 <b>Телефон:</b> %s\n"+
 			"🛠 <b>Услуга:</b> %s\n"+
 			"🏙 <b>Город:</b> %s\n"+
-			"🕐 <b>Время:</b> %s",
+			"🕐 <b>Время:</b> %s\n"+
+			"━━━━━━━━━━━━━━━━━━━━\n"+
+			"🔗 <i>master-hub-production.up.railway.app</i>",
 		record.ID,
 		record.Name,
 		record.Phone,
