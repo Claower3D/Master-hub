@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"regexp"
+	"strings"
 )
 
 const tgAPIBase = "https://api.telegram.org/bot"
@@ -139,6 +141,17 @@ func handleTgUpdate(db DB, upd tgUpdate) {
 	chatID := upd.Message.Chat.ID
 	text := upd.Message.Text
 	firstName := upd.Message.From.FirstName
+
+	// Обработка ответа '+' на уведомление о заявке
+	if upd.Message.ReplyToMessage != nil && strings.TrimSpace(text) == "+" {
+		re := regexp.MustCompile(`#(\d+)`)
+		matches := re.FindStringSubmatch(upd.Message.ReplyToMessage.Text)
+		if len(matches) > 1 {
+			orderID := matches[1]
+			tgSendMessage(chatID, fmt.Sprintf("✅ Пользователь %s принял заявку #%s", firstName, orderID))
+			return
+		}
+	}
 
 	switch text {
 	case "/start":
