@@ -22,7 +22,7 @@ type User struct {
 	Phone        string    `json:"phone"`
 	City         string    `json:"city"`
 	Bonuses      int       `json:"bonuses"`
-	PasswordHash string    `json:"-"`
+	PasswordHash string    `json:"password_hash,omitempty"`
 	Role         string    `json:"role"` // "admin" or "customer"
 	CreatedAt    time.Time `json:"created_at"`
 }
@@ -589,16 +589,35 @@ func InitDB() (DB, error) {
 		}
 	}
 
+	var db DB
+	var err error
 	if dbURL != "" {
 		log.Println("🔌 Connecting to PostgreSQL database...")
-		pdb, err := NewPostgresDB(dbURL)
+		db, err = NewPostgresDB(dbURL)
 		if err == nil {
 			log.Println("✅ Connected to PostgreSQL successfully!")
-			return pdb, nil
+		} else {
+			log.Printf("⚠️ PostgreSQL connection failed: %v. Falling back to JSON storage.\n", err)
+			db, err = NewJsonDB("masterhub_data.json")
 		}
-		log.Printf("⚠️ PostgreSQL connection failed: %v. Falling back to JSON storage.\n", err)
+	} else {
+		log.Println("📁 Using JSON local file storage (masterhub_data.json)...")
+		db, err = NewJsonDB("masterhub_data.json")
 	}
 
-	log.Println("📁 Using JSON local file storage (masterhub_data.json)...")
-	return NewJsonDB("masterhub_data.json")
+	if err != nil {
+		return nil, err
+	}
+
+	// Seed default test admin account
+	_, err = db.GetUserByEmail("admin@masterhub.kz")
+	if err != nil {
+		log.Println("👤 Seeding default admin account (admin@masterhub.kz)...")
+		_, err = db.CreateUser("Administrator", "admin@masterhub.kz", "+77777777777", "almaty", "admin123")
+		if err != nil {
+			log.Printf("⚠️ Failed to seed admin account: %v\n", err)
+		}
+	}
+
+	return db, nil
 }

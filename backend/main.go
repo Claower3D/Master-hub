@@ -21,6 +21,34 @@ type CallbackRequest struct {
 	City    string `json:"city"`
 }
 
+// APIUser represents a user profile safe to send in JSON responses to the frontend client
+type APIUser struct {
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
+	City      string    `json:"city"`
+	Bonuses   int       `json:"bonuses"`
+	Role      string    `json:"role"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+func ToAPIUser(u *User) APIUser {
+	if u == nil {
+		return APIUser{}
+	}
+	return APIUser{
+		ID:        u.ID,
+		Name:      u.Name,
+		Email:     u.Email,
+		Phone:     u.Phone,
+		City:      u.City,
+		Bonuses:   u.Bonuses,
+		Role:      u.Role,
+		CreatedAt: u.CreatedAt,
+	}
+}
+
 // CallbackResponse represents the API response for callback submission
 type CallbackResponse struct {
 	Status  string          `json:"status"`
@@ -191,7 +219,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": sess.Token,
-			"user":  user,
+			"user":  ToAPIUser(user),
 		})
 	}))
 
@@ -235,7 +263,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"token": sess.Token,
-			"user":  user,
+			"user":  ToAPIUser(user),
 		})
 	}))
 
@@ -277,7 +305,7 @@ func main() {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"user": user,
+			"user": ToAPIUser(user),
 		})
 	}))
 
@@ -322,7 +350,7 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"status": "success",
-			"user":   updatedUser,
+			"user":   ToAPIUser(updatedUser),
 		})
 	}))
 

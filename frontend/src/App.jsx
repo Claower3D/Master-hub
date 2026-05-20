@@ -17,7 +17,9 @@ export default function App() {
   const [activeMegaSub, setActiveMegaSub] = useState('none');
   
   // Dedicated Category Page & Modal States
-  const [activePage, setActivePage] = useState('home'); // 'home' | 'category'
+  const [activePage, setActivePage] = useState(() => {
+    return window.location.hash === '#/admin' ? 'admin' : 'home';
+  }); // 'home' | 'category' | 'admin'
   const [selectedCategoryPageObj, setSelectedCategoryPageObj] = useState(null);
   const [selectedModalItem, setSelectedModalItem] = useState(null); // { title, type: 'brand' | 'service', parentTitle }
   
@@ -55,6 +57,94 @@ export default function App() {
     }, 4000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Admin panel states
+  const [adminAuthed, setAdminAuthed] = useState(false);
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPass, setAdminPass] = useState('');
+  const [adminError, setAdminError] = useState('');
+  const [adminCallbacks, setAdminCallbacks] = useState([]);
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminFilterDate, setAdminFilterDate] = useState('');
+  const [adminFilterStatus, setAdminFilterStatus] = useState('all');
+
+  // Hash routing: detect #/admin
+  useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash === '#/admin') {
+        setActivePage('admin');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  const handleResponse = async (res) => {
+    const contentType = res.headers.get('content-type');
+    let data;
+    if (contentType && contentType.includes('application/json')) {
+      data = await res.json();
+    } else {
+      const text = await res.text();
+      data = { message: text };
+    }
+    if (!res.ok) {
+      throw new Error(data.message || 'Request failed');
+    }
+    return data;
+  };
+
+  const fetchAdminCallbacks = (tok) => {
+    const t = tok || token;
+    if (!t) return;
+    setAdminLoading(true);
+    fetch(API_BASE + '/api/callbacks', {
+      headers: { 'Authorization': `Bearer ${t}` }
+    })
+      .then(res => { if (!res.ok) throw new Error('fail'); return res.json(); })
+      .then(data => setAdminCallbacks(data || []))
+      .catch(err => console.error('Admin fetch error:', err))
+      .finally(() => setAdminLoading(false));
+  };
+
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    setAdminError('');
+    fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: adminEmail, password: adminPass })
+    })
+      .then(handleResponse)
+      .then(data => {
+        if (data.user?.role !== 'admin') throw new Error('Доступ только для администраторов');
+        setToken(data.token);
+        setUser(data.user);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setAdminAuthed(true);
+        fetchAdminCallbacks(data.token);
+      })
+      .catch(err => setAdminError(err.message));
+  };
+
+  const handleAdminStatusChange = (id, newStatus) => {
+    fetch(API_BASE + '/api/callbacks/status', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ id, status: newStatus })
+    })
+      .then(res => { if (!res.ok) throw new Error('fail'); fetchAdminCallbacks(); })
+      .catch(err => console.error(err));
+  };
+
+  // Auto-auth admin if already logged in as admin
+  useEffect(() => {
+    if (activePage === 'admin' && user?.role === 'admin' && token) {
+      setAdminAuthed(true);
+      fetchAdminCallbacks(token);
+    }
+  }, [activePage]);
 
   // Auth & Cabinet states
   const [user, setUser] = useState(() => {
@@ -111,11 +201,7 @@ export default function App() {
         password: editPassword
       })
     })
-      .then(async res => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Profile update failed');
-        return data;
-      })
+      .then(handleResponse)
       .then(data => {
         setUser(data.user);
         localStorage.setItem('user', JSON.stringify(data.user));
@@ -160,11 +246,7 @@ export default function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: authEmail, password: authPassword })
     })
-      .then(async res => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Login failed');
-        return data;
-      })
+      .then(handleResponse)
       .then(data => {
         setToken(data.token);
         setUser(data.user);
@@ -191,11 +273,7 @@ export default function App() {
         password: authPassword
       })
     })
-      .then(async res => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Registration failed');
-        return data;
-      })
+      .then(handleResponse)
       .then(data => {
         setToken(data.token);
         setUser(data.user);
@@ -892,6 +970,343 @@ const pageDataMap = {
 
   const catPageData = getCategoryPageData(selectedCategoryPageObj, lang);
 
+  // ========================
+  // ADMIN PANEL RENDER
+  // ========================
+  if (activePage === 'admin') {
+    const filteredCallbacks = adminCallbacks.filter(cb => {
+      if (adminFilterStatus !== 'all' && cb.status !== adminFilterStatus) return false;
+      if (adminFilterDate) {
+        const cbDate = new Date(cb.created_at).toISOString().split('T')[0];
+        if (cbDate !== adminFilterDate) return false;
+      }
+      return true;
+    });
+
+    const statusLabel = (s) => {
+      if (s === 'pending') return 'Новая';
+      if (s === 'in_progress') return 'В работе';
+      if (s === 'completed') return 'Выполнена';
+      return s;
+    };
+
+    const stats = [
+      { label: 'Всего заявок', value: adminCallbacks.length, icon: 'ri-file-list-3-line', color: '#7cf2c7' },
+      { label: 'Новые', value: adminCallbacks.filter(c => c.status === 'pending').length, icon: 'ri-time-line', color: '#5b8cff' },
+      { label: 'В работе', value: adminCallbacks.filter(c => c.status === 'in_progress').length, icon: 'ri-loader-4-line', color: '#ff7a59' },
+      { label: 'Выполнены', value: adminCallbacks.filter(c => c.status === 'completed').length, icon: 'ri-checkbox-circle-line', color: '#7cf2c7' },
+    ];
+
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', fontFamily: 'Outfit, Manrope, sans-serif' }}>
+        {/* Admin Topbar */}
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+          background: 'rgba(11,16,32,0.95)', backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(124,242,199,0.15)',
+          padding: '0 24px', height: '60px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '36px', height: '36px', borderRadius: '10px',
+              background: 'linear-gradient(135deg, #7cf2c7, #5b8cff)',
+              display: 'grid', placeItems: 'center',
+              fontSize: '16px', fontWeight: '900', color: '#0b1020'
+            }}>MH</div>
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: '800', letterSpacing: '-0.01em' }}>MasterHub Admin</div>
+              <div style={{ fontSize: '11px', color: '#7cf2c7', opacity: 0.7 }}>Панель мониторинга</div>
+            </div>
+          </div>
+          {adminAuthed && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                <i className="ri-user-line" style={{ color: '#7cf2c7' }}></i>
+                <span style={{ color: 'rgba(255,255,255,0.8)', fontWeight: '600' }}>{user?.name || user?.email}</span>
+              </div>
+              <button
+                onClick={() => { setAdminAuthed(false); setToken(''); setUser(null); localStorage.removeItem('token'); localStorage.removeItem('user'); }}
+                style={{
+                  background: 'rgba(255,122,89,0.1)', border: '1px solid rgba(255,122,89,0.3)',
+                  color: '#ff7a59', borderRadius: '8px', padding: '6px 14px',
+                  fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit'
+                }}
+              >
+                <i className="ri-logout-box-line"></i> Выйти
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Admin Content */}
+        <div style={{ paddingTop: '60px', minHeight: '100vh' }}>
+          {!adminAuthed ? (
+            /* LOGIN FORM */
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              minHeight: 'calc(100vh - 60px)', padding: '24px'
+            }}>
+              <div style={{
+                width: '100%', maxWidth: '420px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(124,242,199,0.15)',
+                borderRadius: '24px', padding: '40px',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 40px 80px rgba(0,0,0,0.5)'
+              }}>
+                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                  <div style={{
+                    width: '64px', height: '64px', borderRadius: '18px',
+                    background: 'linear-gradient(135deg, rgba(124,242,199,0.2), rgba(91,140,255,0.2))',
+                    border: '1px solid rgba(124,242,199,0.3)',
+                    display: 'grid', placeItems: 'center', margin: '0 auto 20px',
+                    fontSize: '28px'
+                  }}>
+                    <i className="ri-shield-keyhole-line" style={{ color: '#7cf2c7' }}></i>
+                  </div>
+                  <div style={{ fontSize: '22px', fontWeight: '850', letterSpacing: '-0.02em', marginBottom: '8px' }}>Вход в панель</div>
+                  <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>Доступ только для администраторов MasterHub</div>
+                </div>
+
+                {adminError && (
+                  <div style={{
+                    background: 'rgba(255,122,89,0.1)', border: '1px solid rgba(255,122,89,0.25)',
+                    borderRadius: '12px', padding: '12px 16px', marginBottom: '20px',
+                    fontSize: '13px', color: '#ff7a59', fontWeight: '600'
+                  }}>
+                    <i className="ri-error-warning-line"></i> {adminError}
+                  </div>
+                )}
+
+                <form onSubmit={handleAdminLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Электронная почта</label>
+                    <input
+                      type="email" required autoComplete="email"
+                      value={adminEmail} onChange={e => setAdminEmail(e.target.value)}
+                      style={{
+                        width: '100%', background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)',
+                        borderRadius: '12px', padding: '14px 16px',
+                        fontSize: '14px', fontFamily: 'inherit', outline: 'none',
+                        transition: 'border-color 0.2s', boxSizing: 'border-box'
+                      }}
+                      onFocus={e => e.target.style.borderColor = '#7cf2c7'}
+                      onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>Пароль (мин. 6 символов)</label>
+                    <input
+                      type="password" required minLength={6} autoComplete="current-password"
+                      value={adminPass} onChange={e => setAdminPass(e.target.value)}
+                      style={{
+                        width: '100%', background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)',
+                        borderRadius: '12px', padding: '14px 16px',
+                        fontSize: '14px', fontFamily: 'inherit', outline: 'none',
+                        transition: 'border-color 0.2s', boxSizing: 'border-box'
+                      }}
+                      onFocus={e => e.target.style.borderColor = '#7cf2c7'}
+                      onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                    />
+                  </div>
+                  <button type="submit" style={{
+                    background: 'linear-gradient(135deg, #7cf2c7, #5b8cff)',
+                    color: '#0b1020', fontWeight: '800', fontSize: '15px',
+                    border: 'none', borderRadius: '14px', padding: '16px',
+                    cursor: 'pointer', fontFamily: 'inherit', marginTop: '8px',
+                    transition: 'all 0.25s ease'
+                  }}
+                  onMouseEnter={e => e.target.style.opacity = '0.9'}
+                  onMouseLeave={e => e.target.style.opacity = '1'}
+                  >
+                    <i className="ri-login-box-line"></i> Войти
+                  </button>
+                </form>
+              </div>
+            </div>
+          ) : (
+            /* ADMIN DASHBOARD */
+            <div className="admin-dashboard-container">
+
+              {/* Stats Cards */}
+              <div className="admin-stats-grid" style={{ marginBottom: '32px' }}>
+                {stats.map((s, i) => (
+                  <div key={i} style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '16px', padding: '20px',
+                    display: 'flex', flexDirection: 'column', gap: '10px',
+                    position: 'relative', overflow: 'hidden'
+                  }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: `linear-gradient(90deg, transparent, ${s.color}, transparent)` }}></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{
+                        width: '36px', height: '36px', borderRadius: '10px',
+                        background: `${s.color}18`, display: 'grid', placeItems: 'center',
+                        fontSize: '18px', color: s.color
+                      }}>
+                        <i className={s.icon}></i>
+                      </div>
+                      <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', fontWeight: '600' }}>{s.label}</span>
+                    </div>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Filters Row */}
+              <div className="admin-filters-bar" style={{ marginBottom: '20px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: 'rgba(255,255,255,0.7)', marginRight: '4px' }}>
+                  <i className="ri-filter-3-line" style={{ color: '#7cf2c7' }}></i> Фильтры:
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <label style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontWeight: '600' }}>Дата:</label>
+                  <input
+                    type="date" value={adminFilterDate} onChange={e => setAdminFilterDate(e.target.value)}
+                    style={{
+                      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                      color: 'var(--text)', borderRadius: '8px', padding: '7px 12px',
+                      fontSize: '13px', fontFamily: 'inherit', outline: 'none', cursor: 'pointer'
+                    }}
+                  />
+                  {adminFilterDate && (
+                    <button onClick={() => setAdminFilterDate('')} style={{
+                      background: 'rgba(255,122,89,0.1)', border: '1px solid rgba(255,122,89,0.2)',
+                      color: '#ff7a59', borderRadius: '6px', padding: '6px 10px',
+                      fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit'
+                    }}>✕ Сброс</button>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {['all', 'pending', 'in_progress', 'completed'].map(st => (
+                    <button key={st}
+                      onClick={() => setAdminFilterStatus(st)}
+                      style={{
+                        padding: '6px 14px', borderRadius: '8px', fontSize: '12px',
+                        fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit',
+                        border: adminFilterStatus === st
+                          ? '1px solid rgba(124,242,199,0.4)'
+                          : '1px solid rgba(255,255,255,0.08)',
+                        background: adminFilterStatus === st
+                          ? 'rgba(124,242,199,0.12)'
+                          : 'transparent',
+                        color: adminFilterStatus === st ? '#7cf2c7' : 'rgba(255,255,255,0.5)',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {st === 'all' ? 'Все' : statusLabel(st)}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => fetchAdminCallbacks()} style={{
+                  marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px',
+                  background: 'rgba(124,242,199,0.1)', border: '1px solid rgba(124,242,199,0.2)',
+                  color: '#7cf2c7', borderRadius: '8px', padding: '7px 14px',
+                  fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit'
+                }}>
+                  <i className={`ri-refresh-line ${adminLoading ? 'ri-spin' : ''}`}></i> Обновить
+                </button>
+              </div>
+
+              {/* Orders Table */}
+              <div className="admin-table-card">
+                <div style={{
+                  padding: '16px 24px', borderBottom: '1px solid rgba(255,255,255,0.07)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                }}>
+                  <div style={{ fontSize: '15px', fontWeight: '800' }}>
+                    <i className="ri-file-list-3-line" style={{ color: '#7cf2c7', marginRight: '8px' }}></i>
+                    Заявки
+                    <span style={{
+                      marginLeft: '10px', fontSize: '12px', padding: '3px 10px',
+                      background: 'rgba(124,242,199,0.1)', border: '1px solid rgba(124,242,199,0.2)',
+                      color: '#7cf2c7', borderRadius: '999px', fontWeight: '700'
+                    }}>{filteredCallbacks.length}</span>
+                  </div>
+                </div>
+
+                {adminLoading ? (
+                  <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>
+                    <i className="ri-loader-4-line ri-spin" style={{ fontSize: '32px', color: '#7cf2c7' }}></i>
+                    <div style={{ marginTop: '16px', fontSize: '14px' }}>Загрузка...</div>
+                  </div>
+                ) : filteredCallbacks.length === 0 ? (
+                  <div style={{ padding: '60px', textAlign: 'center', color: 'rgba(255,255,255,0.3)', fontSize: '14px' }}>
+                    <i className="ri-inbox-line" style={{ fontSize: '40px', marginBottom: '12px', display: 'block', opacity: 0.4 }}></i>
+                    Заявки не найдены
+                  </div>
+                ) : (
+                  <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                      <thead>
+                        <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
+                          {['ID', 'Имя', 'Телефон', 'Услуга', 'Город', 'Дата', 'Статус'].map(h => (
+                            <th key={h} style={{
+                              padding: '12px 16px', textAlign: 'left',
+                              fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.35)',
+                              textTransform: 'uppercase', letterSpacing: '0.05em',
+                              borderBottom: '1px solid rgba(255,255,255,0.07)'
+                            }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredCallbacks.map((cb, idx) => (
+                          <tr key={cb.id} style={{
+                            borderBottom: '1px solid rgba(255,255,255,0.05)',
+                            background: idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)',
+                            transition: 'background 0.15s'
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'rgba(124,242,199,0.04)'}
+                          onMouseLeave={e => e.currentTarget.style.background = idx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)'}
+                          >
+                            <td style={{ padding: '14px 16px', color: 'rgba(255,255,255,0.35)', fontFamily: 'monospace', fontSize: '12px' }}>#{cb.id}</td>
+                            <td style={{ padding: '14px 16px', fontWeight: '600' }}>{cb.name}</td>
+                            <td style={{ padding: '14px 16px', color: 'rgba(255,255,255,0.6)', fontFamily: 'monospace', fontSize: '13px' }}>{cb.phone}</td>
+                            <td style={{ padding: '14px 16px', color: 'rgba(255,255,255,0.8)', maxWidth: '200px' }}>
+                              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cb.service}</div>
+                            </td>
+                            <td style={{ padding: '14px 16px', color: 'rgba(255,255,255,0.5)' }}>{getCityDisplay(cb.city)}</td>
+                            <td style={{ padding: '14px 16px', color: 'rgba(255,255,255,0.4)', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                              {new Date(cb.created_at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                            </td>
+                            <td style={{ padding: '14px 16px' }}>
+                              <select
+                                value={cb.status}
+                                onChange={e => handleAdminStatusChange(cb.id, e.target.value)}
+                                style={{
+                                  padding: '6px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: '700',
+                                  border: 'none', cursor: 'pointer', fontFamily: 'inherit', outline: 'none',
+                                  background: cb.status === 'pending' ? 'rgba(91,140,255,0.15)'
+                                    : cb.status === 'in_progress' ? 'rgba(255,122,89,0.15)'
+                                    : 'rgba(124,242,199,0.15)',
+                                  color: cb.status === 'pending' ? '#5b8cff'
+                                    : cb.status === 'in_progress' ? '#ff7a59'
+                                    : '#7cf2c7'
+                                }}
+                              >
+                                <option value="pending">Новая</option>
+                                <option value="in_progress">В работе</option>
+                                <option value="completed">Выполнена</option>
+                              </select>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* TOPBAR */}
@@ -914,10 +1329,6 @@ const pageDataMap = {
           <a href="#" className="catalog-btn" onClick={(e) => { e.preventDefault(); setMegaMenuOpen(!megaMenuOpen); }}>
             <i className="ri-menu-line"></i> <span>{t('nav_catalog')}</span>
           </a>
-          <a href="#services">{t('nav_popular')}</a>
-          <a href="#why">{t('nav_why')}</a>
-          <a href="#masters">{t('nav_masters')}</a>
-          <a href="#reviews">{t('nav_reviews')}</a>
           <a href="#contact">{t('nav_contact')}</a>
         </nav>
         <div className="top-cta">
@@ -1958,6 +2369,7 @@ const pageDataMap = {
       )}
 
       {/* CALLBACK FORM */}
+      {activePage !== 'admin' && (
       <section id="contact" className="callback" style={{ position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
           <img src="./why_bg.png" alt="Smart Home Interior" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, filter: 'blur(3px)' }} />
@@ -2047,6 +2459,7 @@ const pageDataMap = {
           </div>
         </div>
       </section>
+      )}
 
       {/* FOOTER */}
       <footer>
