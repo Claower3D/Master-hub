@@ -1,3 +1,4 @@
+# Trigger build: 2026-05-20
 # Stage 1: Build React frontend
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
