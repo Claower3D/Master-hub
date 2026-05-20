@@ -30,6 +30,19 @@ type tgUpdate struct {
 		} `json:"chat"`
 		Text string `json:"text"`
 	} `json:"message"`
+	ReplyToMessage *struct {
+		MessageID int `json:"message_id"`
+		From struct {
+			ID        int64  `json:"id"`
+			FirstName string `json:"first_name"`
+			LastName  string `json:"last_name"`
+			Username  string `json:"username"`
+		} `json:"from"`
+		Chat struct {
+			ID int64 `json:"id"`
+		} `json:"chat"`
+		Text string `json:"text"`
+	} `json:"reply_to_message"`
 }
 
 type tgUpdatesResponse struct {
