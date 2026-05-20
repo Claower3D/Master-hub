@@ -2,7 +2,7 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm install
 COPY frontend/ ./
 RUN npm run build
 
@@ -12,7 +12,7 @@ WORKDIR /app/backend
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 COPY backend/ ./
-RUN CGO_ENABLED=0 GOOS=linux go build -o masterhub-backend .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o masterhub-backend .
 
 # Stage 3: Final image
 FROM alpine:latest
@@ -31,7 +31,6 @@ COPY cat_moskit.png cat_washing.png cat_win_make.png cat_win_repair.png ./
 COPY hero_bg.png icons.svg favicon.svg why_bg.png ./
 COPY slide_appliances.png slide_furniture.png slide_windows.png ./
 
-# PORT is set by Railway automatically
 EXPOSE 8080
 
 CMD ["./masterhub-backend"]
