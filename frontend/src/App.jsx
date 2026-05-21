@@ -2335,7 +2335,7 @@ const pageDataMap = {
           onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           title="На главную"
         >
-          <div className="logo">MH</div>
+          <div className="logo">HM</div>
           <div>
             <div className="brand-name">{t('brand_name')}</div>
             <div className="brand-sub">
@@ -3995,7 +3995,7 @@ const pageDataMap = {
             onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             title="На главную"
           >
-            <div className="logo">MH</div>
+            <div className="logo">HM</div>
             <div>
               <div className="brand-name">{t('brand_name')}</div>
               <div className="brand-sub">
