@@ -439,6 +439,89 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]string{"status": "success"})
 	}))
 
+	// GET /api/reviews
+	mux.HandleFunc("/api/reviews", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		reviews, err := dbInstance.GetReviews()
+		if err != nil {
+			http.Error(w, "Failed to get reviews", http.StatusInternalServerError)
+			return
+		}
+
+		// Fallback to default reviews if DB is empty
+		if len(reviews) == 0 {
+			reviews = []ReviewRecord{
+				{ID: 1, Author: "— Алия, Бостандыкский р-н", Text: "«Заказали клининг после ремонта + вывоз мусора. Приехали через час, всё сделали за вечер. Цена не выросла ни на тенге».", Rating: 5, CreatedAt: time.Now()},
+				{ID: 2, Author: "— Ержан, мкр Самал", Text: "«Сломалась стиралка вечером. Мастер был у нас в 9 утра, починил за 40 минут. Дали гарантию на год».", Rating: 5, CreatedAt: time.Now()},
+				{ID: 3, Author: "— Динара, ЖК «Альпийский»", Text: "«Перетяжка дивана — как новый. Забрали, через 4 дня привезли. Очень аккуратно».", Rating: 5, CreatedAt: time.Now()},
+			}
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(reviews)
+	}))
+
+	// POST /api/reviews/new
+	mux.HandleFunc("/api/reviews/new", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var userID *int
+		var defaultAuthor = "Аноним"
+
+		user, err := getAuthenticatedUser(r, dbInstance)
+		if err == nil && user != nil {
+			userID = &user.ID
+			defaultAuthor = user.Name
+		}
+
+		var input struct {
+			Author string `json:"author"`
+			Text   string `json:"text"`
+			Rating int    `json:"rating"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+			http.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+
+		author := input.Author
+		if author == "" {
+			author = defaultAuthor
+		}
+		text := input.Text
+		rating := input.Rating
+		if rating < 1 || rating > 5 {
+			rating = 5
+		}
+
+		if text == "" {
+			http.Error(w, "Review text is required", http.StatusBadRequest)
+			return
+		}
+
+		rev, err := dbInstance.CreateReview(author, text, rating, userID)
+		if err != nil {
+			http.Error(w, "Failed to create review", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(rev)
+	}))
+
 	// Serve Static Files from dist / root directory (needed for deployment)
 	staticDir := "."
 	if _, err := os.Stat("index.html"); os.IsNotExist(err) {

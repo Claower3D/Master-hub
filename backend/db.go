@@ -46,6 +46,16 @@ type CallbackRecord struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// ReviewRecord represents a user review in the DB
+type ReviewRecord struct {
+	ID        int       `json:"id"`
+	UserID    *int      `json:"user_id"`
+	Author    string    `json:"author"`
+	Text      string    `json:"text"`
+	Rating    int       `json:"rating"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 // DB defines all database operations
 type DB interface {
 	CreateUser(name, email, phone, city, password string) (*User, error)
@@ -62,6 +72,8 @@ type DB interface {
 	AddTelegramSubscriber(chatID int64, name string) error
 	RemoveTelegramSubscriber(chatID int64) error
 	GetTelegramSubscribers() ([]int64, error)
+	CreateReview(author, text string, rating int, userID *int) (*ReviewRecord, error)
+	GetReviews() ([]ReviewRecord, error)
 	Close() error
 }
 
@@ -118,6 +130,15 @@ func NewPostgresDB(connStr string) (*PostgresDB, error) {
 		CREATE TABLE IF NOT EXISTS tg_subscribers (
 			chat_id BIGINT PRIMARY KEY,
 			name VARCHAR(255) NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS reviews (
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+			author VARCHAR(255) NOT NULL,
+			text TEXT NOT NULL,
+			rating INTEGER NOT NULL DEFAULT 5,
+			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 		);
 	`)
 	if err != nil {
@@ -399,6 +420,41 @@ func (p *PostgresDB) GetTelegramSubscribers() ([]int64, error) {
 	return list, nil
 }
 
+func (p *PostgresDB) CreateReview(author, text string, rating int, userID *int) (*ReviewRecord, error) {
+	var r ReviewRecord
+	err := p.db.QueryRow(`
+		INSERT INTO reviews (author, text, rating, user_id)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, user_id, author, text, rating, created_at
+	`, author, text, rating, userID).Scan(&r.ID, &r.UserID, &r.Author, &r.Text, &r.Rating, &r.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (p *PostgresDB) GetReviews() ([]ReviewRecord, error) {
+	rows, err := p.db.Query(`
+		SELECT id, user_id, author, text, rating, created_at
+		FROM reviews
+		ORDER BY created_at DESC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var list []ReviewRecord
+	for rows.Next() {
+		var r ReviewRecord
+		if err := rows.Scan(&r.ID, &r.UserID, &r.Author, &r.Text, &r.Rating, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		list = append(list, r)
+	}
+	return list, nil
+}
+
 type TgSubscriber struct {
 	ChatID int64  `json:"chat_id"`
 	Name   string `json:"name"`
@@ -413,6 +469,7 @@ type JsonDB struct {
 		Sessions      []Session        `json:"sessions"`
 		Callbacks     []CallbackRecord `json:"callbacks"`
 		TgSubscribers []TgSubscriber   `json:"tg_subscribers"`
+		Reviews       []ReviewRecord   `json:"reviews"`
 	}
 }
 
@@ -427,6 +484,7 @@ func NewJsonDB(filePath string) (*JsonDB, error) {
 		db.Data.Sessions = []Session{}
 		db.Data.Callbacks = []CallbackRecord{}
 		db.Data.TgSubscribers = []TgSubscriber{}
+		db.Data.Reviews = []ReviewRecord{}
 		err = db.save()
 		if err != nil {
 			return nil, err
@@ -690,6 +748,37 @@ func (j *JsonDB) GetTelegramSubscribers() ([]int64, error) {
 
 func (j *JsonDB) Close() error {
 	return nil
+}
+
+func (j *JsonDB) CreateReview(author, text string, rating int, userID *int) (*ReviewRecord, error) {
+	j.load()
+	id := 1
+	if len(j.Data.Reviews) > 0 {
+		id = j.Data.Reviews[len(j.Data.Reviews)-1].ID + 1
+	}
+
+	r := ReviewRecord{
+		ID:        id,
+		UserID:    userID,
+		Author:    author,
+		Text:      text,
+		Rating:    rating,
+		CreatedAt: time.Now(),
+	}
+	j.Data.Reviews = append(j.Data.Reviews, r)
+	if err := j.save(); err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (j *JsonDB) GetReviews() ([]ReviewRecord, error) {
+	j.load()
+	var list []ReviewRecord
+	for i := len(j.Data.Reviews) - 1; i >= 0; i-- {
+		list = append(list, j.Data.Reviews[i])
+	}
+	return list, nil
 }
 
 // Helper function to initialize database connection

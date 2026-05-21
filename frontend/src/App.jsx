@@ -363,6 +363,34 @@ export default function App() {
   const [statsData, setStatsData] = useState([]);
   const [reviewsData, setReviewsData] = useState([]);
 
+  // Reviews submit states
+  const [reviewAuthor, setReviewAuthor] = useState('');
+  const [reviewText, setReviewText] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewSuccess, setReviewSuccess] = useState('');
+  const [reviewError, setReviewError] = useState('');
+
+  // Color customizer states
+  const [accentColor, setAccentColor] = useState(() => localStorage.getItem('accent-color') || '#7cf2c7');
+  const [accent2Color, setAccent2Color] = useState(() => localStorage.getItem('accent-2-color') || '#5b8cff');
+  const [accent3Color, setAccent3Color] = useState(() => localStorage.getItem('accent-3-color') || '#ff7a59');
+  const [isColorPanelOpen, setIsColorPanelOpen] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent', accentColor);
+    localStorage.setItem('accent-color', accentColor);
+  }, [accentColor]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent-2', accent2Color);
+    localStorage.setItem('accent-2-color', accent2Color);
+  }, [accent2Color]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent-3', accent3Color);
+    localStorage.setItem('accent-3-color', accent3Color);
+  }, [accent3Color]);
+
   // Theme effect
   useEffect(() => {
     if (theme === 'light') {
@@ -411,6 +439,44 @@ export default function App() {
         ]);
       });
   }, []);
+
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    setReviewSuccess('');
+    setReviewError('');
+
+    if (!reviewText.trim()) {
+      setReviewError(lang === 'ru' ? 'Введите текст отзыва' : lang === 'kz' ? 'Пікір мәтінін енгізіңіз' : 'Please enter review text');
+      return;
+    }
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    fetch(API_BASE + '/api/reviews/new', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        author: reviewAuthor.trim() || (user ? user.name : ''),
+        text: reviewText,
+        rating: reviewRating
+      })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to submit review');
+        return res.json();
+      })
+      .then(newRev => {
+        setReviewsData(prev => [newRev, ...prev]);
+        setReviewText('');
+        setReviewAuthor('');
+        setReviewRating(5);
+        setReviewSuccess(lang === 'ru' ? 'Отзыв успешно добавлен!' : lang === 'kz' ? 'Пікір сәтті қосылды!' : 'Review added successfully!');
+      })
+      .catch(err => setReviewError(err.message));
+  };
 
   // Translation helper
   const t = (key) => {
@@ -2279,11 +2345,139 @@ const pageDataMap = {
             </div>
             <div className="r-grid">
               {reviewsData.map((rev, idx) => (
-                <blockquote key={idx}>
+                <blockquote key={idx} style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ color: '#ffcc00', fontSize: '14px', display: 'flex', gap: '2px' }}>
+                    {Array.from({ length: rev.rating || 5 }).map((_, i) => (
+                      <i key={i} className="ri-star-fill"></i>
+                    ))}
+                  </div>
                   <p>{t(rev.text)}</p>
-                  <cite>{t(rev.author)}</cite>
+                  <cite style={{ marginTop: 'auto' }}>{t(rev.author)}</cite>
                 </blockquote>
               ))}
+            </div>
+
+            {/* REVIEW FORM */}
+            <div className="review-form-container" style={{
+              marginTop: '40px',
+              background: 'rgba(20, 27, 52, 0.6)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '16px',
+              padding: '30px',
+              maxWidth: '600px',
+              marginInline: 'auto'
+            }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '15px', color: '#fff', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <i className="ri-message-3-line" style={{ color: 'var(--accent)' }}></i>
+                {lang === 'ru' ? 'Оставить отзыв' : lang === 'kz' ? 'Пікір қалдыру' : 'Leave a Review'}
+              </h3>
+
+              {reviewSuccess && (
+                <div style={{ padding: '12px', background: 'rgba(0, 230, 115, 0.1)', border: '1px solid #00e673', borderRadius: '10px', color: '#00e673', fontSize: '13px', marginBottom: '15px' }}>
+                  {reviewSuccess}
+                </div>
+              )}
+
+              {reviewError && (
+                <div style={{ padding: '12px', background: 'rgba(255, 50, 50, 0.1)', border: '1px solid #ff3232', borderRadius: '10px', color: '#ff3232', fontSize: '13px', marginBottom: '15px' }}>
+                  {reviewError}
+                </div>
+              )}
+
+              <form onSubmit={handleReviewSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {lang === 'ru' ? 'Оценка:' : lang === 'kz' ? 'Бағалау:' : 'Rating:'}
+                  </label>
+                  <div style={{ display: 'flex', gap: '6px', fontSize: '20px' }}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <i
+                        key={star}
+                        className={reviewRating >= star ? "ri-star-fill" : "ri-star-line"}
+                        style={{ color: '#ffcc00', cursor: 'pointer', transition: 'transform 0.15s ease' }}
+                        onClick={() => setReviewRating(star)}
+                      ></i>
+                    ))}
+                  </div>
+                </div>
+
+                {!user && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {lang === 'ru' ? 'Ваше имя:' : lang === 'kz' ? 'Атыңыз:' : 'Your Name:'}
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={lang === 'ru' ? 'Аноним' : lang === 'kz' ? 'Аноним' : 'Anonymous'}
+                      value={reviewAuthor}
+                      onChange={(e) => setReviewAuthor(e.target.value)}
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '10px',
+                        padding: '10px 14px',
+                        color: '#fff',
+                        fontSize: '14px',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                )}
+
+                {user && (
+                  <div style={{ fontSize: '13px', color: 'var(--muted)', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                    <i className="ri-user-line" style={{ marginRight: '6px', color: 'var(--accent)' }}></i>
+                    {lang === 'ru' ? 'Вы пишите отзыв от имени: ' : lang === 'kz' ? 'Сіз келесі атпен пікір жазып жатырсыз: ' : 'Posting as: '} 
+                    <strong style={{ color: '#fff' }}>{user.name}</strong>
+                  </div>
+                )}
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {lang === 'ru' ? 'Текст отзыва:' : lang === 'kz' ? 'Пікір мәтіні:' : 'Review Text:'}
+                  </label>
+                  <textarea
+                    required
+                    rows={3}
+                    placeholder={lang === 'ru' ? 'Напишите ваше мнение о качестве услуг...' : lang === 'kz' ? 'Қызмет көрсету сапасы туралы пікіріңізді жазыңыз...' : 'Write your review here...'}
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '10px',
+                      padding: '10px 14px',
+                      color: '#fff',
+                      fontSize: '14px',
+                      outline: 'none',
+                      resize: 'none'
+                    }}
+                  />
+                </div>
+
+                <button type="submit" style={{
+                  background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
+                  border: 'none',
+                  borderRadius: '10px',
+                  color: '#0b1020',
+                  padding: '12px',
+                  fontWeight: 'bold',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 15px rgba(124, 242, 199, 0.2)',
+                  transition: 'transform 0.15s ease, opacity 0.15s ease'
+                }}>
+                  <i className="ri-send-plane-line"></i>
+                  {lang === 'ru' ? 'Отправить отзыв' : lang === 'kz' ? 'Пікірді жіберу' : 'Submit Review'}
+                </button>
+              </form>
             </div>
           </section>
         </>
@@ -3231,6 +3425,166 @@ const pageDataMap = {
           </div>
         </div>
       )}
+      {/* COLOR SCHEME CUSTOMIZER WIDGET */}
+      <div className="color-customizer" style={{
+        position: 'fixed',
+        right: isColorPanelOpen ? '20px' : '-320px',
+        top: '25%',
+        width: '300px',
+        background: 'rgba(15, 21, 43, 0.85)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: '16px',
+        padding: '20px',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        zIndex: 10000,
+        transition: 'right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+        color: '#fff'
+      }}>
+        {/* Toggle Button */}
+        <button 
+          onClick={() => setIsColorPanelOpen(!isColorPanelOpen)}
+          style={{
+            position: 'absolute',
+            left: '-50px',
+            top: '20px',
+            width: '50px',
+            height: '50px',
+            background: 'var(--accent)',
+            color: '#0b1020',
+            border: 'none',
+            borderRadius: '12px 0 0 12px',
+            cursor: 'pointer',
+            fontSize: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '-4px 4px 15px rgba(0,0,0,0.3)',
+            outline: 'none'
+          }}
+          aria-label="Настройка цвета"
+        >
+          <i className={`ri-palette-line ${isColorPanelOpen ? '' : 'ri-spin'}`}></i>
+        </button>
+
+        <h4 style={{ fontSize: '15px', fontWeight: '850', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <i className="ri-settings-4-line"></i>
+          {lang === 'ru' ? 'Цветовая палитра' : lang === 'kz' ? 'Түс палитрасы' : 'Color Customizer'}
+        </h4>
+
+        {/* Preset Palettes */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', fontSize: '11px', color: 'var(--muted)', fontWeight: 'bold', marginBottom: '8px', textTransform: 'uppercase' }}>
+            {lang === 'ru' ? 'Предустановки:' : lang === 'kz' ? 'Дайын жинақтар:' : 'Presets:'}
+          </label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+            {[
+              { name: lang === 'ru' ? 'Мята (По ум.)' : 'Default', colors: ['#7cf2c7', '#5b8cff', '#ff7a59'] },
+              { name: lang === 'ru' ? 'Оранжевый' : 'Orange Glow', colors: ['#ff7a59', '#ffcc00', '#ff3300'] },
+              { name: lang === 'ru' ? 'Киберпанк' : 'Cyberpunk', colors: ['#ff007f', '#9900ff', '#00f2fe'] },
+              { name: lang === 'ru' ? 'Океан' : 'Ocean Blue', colors: ['#00e6ff', '#0072ff', '#00f2fe'] },
+              { name: lang === 'ru' ? 'Изумруд' : 'Emerald', colors: ['#00ff87', '#60efff', '#00a86b'] },
+              { name: lang === 'ru' ? 'Рубин' : 'Ruby Red', colors: ['#ff0055', '#ff5500', '#7a001e'] }
+            ].map((p, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setAccentColor(p.colors[0]);
+                  setAccent2Color(p.colors[1]);
+                  setAccent3Color(p.colors[2]);
+                }}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '8px',
+                  padding: '6px 8px',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '6px',
+                  transition: 'background 0.2s'
+                }}
+              >
+                <span>{p.name}</span>
+                <div style={{ display: 'flex', gap: '3px' }}>
+                  {p.colors.map((c, i) => (
+                    <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: c }}></div>
+                  ))}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Custom Pickers */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px' }}>
+          <label style={{ display: 'block', fontSize: '11px', color: 'var(--muted)', fontWeight: 'bold', textTransform: 'uppercase' }}>
+            {lang === 'ru' ? 'Свой выбор:' : lang === 'kz' ? 'Өз түсіңіз:' : 'Custom Choice:'}
+          </label>
+          
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
+              {lang === 'ru' ? 'Основной цвет:' : 'Primary Accent:'}
+            </span>
+            <input 
+              type="color" 
+              value={accentColor} 
+              onChange={(e) => setAccentColor(e.target.value)}
+              style={{ width: '40px', height: '24px', border: 'none', background: 'none', cursor: 'pointer' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
+              {lang === 'ru' ? 'Вторичный цвет:' : 'Secondary Accent:'}
+            </span>
+            <input 
+              type="color" 
+              value={accent2Color} 
+              onChange={(e) => setAccent2Color(e.target.value)}
+              style={{ width: '40px', height: '24px', border: 'none', background: 'none', cursor: 'pointer' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
+              {lang === 'ru' ? 'Третичный (оранж):' : 'Tertiary Accent:'}
+            </span>
+            <input 
+              type="color" 
+              value={accent3Color} 
+              onChange={(e) => setAccent3Color(e.target.value)}
+              style={{ width: '40px', height: '24px', border: 'none', background: 'none', cursor: 'pointer' }}
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            setAccentColor('#7cf2c7');
+            setAccent2Color('#5b8cff');
+            setAccent3Color('#ff7a59');
+          }}
+          style={{
+            marginTop: '15px',
+            width: '100%',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: '#fff',
+            padding: '8px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          {lang === 'ru' ? 'Сбросить цвета' : 'Reset Colors'}
+        </button>
+      </div>
     </>
   );
 }
