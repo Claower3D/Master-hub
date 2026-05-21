@@ -4745,32 +4745,47 @@ const pageDataMap = {
           </div>
         )}
 
-        {/* Floating Button */}
-        <button
-          onClick={() => {
-            setIsAssistantOpen(prev => !prev);
-            setShowAssistantTooltip(false);
-          }}
-          style={{
-            width: '64px',
-            height: '64px',
-            borderRadius: '50%',
-            background: 'var(--accent)',
-            color: '#0b1020',
-            border: 'none',
-            display: 'grid',
-            placeItems: 'center',
-            fontSize: '28px',
-            cursor: 'pointer',
-            boxShadow: '0 10px 25px rgba(124,242,199,0.5)',
-            transition: 'all 0.3s ease',
-            transform: isAssistantOpen ? 'scale(0.9)' : 'scale(1)'
-          }}
-          aria-label="Ассистент по сайту"
-          title="Ассистент по сайту"
-        >
-          <i className={isAssistantOpen ? "ri-close-line" : "ri-robot-2-line"}></i>
-        </button>
+        {/* Floating Buttons Group */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* Reviews Floating Button */}
+          <button
+            onClick={() => {
+              document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="reviews-floating-btn"
+            aria-label={t('nav_reviews')}
+            title={t('nav_reviews')}
+          >
+            <i className="ri-message-3-line"></i>
+          </button>
+
+          {/* Floating Button */}
+          <button
+            onClick={() => {
+              setIsAssistantOpen(prev => !prev);
+              setShowAssistantTooltip(false);
+            }}
+            style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: 'var(--accent)',
+              color: '#0b1020',
+              border: 'none',
+              display: 'grid',
+              placeItems: 'center',
+              fontSize: '28px',
+              cursor: 'pointer',
+              boxShadow: '0 10px 25px rgba(124,242,199,0.5)',
+              transition: 'all 0.3s ease',
+              transform: isAssistantOpen ? 'scale(0.9)' : 'scale(1)'
+            }}
+            aria-label="Ассистент по сайту"
+            title="Ассистент по сайту"
+          >
+            <i className={isAssistantOpen ? "ri-close-line" : "ri-robot-2-line"}></i>
+          </button>
+        </div>
       </div>
 
       {/* AUTH MODAL */}
