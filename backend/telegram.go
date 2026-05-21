@@ -15,34 +15,24 @@ import (
 
 const tgAPIBase = "https://api.telegram.org/bot"
 
+type tgMessage struct {
+	MessageID int `json:"message_id"`
+	From      struct {
+		ID        int64  `json:"id"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		Username  string `json:"username"`
+	} `json:"from"`
+	Chat struct {
+		ID int64 `json:"id"`
+	} `json:"chat"`
+	Text           string     `json:"text"`
+	ReplyToMessage *tgMessage `json:"reply_to_message"`
+}
+
 type tgUpdate struct {
-	UpdateID int `json:"update_id"`
-	Message  struct {
-		MessageID int `json:"message_id"`
-		From      struct {
-			ID        int64  `json:"id"`
-			FirstName string `json:"first_name"`
-			LastName  string `json:"last_name"`
-			Username  string `json:"username"`
-		} `json:"from"`
-		Chat struct {
-			ID int64 `json:"id"`
-		} `json:"chat"`
-		Text string `json:"text"`
-	} `json:"message"`
-	ReplyToMessage *struct {
-		MessageID int `json:"message_id"`
-		From struct {
-			ID        int64  `json:"id"`
-			FirstName string `json:"first_name"`
-			LastName  string `json:"last_name"`
-			Username  string `json:"username"`
-		} `json:"from"`
-		Chat struct {
-			ID int64 `json:"id"`
-		} `json:"chat"`
-		Text string `json:"text"`
-	} `json:"reply_to_message"`
+	UpdateID int       `json:"update_id"`
+	Message  tgMessage `json:"message"`
 }
 
 type tgUpdatesResponse struct {
@@ -151,6 +141,10 @@ func tgGetUpdates(token string, offset int) ([]tgUpdate, error) {
 }
 
 func handleTgUpdate(db DB, upd tgUpdate) {
+	if upd.Message.MessageID == 0 {
+		return
+	}
+
 	chatID := upd.Message.Chat.ID
 	text := upd.Message.Text
 	firstName := upd.Message.From.FirstName
@@ -161,7 +155,7 @@ func handleTgUpdate(db DB, upd tgUpdate) {
 		matches := re.FindStringSubmatch(upd.Message.ReplyToMessage.Text)
 		if len(matches) > 1 {
 			orderID := matches[1]
-			tgSendMessage(chatID, fmt.Sprintf("✅ Пользователь %s принял заявку #%s", firstName, orderID))
+			tgSendMessage(chatID, fmt.Sprintf("✅ Оператор %s принял заявку #%s", firstName, orderID))
 			return
 		}
 	}
