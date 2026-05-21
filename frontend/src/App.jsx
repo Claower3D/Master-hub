@@ -371,25 +371,50 @@ export default function App() {
   const [reviewError, setReviewError] = useState('');
 
   // Color customizer states
-  const [accentColor, setAccentColor] = useState(() => localStorage.getItem('accent-color') || '#7cf2c7');
-  const [accent2Color, setAccent2Color] = useState(() => localStorage.getItem('accent-2-color') || '#5b8cff');
-  const [accent3Color, setAccent3Color] = useState(() => localStorage.getItem('accent-3-color') || '#ff7a59');
+  const [accentColor, setAccentColor] = useState('#7cf2c7');
+  const [accent2Color, setAccent2Color] = useState('#5b8cff');
+  const [accent3Color, setAccent3Color] = useState('#ff7a59');
   const [isColorPanelOpen, setIsColorPanelOpen] = useState(false);
 
+  // Load color values depending on active theme
   useEffect(() => {
+    if (theme === 'light') {
+      const savedAccent = localStorage.getItem('accent-color-light') || '#f97316';
+      const savedAccent2 = localStorage.getItem('accent-2-color-light') || '#ea580c';
+      const savedAccent3 = localStorage.getItem('accent-3-color-light') || '#10b981';
+      setAccentColor(savedAccent);
+      setAccent2Color(savedAccent2);
+      setAccent3Color(savedAccent3);
+    } else {
+      const savedAccent = localStorage.getItem('accent-color-dark') || '#7cf2c7';
+      const savedAccent2 = localStorage.getItem('accent-2-color-dark') || '#5b8cff';
+      const savedAccent3 = localStorage.getItem('accent-3-color-dark') || '#ff7a59';
+      setAccentColor(savedAccent);
+      setAccent2Color(savedAccent2);
+      setAccent3Color(savedAccent3);
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    document.body.style.setProperty('--accent', accentColor);
     document.documentElement.style.setProperty('--accent', accentColor);
-    localStorage.setItem('accent-color', accentColor);
-  }, [accentColor]);
+    const key = theme === 'light' ? 'accent-color-light' : 'accent-color-dark';
+    localStorage.setItem(key, accentColor);
+  }, [accentColor, theme]);
 
   useEffect(() => {
+    document.body.style.setProperty('--accent-2', accent2Color);
     document.documentElement.style.setProperty('--accent-2', accent2Color);
-    localStorage.setItem('accent-2-color', accent2Color);
-  }, [accent2Color]);
+    const key = theme === 'light' ? 'accent-2-color-light' : 'accent-2-color-dark';
+    localStorage.setItem(key, accent2Color);
+  }, [accent2Color, theme]);
 
   useEffect(() => {
+    document.body.style.setProperty('--accent-3', accent3Color);
     document.documentElement.style.setProperty('--accent-3', accent3Color);
-    localStorage.setItem('accent-3-color', accent3Color);
-  }, [accent3Color]);
+    const key = theme === 'light' ? 'accent-3-color-light' : 'accent-3-color-dark';
+    localStorage.setItem(key, accent3Color);
+  }, [accent3Color, theme]);
 
   // Theme effect
   useEffect(() => {
@@ -3431,15 +3456,15 @@ const pageDataMap = {
         right: isColorPanelOpen ? '20px' : '-320px',
         top: '25%',
         width: '300px',
-        background: 'rgba(15, 21, 43, 0.85)',
+        background: theme === 'light' ? 'rgba(255, 255, 255, 0.88)' : 'rgba(15, 21, 43, 0.88)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
+        border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.1)',
         borderRadius: '16px',
         padding: '20px',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+        boxShadow: theme === 'light' ? '0 20px 50px rgba(0,0,0,0.15)' : '0 20px 50px rgba(0,0,0,0.5)',
         zIndex: 10000,
         transition: 'right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
-        color: '#fff'
+        color: theme === 'light' ? '#0f172a' : '#fff'
       }}>
         {/* Toggle Button */}
         <button 
@@ -3451,7 +3476,7 @@ const pageDataMap = {
             width: '50px',
             height: '50px',
             background: 'var(--accent)',
-            color: '#0b1020',
+            color: '#fff',
             border: 'none',
             borderRadius: '12px 0 0 12px',
             cursor: 'pointer',
@@ -3459,7 +3484,7 @@ const pageDataMap = {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '-4px 4px 15px rgba(0,0,0,0.3)',
+            boxShadow: '-4px 4px 15px rgba(0,0,0,0.15)',
             outline: 'none'
           }}
           aria-label="Настройка цвета"
@@ -3478,14 +3503,21 @@ const pageDataMap = {
             {lang === 'ru' ? 'Предустановки:' : lang === 'kz' ? 'Дайын жинақтар:' : 'Presets:'}
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-            {[
-              { name: lang === 'ru' ? 'Мята (По ум.)' : 'Default', colors: ['#7cf2c7', '#5b8cff', '#ff7a59'] },
+            {(theme === 'light' ? [
+              { name: lang === 'ru' ? 'Оранжевый (ум)' : 'Orange (Def)', colors: ['#f97316', '#ea580c', '#10b981'] },
+              { name: lang === 'ru' ? 'Синий Премиум' : 'Royal Blue', colors: ['#2563eb', '#1d4ed8', '#f59e0b'] },
+              { name: lang === 'ru' ? 'Тиффани' : 'Teal Emerald', colors: ['#0d9488', '#0f766e', '#84cc16'] },
+              { name: lang === 'ru' ? 'Коралл' : 'Soft Coral', colors: ['#f43f5e', '#e11d48', '#10b981'] },
+              { name: lang === 'ru' ? 'Фиолетовый' : 'Vivid Violet', colors: ['#8b5cf6', '#7c3aed', '#f43f5e'] },
+              { name: lang === 'ru' ? 'Роза' : 'Gold Rose', colors: ['#db2777', '#be185d', '#eab308'] }
+            ] : [
+              { name: lang === 'ru' ? 'Мята (ум)' : 'Mint (Def)', colors: ['#7cf2c7', '#5b8cff', '#ff7a59'] },
               { name: lang === 'ru' ? 'Оранжевый' : 'Orange Glow', colors: ['#ff7a59', '#ffcc00', '#ff3300'] },
               { name: lang === 'ru' ? 'Киберпанк' : 'Cyberpunk', colors: ['#ff007f', '#9900ff', '#00f2fe'] },
               { name: lang === 'ru' ? 'Океан' : 'Ocean Blue', colors: ['#00e6ff', '#0072ff', '#00f2fe'] },
               { name: lang === 'ru' ? 'Изумруд' : 'Emerald', colors: ['#00ff87', '#60efff', '#00a86b'] },
               { name: lang === 'ru' ? 'Рубин' : 'Ruby Red', colors: ['#ff0055', '#ff5500', '#7a001e'] }
-            ].map((p, idx) => (
+            ]).map((p, idx) => (
               <button
                 key={idx}
                 onClick={() => {
@@ -3494,13 +3526,13 @@ const pageDataMap = {
                   setAccent3Color(p.colors[2]);
                 }}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: theme === 'light' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.04)',
+                  border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.06)' : '1px solid rgba(255, 255, 255, 0.08)',
                   borderRadius: '8px',
                   padding: '6px 8px',
                   fontSize: '11px',
                   fontWeight: '600',
-                  color: '#fff',
+                  color: theme === 'light' ? '#0f172a' : '#fff',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -3521,7 +3553,7 @@ const pageDataMap = {
         </div>
 
         {/* Custom Pickers */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', borderTop: theme === 'light' ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.08)', paddingTop: '15px' }}>
           <label style={{ display: 'block', fontSize: '11px', color: 'var(--muted)', fontWeight: 'bold', textTransform: 'uppercase' }}>
             {lang === 'ru' ? 'Свой выбор:' : lang === 'kz' ? 'Өз түсіңіз:' : 'Custom Choice:'}
           </label>
@@ -3552,7 +3584,7 @@ const pageDataMap = {
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
-              {lang === 'ru' ? 'Третичный (оранж):' : 'Tertiary Accent:'}
+              {lang === 'ru' ? 'Третичный цвет:' : 'Tertiary Accent:'}
             </span>
             <input 
               type="color" 
@@ -3565,16 +3597,22 @@ const pageDataMap = {
 
         <button
           onClick={() => {
-            setAccentColor('#7cf2c7');
-            setAccent2Color('#5b8cff');
-            setAccent3Color('#ff7a59');
+            if (theme === 'light') {
+              setAccentColor('#f97316');
+              setAccent2Color('#ea580c');
+              setAccent3Color('#10b981');
+            } else {
+              setAccentColor('#7cf2c7');
+              setAccent2Color('#5b8cff');
+              setAccent3Color('#ff7a59');
+            }
           }}
           style={{
             marginTop: '15px',
             width: '100%',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#fff',
+            background: theme === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.05)',
+            border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.1)',
+            color: theme === 'light' ? '#0f172a' : '#fff',
             padding: '8px',
             borderRadius: '8px',
             fontSize: '12px',
