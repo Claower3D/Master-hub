@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 	"regexp"
 	"strings"
@@ -155,8 +156,16 @@ func handleTgUpdate(db DB, upd tgUpdate) {
 		matches := re.FindStringSubmatch(upd.Message.ReplyToMessage.Text)
 		if len(matches) > 1 {
 			orderID := matches[1]
-			tgSendMessage(chatID, fmt.Sprintf("✅ Оператор %s принял заявку #%s", firstName, orderID))
-			return
+			orderIDInt, err := strconv.Atoi(orderID)
+			if err == nil {
+				if errDb := db.UpdateCallbackStatus(orderIDInt, "in_progress"); errDb != nil {
+					log.Printf("⚠️ Ошибка обновления статуса для заявки %d: %v", orderIDInt, errDb)
+					tgSendMessage(chatID, fmt.Sprintf("⚠️ Заявка #%s найдена, но не удалось обновить её статус в базе.", orderID))
+					return
+				}
+				tgSendMessage(chatID, fmt.Sprintf("✅ Оператор %s принял заявку #%s. Статус обновлен на «В обработке».", firstName, orderID))
+				return
+			}
 		}
 	}
 
