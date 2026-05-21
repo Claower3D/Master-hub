@@ -214,6 +214,22 @@ export default function App() {
   const fetchMyCallbacks = () => {
     if (!token) return;
     setCallbacksLoading(true);
+    
+    // Refresh user info to get latest bonuses balance
+    fetch(API_BASE + '/api/auth/me', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => { if (res.ok) return res.json(); })
+      .then(data => {
+        if (data && data.user) {
+          setUser(data.user);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+      })
+      .catch(err => console.log('Error refreshing user details:', err));
+
     fetch(API_BASE + '/api/callbacks', {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -2854,6 +2870,12 @@ const pageDataMap = {
                 <i className="ri-dashboard-3-line"></i> Панель
               </button>
               <button 
+                className={`cabinet-tab-btn ${cabinetTab === 'warranty' ? 'active' : ''}`}
+                onClick={() => setCabinetTab('warranty')}
+              >
+                <i className="ri-shield-check-line"></i> {lang === 'ru' ? 'Гарантии' : lang === 'kz' ? 'Кепілдіктер' : 'Warranties'}
+              </button>
+              <button 
                 className={`cabinet-tab-btn ${cabinetTab === 'profile' ? 'active' : ''}`}
                 onClick={() => { setCabinetTab('profile'); setProfileSuccess(''); setProfileError(''); }}
               >
@@ -2970,6 +2992,131 @@ const pageDataMap = {
                       </div>
                     )}
                   </div>
+                </div>
+              )}
+
+              {cabinetTab === 'warranty' && (
+                <div className="cabinet-tab-content">
+                  <h3 className="cabinet-section-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '18px', fontWeight: '850', marginBottom: '20px' }}>
+                    <i className="ri-shield-check-line" style={{ color: 'var(--accent)' }}></i>
+                    {lang === 'ru' ? 'Гарантийные листы и Бонусы' : lang === 'kz' ? 'Кепілдік парақтары және Бонустар' : 'Warranty Certificates & Bonuses'}
+                  </h3>
+
+                  {myCallbacks.filter(cb => cb.status === 'completed').length === 0 ? (
+                    <div style={{ padding: '40px 20px', textAlign: 'center', background: 'var(--surface-2)', borderRadius: '16px', color: 'var(--muted)', fontSize: '14px', border: '1px dashed rgba(255,255,255,0.05)' }}>
+                      <i className="ri-shield-flash-line" style={{ fontSize: '36px', color: 'rgba(255,255,255,0.1)', display: 'block', marginBottom: '15px' }}></i>
+                      {lang === 'ru' 
+                        ? 'У вас пока нет выполненных заказов с активной гарантией.' 
+                        : lang === 'kz' 
+                        ? 'Сізде әлі белсенді кепілдігі бар орындалған тапсырыстар жоқ.' 
+                        : 'You do not have any completed orders with active warranty yet.'}
+                    </div>
+                  ) : (
+                    <div className="warranties-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+                      {myCallbacks.filter(cb => cb.status === 'completed').map(cb => {
+                        const compDate = new Date(cb.created_at);
+                        const expiryDate = new Date(compDate.getTime() + 90 * 24 * 60 * 60 * 1000);
+                        const isExpired = new Date() > expiryDate;
+                        
+                        return (
+                          <div key={cb.id} className="warranty-card" style={{
+                            background: 'linear-gradient(135deg, rgba(20, 20, 25, 0.9) 0%, rgba(30, 30, 40, 0.9) 100%)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between'
+                          }}>
+                            <div style={{
+                              position: 'absolute',
+                              top: '-20%',
+                              right: '-20%',
+                              width: '120px',
+                              height: '120px',
+                              background: isExpired ? 'radial-gradient(circle, rgba(100,100,100,0.1) 0%, transparent 70%)' : 'radial-gradient(circle, rgba(0, 242, 254, 0.15) 0%, transparent 70%)',
+                              pointerEvents: 'none'
+                            }}></div>
+
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                                <span style={{ fontSize: '11px', letterSpacing: '1px', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'uppercase' }}>
+                                  MASTERHUB GUARANTEE
+                                </span>
+                                <span style={{
+                                  fontSize: '11px',
+                                  fontWeight: 'bold',
+                                  padding: '4px 8px',
+                                  borderRadius: '6px',
+                                  background: isExpired ? 'rgba(255,255,255,0.05)' : 'rgba(0, 230, 115, 0.1)',
+                                  color: isExpired ? '#aaa' : '#00e673',
+                                  border: isExpired ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0, 230, 115, 0.2)'
+                                }}>
+                                  {isExpired 
+                                    ? (lang === 'ru' ? 'ИСТЕКЛА' : lang === 'kz' ? 'МЕРЗІМІ БІТТІ' : 'EXPIRED') 
+                                    : (lang === 'ru' ? 'АКТИВНА' : lang === 'kz' ? 'БЕЛСЕНДІ' : 'ACTIVE')}
+                                </span>
+                              </div>
+
+                              <h4 style={{ fontSize: '16px', fontWeight: '900', color: '#fff', margin: '0 0 5px 0' }}>
+                                MH-G-{cb.id}
+                              </h4>
+                              <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '0 0 15px 0' }}>
+                                {cb.service}
+                              </p>
+
+                              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px', marginBottom: '15px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px' }}>
+                                  <span style={{ color: 'var(--muted)' }}>
+                                    {lang === 'ru' ? 'Дата оформления:' : lang === 'kz' ? 'Ресімделген күні:' : 'Issued Date:'}
+                                  </span>
+                                  <span style={{ color: '#fff', fontWeight: '600' }}>
+                                    {compDate.toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '6px' }}>
+                                  <span style={{ color: 'var(--muted)' }}>
+                                    {lang === 'ru' ? 'Срок действия:' : lang === 'kz' ? 'Күшін жою күні:' : 'Expiry Date:'}
+                                  </span>
+                                  <span style={{ color: '#fff', fontWeight: '600' }}>
+                                    {expiryDate.toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                                  <span style={{ color: 'var(--muted)' }}>
+                                    {lang === 'ru' ? 'Начислено бонусов:' : lang === 'kz' ? 'Бонустар есептелді:' : 'Bonuses Credited:'}
+                                  </span>
+                                  <span style={{ color: '#ffcc00', fontWeight: 'bold' }}>
+                                    +1,000 ✨
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div style={{
+                              background: 'rgba(255,255,255,0.02)',
+                              padding: '10px',
+                              borderRadius: '8px',
+                              fontSize: '11px',
+                              color: 'var(--muted)',
+                              lineHeight: '1.4',
+                              border: '1px solid rgba(255,255,255,0.03)'
+                            }}>
+                              <i className="ri-information-line" style={{ marginRight: '5px', color: 'var(--accent)' }}></i>
+                              {lang === 'ru' 
+                                ? 'Гарантия покрывает все выполненные работы. При возникновении гарантийного случая обратитесь в поддержку.' 
+                                : lang === 'kz' 
+                                ? 'Кепілдік барлық жұмыстарды қамтиды. Кепілдік жағдайы туындаса, қолдау қызметіне хабарласыңыз.' 
+                                : 'The warranty covers all completed works. In case of a warranty event, contact support.'}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 

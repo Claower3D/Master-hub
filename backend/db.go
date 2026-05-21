@@ -335,8 +335,32 @@ func (p *PostgresDB) GetAllCallbacks() ([]CallbackRecord, error) {
 }
 
 func (p *PostgresDB) UpdateCallbackStatus(id int, status string) error {
-	_, err := p.db.Exec("UPDATE callbacks SET status = $1 WHERE id = $2", status, id)
-	return err
+	tx, err := p.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	var oldStatus string
+	var userID *int
+	err = tx.QueryRow("SELECT status, user_id FROM callbacks WHERE id = $1", id).Scan(&oldStatus, &userID)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("UPDATE callbacks SET status = $1 WHERE id = $2", status, id)
+	if err != nil {
+		return err
+	}
+
+	if status == "completed" && oldStatus != "completed" && userID != nil {
+		_, err = tx.Exec("UPDATE users SET bonuses = bonuses + 1000 WHERE id = $1", *userID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
 func (p *PostgresDB) Close() error {
@@ -616,7 +640,17 @@ func (j *JsonDB) UpdateCallbackStatus(id int, status string) error {
 	j.load()
 	for idx, cb := range j.Data.Callbacks {
 		if cb.ID == id {
+			oldStatus := cb.Status
 			j.Data.Callbacks[idx].Status = status
+
+			if status == "completed" && oldStatus != "completed" && cb.UserID != nil {
+				for uIdx, u := range j.Data.Users {
+					if u.ID == *cb.UserID {
+						j.Data.Users[uIdx].Bonuses += 1000
+						break
+					}
+				}
+			}
 			return j.save()
 		}
 	}
