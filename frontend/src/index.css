@@ -1082,7 +1082,7 @@ footer{
 
 /* RESPONSIVE */
 @media (max-width:1450px){
-  .topbar { gap: 12px; padding: 8px 16px; margin: 12px 2vw 0; }
+  .topbar { gap: 12px; padding: 8px 6vw; margin: 0 !important; width: 100% !important; border-radius: 0 !important; }
   .top-nav { gap: 2px; }
   .top-nav a:not(.catalog-btn) { font-size: 13px; padding: 6px 10px; }
   .top-cta { gap: 10px; }
@@ -1106,7 +1106,7 @@ footer{
 }
 
 @media (max-width: 1450px) {
-  .topbar { gap: 10px; padding: 8px 16px; margin: 12px 2vw 0; }
+  .topbar { gap: 10px; padding: 8px 6vw; margin: 0 !important; width: 100% !important; border-radius: 0 !important; }
   .top-nav { gap: 4px; }
   .top-nav a:not(.catalog-btn) { padding: 6px 8px; font-size: 12px; }
   .top-cta { gap: 8px; }
@@ -1237,7 +1237,7 @@ footer{
 }
 
 @media (max-width: 520px) {
-  .topbar { margin: 6px 6px 0; padding: 6px 10px; gap: 4px; }
+  .topbar { margin: 0 !important; padding: 6px 16px !important; gap: 4px; border-radius: 0 !important; width: 100% !important; }
   .brand-name { font-size: 13px !important; }
   .logo { width: 32px; height: 32px; font-size: 13px; }
   .catalog-btn { padding: 5px 10px; font-size: 11px; gap: 3px; }
@@ -1673,15 +1673,6 @@ body.light-theme .assistant-tooltip-arrow::after {
   section:not(.hero) {
     padding-left: calc((100vw - 1420px) / 2) !important;
     padding-right: calc((100vw - 1420px) / 2) !important;
-  }
-  .topbar {
-    max-width: 1420px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-  .mega-menu {
-    left: calc((100vw - 1320px) / 2) !important;
-    right: calc((100vw - 1320px) / 2) !important;
   }
 }
 
@@ -2820,7 +2811,7 @@ body.light-theme .status-completed {
   .topbar {
     height: auto !important;
     padding: 8px 12px !important;
-    margin: 8px 8px 0 !important;
+    margin: 0 !important; border-radius: 0 !important; width: 100% !important;
     gap: 8px !important;
     display: flex !important;
     align-items: center !important;
@@ -2897,8 +2888,10 @@ body.light-theme .status-completed {
 
 @media (max-width: 480px) {
   .topbar {
-    padding: 6px 10px !important;
-    margin: 6px 6px 0 !important;
+    padding: 6px 16px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    width: 100% !important;
     gap: 6px !important;
   }
   .brand-name {
