@@ -5,6 +5,32 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
   ? 'http://localhost:8080'
   : '';
 
+const defaultAssistantRules = [
+  {
+    id: 'rule-price',
+    triggers: ['цен', 'стоим', 'прайс', 'бага', 'кун'],
+    reply: 'Стоимость большинства услуг начинается от 2 500 ₸. Выезд мастера и диагностика при продолжении работ — бесплатно! Хотите оставить заявку на точный расчет?'
+  },
+  {
+    id: 'rule-urgent',
+    triggers: ['срочн', 'быстр', 'выезд', 'тез', 'апат'],
+    reply: 'Среднее время прибытия мастера по городу — всего 45 минут! У нас 14 дежурных мастеров онлайн. Оформим срочный выезд?'
+  },
+  {
+    id: 'rule-warranty',
+    triggers: ['гарант', 'кепил'],
+    reply: 'Мы предоставляем официальную гарантию до 12 месяцев на все виды работ и комплектующие. Выдаем акт выполненных работ!'
+  },
+  {
+    id: 'rule-schedule',
+    triggers: ['график', 'работ', 'уакыт', 'кесте'],
+    reply: 'Мы работаем ежедневно, без выходных с 09:00 до 21:00. Готовы принять вашу заявку прямо сейчас!'
+  }
+];
+
+const defaultAssistantFallback = "Спасибо за обращение! Наш специалист свяжется с вами в течение 5 минут для точного расчета.";
+
+
 export default function App() {
   const [lang, setLang] = useState(() => localStorage.getItem('lang') || 'ru');
   const [city, setCity] = useState(() => localStorage.getItem('city') || 'almaty');
@@ -49,10 +75,42 @@ export default function App() {
   // Assistant Modal State
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantMessages, setAssistantMessages] = useState([
-    { sender: 'ai', text: 'Здравствуйте! Я виртуальный ассистент HUB MASTER. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
+    { sender: 'ai', text: 'Здравствуйте! Меня зовут Ирина. Я виртуальный ассистент HUB MASTER. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
   ]);
   const [assistantInput, setAssistantInput] = useState('');
   const [showAssistantTooltip, setShowAssistantTooltip] = useState(false);
+
+  // Assistant customizable script configuration state
+  const [assistantRules, setAssistantRules] = useState(() => {
+    const saved = localStorage.getItem('assistant_rules');
+    return saved ? JSON.parse(saved) : defaultAssistantRules;
+  });
+  const [assistantFallback, setAssistantFallback] = useState(() => {
+    const saved = localStorage.getItem('assistant_fallback');
+    return saved ? saved : defaultAssistantFallback;
+  });
+
+  // Assistant rules editor states
+  const [showRuleForm, setShowRuleForm] = useState(false);
+  const [editingRule, setEditingRule] = useState(null);
+  const [ruleFormTriggers, setRuleFormTriggers] = useState('');
+  const [ruleFormReply, setRuleFormReply] = useState('');
+
+  // Live test chat states in admin
+  const [testMessages, setTestMessages] = useState([
+    { sender: 'ai', text: 'Здравствуйте! Напишите мне любой вопрос, чтобы протестировать настроенные правила ответов.' }
+  ]);
+  const [testInput, setTestInput] = useState('');
+
+  const saveAssistantRules = (newRules) => {
+    setAssistantRules(newRules);
+    localStorage.setItem('assistant_rules', JSON.stringify(newRules));
+  };
+
+  const saveAssistantFallback = (newFallback) => {
+    setAssistantFallback(newFallback);
+    localStorage.setItem('assistant_fallback', newFallback);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -388,6 +446,85 @@ export default function App() {
     }
   };
 
+  // Helper handlers for managing Assistant rules
+  const handleSaveRule = (e) => {
+    e.preventDefault();
+    if (!ruleFormReply.trim() || !ruleFormTriggers.trim()) return;
+
+    const triggersArr = ruleFormTriggers
+      .split(',')
+      .map(t => t.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (triggersArr.length === 0) {
+      alert('Пожалуйста, введите хотя бы одно ключевое слово.');
+      return;
+    }
+
+    if (editingRule) {
+      // Edit rule
+      const updated = assistantRules.map(r =>
+        r.id === editingRule.id
+          ? { ...r, triggers: triggersArr, reply: ruleFormReply.trim() }
+          : r
+      );
+      saveAssistantRules(updated);
+      setEditingRule(null);
+    } else {
+      // Add rule
+      const newRule = {
+        id: `rule-${Date.now()}`,
+        triggers: triggersArr,
+        reply: ruleFormReply.trim()
+      };
+      saveAssistantRules([...assistantRules, newRule]);
+    }
+
+    setRuleFormTriggers('');
+    setRuleFormReply('');
+    setShowRuleForm(false);
+  };
+
+  const handleDeleteRule = (ruleId) => {
+    if (window.confirm('Вы уверены, что хотите удалить это правило ответов ассистента?')) {
+      const updated = assistantRules.filter(r => r.id !== ruleId);
+      saveAssistantRules(updated);
+    }
+  };
+
+  const handleResetAssistantSettings = () => {
+    if (window.confirm('Сбросить сценарий ассистента к исходным настройкам по умолчанию? Все ваши правила будут стерты.')) {
+      setAssistantRules(defaultAssistantRules);
+      localStorage.removeItem('assistant_rules');
+      setAssistantFallback(defaultAssistantFallback);
+      localStorage.removeItem('assistant_fallback');
+      alert('Настройки ассистента сброшены.');
+    }
+  };
+
+  const handleTestSend = (textToSend) => {
+    const query = textToSend || testInput;
+    if (!query.trim()) return;
+
+    const newMsgs = [...testMessages, { sender: 'user', text: query }];
+    setTestMessages(newMsgs);
+    if (!textToSend) setTestInput('');
+
+    setTimeout(() => {
+      let aiReply = assistantFallback;
+      const qLower = query.toLowerCase();
+      
+      for (const rule of assistantRules) {
+        if (rule.triggers.some(trg => qLower.includes(trg.trim().toLowerCase()))) {
+          aiReply = rule.reply;
+          break;
+        }
+      }
+
+      setTestMessages(prev => [...prev, { sender: 'ai', text: aiReply }]);
+    }, 400);
+  };
+
   // Auto-auth admin if already logged in as admin
   useEffect(() => {
     if (activePage === 'admin' && user?.role === 'admin' && token) {
@@ -593,16 +730,15 @@ export default function App() {
 
     // Simulate AI response after a short delay
     setTimeout(() => {
-      let aiReply = "Спасибо за обращение! Наш специалист свяжется с вами в течение 5 минут для точного расчета.";
+      let aiReply = assistantFallback;
       const qLower = query.toLowerCase();
-      if (qLower.includes('цен') || qLower.includes('стоим') || qLower.includes('прайс')) {
-        aiReply = "Стоимость большинства услуг начинается от 2 500 ₸. Выезд мастера и диагностика при продолжении работ — бесплатно! Хотите оставить заявку на точный расчет?";
-      } else if (qLower.includes('срочн') || qLower.includes('быстр') || qLower.includes('выезд')) {
-        aiReply = "Среднее время прибытия мастера по городу — всего 45 минут! У нас 14 дежурных мастеров онлайн. Оформим срочный выезд?";
-      } else if (qLower.includes('гарант')) {
-        aiReply = "Мы предоставляем официальную гарантию до 12 месяцев на все виды работ и комплектующие. Выдаем акт выполненных работ!";
-      } else if (qLower.includes('график') || qLower.includes('работ')) {
-        aiReply = "Мы работаем ежедневно, без выходных с 09:00 до 21:00. Готовы принять вашу заявку прямо сейчас!";
+      
+      // Look through configured rules
+      for (const rule of assistantRules) {
+        if (rule.triggers.some(trg => qLower.includes(trg.trim().toLowerCase()))) {
+          aiReply = rule.reply;
+          break;
+        }
       }
 
       setAssistantMessages(prev => [...prev, { sender: 'ai', text: aiReply }]);
@@ -1623,7 +1759,7 @@ const pageDataMap = {
             /* ADMIN DASHBOARD */
             <div className="admin-dashboard-container">
               {/* Admin active tab selection subbar */}
-              <div className="admin-sub-tabs" style={{ display: 'flex', gap: '20px', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '4px' }}>
+              <div className="admin-sub-tabs" style={{ display: 'flex', gap: '20px', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '4px', flexWrap: 'wrap' }}>
                 <button 
                   onClick={() => setAdminActiveTab('orders')}
                   style={{
@@ -1664,9 +1800,29 @@ const pageDataMap = {
                 >
                   <i className="ri-folder-settings-line"></i> Настройка каталога услуг
                 </button>
+                <button 
+                  onClick={() => setAdminActiveTab('assistant')}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: adminActiveTab === 'assistant' ? 'var(--accent)' : 'var(--muted)',
+                    fontSize: '16px',
+                    fontWeight: '750',
+                    cursor: 'pointer',
+                    padding: '8px 12px',
+                    borderBottom: adminActiveTab === 'assistant' ? '3px solid var(--accent)' : '3px solid transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <i className="ri-robot-line"></i> Настройка ассистента Ирина
+                </button>
               </div>
 
-              {adminActiveTab === 'orders' ? (
+              {adminActiveTab === 'orders' && (
                 <>
                   {/* Stats Cards */}
                   <div className="admin-stats-grid" style={{ marginBottom: '32px' }}>
@@ -1820,7 +1976,9 @@ const pageDataMap = {
                     )}
                   </div>
                 </>
-              ) : (
+              )}
+
+              {adminActiveTab === 'catalog' && (
                 /* CATALOG CONFIGURATION TAB */
                 <div className="catalog-manager">
                   {/* Header row */}
@@ -2311,6 +2469,325 @@ const pageDataMap = {
                           </div>
                           <button type="submit" className="btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', marginTop: '10px' }}>
                             Сохранить подкатегорию
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {adminActiveTab === 'assistant' && (
+                <div className="assistant-manager">
+                  {/* Header Row */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                    <div>
+                      <h2 style={{ fontSize: '20px', fontWeight: '850', margin: 0 }}>Настройка ответов ассистента Ирина</h2>
+                      <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '4px 0 0 0' }}>
+                        Пропишите сценарии: на какой текст пользователя как отвечать, и настройте стандартную реплику.
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        onClick={handleResetAssistantSettings} 
+                        className="btn-ghost"
+                        style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', color: '#ff7a59', border: '1px solid rgba(255,122,89,0.2)' }}
+                      >
+                        <i className="ri-history-line"></i> Сбросить по умолчанию
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setEditingRule(null);
+                          setRuleFormTriggers('');
+                          setRuleFormReply('');
+                          setShowRuleForm(true);
+                        }}
+                        className="btn-primary"
+                        style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <i className="ri-add-line"></i> Добавить сценарий
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Main Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '24px', alignItems: 'start' }} className="assistant-admin-grid">
+                    {/* Left Column: Config cards */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                      {/* Fallback Message Card */}
+                      <div className="admin-table-card" style={{ padding: '24px' }}>
+                        <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="ri-chat-default-line" style={{ color: 'var(--accent)' }}></i>
+                          Стандартный ответ ассистента
+                        </h3>
+                        <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '0 0 12px 0' }}>
+                          Этот ответ отправляется пользователю, если его сообщение не подошло ни под одно ключевое слово.
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                          <textarea
+                            value={assistantFallback}
+                            onChange={(e) => saveAssistantFallback(e.target.value)}
+                            placeholder="Введите текст стандартного ответа..."
+                            style={{ 
+                              flex: 1, 
+                              padding: '12px', 
+                              borderRadius: '10px', 
+                              background: 'var(--bg)', 
+                              border: '1px solid var(--border)', 
+                              color: 'var(--text)', 
+                              minHeight: '80px', 
+                              fontFamily: 'inherit', 
+                              resize: 'vertical',
+                              fontSize: '14px'
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
+                          <span style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: '600' }}>
+                            <i className="ri-checkbox-circle-line"></i> Автоматически сохранено
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Rules Scenario List Card */}
+                      <div className="admin-table-card">
+                        <div className="admin-table-card-header" style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)' }}>
+                          <h3 style={{ fontSize: '16px', fontWeight: '800', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <i className="ri-mind-map" style={{ color: 'var(--accent)' }}></i>
+                            Сценарии ответов по ключевым словам
+                          </h3>
+                        </div>
+
+                        {assistantRules.length === 0 ? (
+                          <div style={{ padding: '48px', textAlign: 'center', color: 'var(--muted)' }}>
+                            <i className="ri-question-mark" style={{ fontSize: '32px', opacity: 0.3, marginBottom: '12px', display: 'block' }}></i>
+                            Сценарии отсутствуют. Добавьте новые ключевые слова для автоответов.
+                          </div>
+                        ) : (
+                          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            {assistantRules.map((rule, idx) => (
+                              <div 
+                                key={rule.id} 
+                                style={{ 
+                                  background: 'var(--bg)', 
+                                  border: '1px solid var(--border)', 
+                                  borderRadius: '16px', 
+                                  padding: '20px',
+                                  position: 'relative'
+                                }}
+                              >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                                  <span style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: '750', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                    Правило #{idx + 1}
+                                  </span>
+                                  <div style={{ display: 'flex', gap: '8px' }}>
+                                    <button
+                                      onClick={() => {
+                                        setEditingRule(rule);
+                                        setRuleFormTriggers(rule.triggers.join(', '));
+                                        setRuleFormReply(rule.reply);
+                                        setShowRuleForm(true);
+                                      }}
+                                      style={{
+                                        background: 'rgba(124,242,199,0.1)',
+                                        border: '1px solid rgba(124,242,199,0.2)',
+                                        color: 'var(--accent)',
+                                        borderRadius: '8px',
+                                        padding: '6px 12px',
+                                        fontSize: '12px',
+                                        cursor: 'pointer',
+                                        fontFamily: 'inherit',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        fontWeight: '700'
+                                      }}
+                                    >
+                                      <i className="ri-edit-line"></i> Изменить
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteRule(rule.id)}
+                                      style={{
+                                        background: 'rgba(255,122,89,0.1)',
+                                        border: '1px solid rgba(255,122,89,0.2)',
+                                        color: '#ff7a59',
+                                        borderRadius: '8px',
+                                        padding: '6px 12px',
+                                        fontSize: '12px',
+                                        cursor: 'pointer',
+                                        fontFamily: 'inherit',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        fontWeight: '700'
+                                      }}
+                                    >
+                                      <i className="ri-delete-bin-line"></i>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div style={{ marginBottom: '12px' }}>
+                                  <div style={{ fontSize: '11px', color: 'var(--muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '4px' }}>Если текст сообщения содержит:</div>
+                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                    {rule.triggers.map((trg, tIdx) => (
+                                      <span 
+                                        key={tIdx} 
+                                        style={{ 
+                                          background: 'rgba(91,140,255,0.12)', 
+                                          color: 'var(--accent2)', 
+                                          padding: '4px 10px', 
+                                          borderRadius: '8px', 
+                                          fontSize: '12px', 
+                                          fontWeight: '700',
+                                          border: '1px solid rgba(91,140,255,0.2)'
+                                        }}
+                                      >
+                                        {trg}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <div style={{ fontSize: '11px', color: 'var(--muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '4px' }}>Ирина ответит:</div>
+                                  <div style={{ fontSize: '14px', color: 'var(--text)', lineHeight: '1.5', background: 'var(--surface)', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                                    {rule.reply}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right Column: Simulated Chat Test Area */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'sticky', top: '80px' }}>
+                      <div className="admin-table-card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '480px' }}>
+                        <div style={{ padding: '16px 20px', background: 'var(--bg)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></div>
+                            <span style={{ fontSize: '14px', fontWeight: '800' }}>Тест ассистента Ирина</span>
+                          </div>
+                          <button 
+                            onClick={() => setTestMessages([{ sender: 'ai', text: 'Здравствуйте! Напишите мне любой вопрос, чтобы протестировать настроенные правила ответов.' }])}
+                            style={{ background: 'transparent', border: 'none', color: '#ff7a59', fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit' }}
+                          >
+                            Сбросить чат
+                          </button>
+                        </div>
+
+                        {/* Messages display */}
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--bg)' }}>
+                          {testMessages.map((msg, mIdx) => (
+                            <div 
+                              key={mIdx} 
+                              style={{ 
+                                alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                                maxWidth: '80%',
+                                display: 'flex',
+                                flexDirection: 'column'
+                              }}
+                            >
+                              <span style={{ 
+                                fontSize: '10px', 
+                                color: 'var(--muted)', 
+                                marginBottom: '2px',
+                                alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start'
+                              }}>
+                                {msg.sender === 'user' ? 'Вы' : 'Ирина'}
+                              </span>
+                              <div style={{ 
+                                background: msg.sender === 'user' ? 'var(--accent2)' : 'var(--surface)',
+                                color: msg.sender === 'user' ? '#fff' : 'var(--text)',
+                                padding: '10px 14px',
+                                borderRadius: msg.sender === 'user' ? '14px 14px 2px 14px' : '14px 14px 14px 2px',
+                                fontSize: '13px',
+                                border: msg.sender === 'user' ? 'none' : '1px solid var(--border)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                lineHeight: '1.4'
+                              }}>
+                                {msg.text}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Input row */}
+                        <div style={{ padding: '12px', borderTop: '1px solid var(--border)', display: 'flex', gap: '8px', background: 'var(--surface)' }}>
+                          <input 
+                            type="text" 
+                            value={testInput} 
+                            onChange={(e) => setTestInput(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleTestSend()}
+                            placeholder="Задайте вопрос ассистенту..."
+                            style={{ 
+                              flex: 1, 
+                              padding: '10px 14px', 
+                              borderRadius: '10px', 
+                              background: 'var(--bg)', 
+                              border: '1px solid var(--border)', 
+                              color: 'var(--text)',
+                              fontSize: '13px',
+                              fontFamily: 'inherit'
+                            }}
+                          />
+                          <button 
+                            onClick={() => handleTestSend()} 
+                            style={{ 
+                              padding: '10px 16px', 
+                              borderRadius: '10px', 
+                              background: 'var(--accent)', 
+                              border: 'none', 
+                              color: '#1a1f2c', 
+                              cursor: 'pointer',
+                              fontWeight: '700'
+                            }}
+                          >
+                            <i className="ri-send-plane-2-line"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MODAL: RULE FORM */}
+                  {showRuleForm && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
+                      <div className="cb-form-card" style={{ maxWidth: '520px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+                        <button onClick={() => setShowRuleForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+                        <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="ri-robot-line" style={{ color: 'var(--accent)' }}></i>
+                          {editingRule ? 'Редактировать сценарий' : 'Добавить новый сценарий'}
+                        </h3>
+                        <form onSubmit={handleSaveRule} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ключевые слова (через запятую)</label>
+                            <input 
+                              type="text" 
+                              required 
+                              value={ruleFormTriggers} 
+                              onChange={e => setRuleFormTriggers(e.target.value)}
+                              placeholder="Например: цен, стоимость, прайс, сколько"
+                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '14px' }}
+                            />
+                            <span style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '4px', display: 'block' }}>
+                              Ассистент ответит по этому правилу, если сообщение содержит любое из этих ключевых слов.
+                            </span>
+                          </div>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ответ ассистента</label>
+                            <textarea 
+                              required
+                              value={ruleFormReply} 
+                              onChange={e => setRuleFormReply(e.target.value)}
+                              placeholder="Введите ответ ассистента..."
+                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', minHeight: '120px', fontFamily: 'inherit', resize: 'vertical', fontSize: '14px' }}
+                            />
+                          </div>
+                          <button type="submit" className="btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', marginTop: '10px', fontWeight: '700' }}>
+                            Сохранить сценарий
                           </button>
                         </form>
                       </div>
