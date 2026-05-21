@@ -75,7 +75,7 @@ export default function App() {
   // Assistant Modal State
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantMessages, setAssistantMessages] = useState([
-    { sender: 'ai', text: 'Здравствуйте! Меня зовут Ирина. Я виртуальный ассистент HUB MASTER. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
+    { sender: 'ai', text: 'Здравствуйте! Меня зовут Иришка. Я виртуальный ассистент HUB MASTER. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
   ]);
   const [assistantInput, setAssistantInput] = useState('');
   const [showAssistantTooltip, setShowAssistantTooltip] = useState(false);
@@ -1818,7 +1818,7 @@ const pageDataMap = {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  <i className="ri-robot-line"></i> Настройка ассистента Ирина
+                  <i className="ri-robot-line"></i> Настройка ассистента Иришка
                 </button>
               </div>
 
@@ -2482,7 +2482,7 @@ const pageDataMap = {
                   {/* Header Row */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
                     <div>
-                      <h2 style={{ fontSize: '20px', fontWeight: '850', margin: 0 }}>Настройка ответов ассистента Ирина</h2>
+                      <h2 style={{ fontSize: '20px', fontWeight: '850', margin: 0 }}>Настройка ответов ассистента Иришка</h2>
                       <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '4px 0 0 0' }}>
                         Пропишите сценарии: на какой текст пользователя как отвечать, и настройте стандартную реплику.
                       </p>
@@ -2650,7 +2650,7 @@ const pageDataMap = {
                                 </div>
 
                                 <div>
-                                  <div style={{ fontSize: '11px', color: 'var(--muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '4px' }}>Ирина ответит:</div>
+                                  <div style={{ fontSize: '11px', color: 'var(--muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '4px' }}>Иришка ответит:</div>
                                   <div style={{ fontSize: '14px', color: 'var(--text)', lineHeight: '1.5', background: 'var(--surface)', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)' }}>
                                     {rule.reply}
                                   </div>
@@ -2668,7 +2668,7 @@ const pageDataMap = {
                         <div style={{ padding: '16px 20px', background: 'var(--bg)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></div>
-                            <span style={{ fontSize: '14px', fontWeight: '800' }}>Тест ассистента Ирина</span>
+                            <span style={{ fontSize: '14px', fontWeight: '800' }}>Тест ассистента Иришка</span>
                           </div>
                           <button 
                             onClick={() => setTestMessages([{ sender: 'ai', text: 'Здравствуйте! Напишите мне любой вопрос, чтобы протестировать настроенные правила ответов.' }])}
@@ -2696,7 +2696,7 @@ const pageDataMap = {
                                 marginBottom: '2px',
                                 alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start'
                               }}>
-                                {msg.sender === 'user' ? 'Вы' : 'Ирина'}
+                                {msg.sender === 'user' ? 'Вы' : 'Иришка'}
                               </span>
                               <div style={{ 
                                 background: msg.sender === 'user' ? 'var(--accent2)' : 'var(--surface)',
@@ -4658,7 +4658,7 @@ const pageDataMap = {
                   <i className="ri-robot-2-fill"></i>
                 </div>
                 <div>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text)' }}>Ирина · Ассистент</div>
+                  <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text)' }}>Иришка · Ассистент</div>
                   <div style={{ fontSize: '12px', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'pulse 2s infinite' }}></span> Онлайн
                   </div>
@@ -4732,7 +4732,7 @@ const pageDataMap = {
           >
             <div className="assistant-tooltip-arrow"></div>
             <i className="ri-robot-line" style={{ color: 'var(--accent)', marginRight: '6px' }}></i>
-            <span>Ирина: Нужна помощь с выбором услуги? 🤖</span>
+            <span>Иришка: Нужна помощь с выбором услуги? 🤖</span>
             <button
               onClick={(e) => {
                 e.stopPropagation();
