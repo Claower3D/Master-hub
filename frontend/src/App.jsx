@@ -70,6 +70,25 @@ export default function App() {
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminFilterDate, setAdminFilterDate] = useState('');
   const [adminFilterStatus, setAdminFilterStatus] = useState('all');
+  const [adminActiveTab, setAdminActiveTab] = useState('orders'); // 'orders' or 'catalog'
+  const [catalogSubTab, setCatalogSubTab] = useState('categories'); // 'categories' or 'subcategories'
+
+  // Category Form State
+  const [showCatForm, setShowCatForm] = useState(false);
+  const [editingCat, setEditingCat] = useState(null);
+  const [catFormTab, setCatFormTab] = useState('okna');
+  const [catFormTitle, setCatFormTitle] = useState('');
+  const [catFormIcon, setCatFormIcon] = useState('ri-tools-line');
+
+  // Subcategory Form State
+  const [showSubForm, setShowSubForm] = useState(false);
+  const [editingSub, setEditingSub] = useState(null);
+  const [subFormCatId, setSubFormCatId] = useState('');
+  const [subFormTitle, setSubFormTitle] = useState('');
+  const [subFormDesc, setSubFormDesc] = useState('');
+  const [subFormPrice, setSubFormPrice] = useState('');
+  const [subFormTime, setSubFormTime] = useState('');
+  const [subFormWarr, setSubFormWarr] = useState('');
 
   // Hash routing: detect #/admin
   useEffect(() => {
@@ -139,6 +158,147 @@ export default function App() {
     })
       .then(res => { if (!res.ok) throw new Error('fail'); fetchAdminCallbacks(); })
       .catch(err => console.error(err));
+  };
+
+  // Save functions
+  const saveMegaCategories = (newCats) => {
+    setMegaCategories(newCats);
+    localStorage.setItem('megaCategories', JSON.stringify(newCats));
+  };
+
+  const saveMegaSubcategories = (newSubs) => {
+    setMegaSubcategories(newSubs);
+    localStorage.setItem('megaSubcategories', JSON.stringify(newSubs));
+  };
+
+  const saveMegaDetails = (newDetails) => {
+    setMegaDetails(newDetails);
+    localStorage.setItem('megaDetails', JSON.stringify(newDetails));
+  };
+
+  const handleResetCatalog = () => {
+    if (window.confirm('Вы уверены, что хотите сбросить весь каталог к исходным настройкам по умолчанию? Все ваши изменения будут стерты.')) {
+      setMegaCategories(defaultMegaCategories);
+      localStorage.removeItem('megaCategories');
+      setMegaSubcategories(defaultMegaSubcategories);
+      localStorage.removeItem('megaSubcategories');
+      setMegaDetails(defaultMegaDetails);
+      localStorage.removeItem('megaDetails');
+      alert('Каталог успешно сброшен к исходным настройкам.');
+    }
+  };
+
+  const handleSaveCategory = (e) => {
+    e.preventDefault();
+    if (!catFormTitle.trim()) return;
+
+    if (editingCat) {
+      // Edit
+      const updated = megaCategories.map(c => 
+        c.id === editingCat.id ? { ...c, title: catFormTitle, icon: catFormIcon, tab: catFormTab } : c
+      );
+      saveMegaCategories(updated);
+      setEditingCat(null);
+    } else {
+      // Add
+      const newId = `cat-${Date.now()}`;
+      const newCatObj = { id: newId, tab: catFormTab, title: catFormTitle, icon: catFormIcon };
+      saveMegaCategories([...megaCategories, newCatObj]);
+
+      // Initialize empty subcategory array for it
+      saveMegaSubcategories({
+        ...megaSubcategories,
+        [newId]: []
+      });
+    }
+
+    setCatFormTitle('');
+    setShowCatForm(false);
+  };
+
+  const handleDeleteCategory = (catId) => {
+    if (window.confirm('Удаление категории сотрет все привязанные к ней подкатегории. Вы уверены?')) {
+      const updatedCats = megaCategories.filter(c => c.id !== catId);
+      saveMegaCategories(updatedCats);
+
+      // Clean subcategories
+      const updatedSubs = { ...megaSubcategories };
+      const subList = updatedSubs[catId] || [];
+      delete updatedSubs[catId];
+      saveMegaSubcategories(updatedSubs);
+
+      // Clean details
+      const updatedDetails = { ...megaDetails };
+      subList.forEach(sub => {
+        delete updatedDetails[sub.id];
+      });
+      saveMegaDetails(updatedDetails);
+    }
+  };
+
+  const handleSaveSubcategory = (e) => {
+    e.preventDefault();
+    if (!subFormCatId || !subFormTitle.trim()) return;
+
+    const subId = editingSub ? editingSub.id : `sub-${Date.now()}`;
+    const subObj = { id: subId, title: subFormTitle };
+
+    // Update subcategories dictionary
+    const updatedSubs = { ...megaSubcategories };
+    if (editingSub) {
+      // If parent category changed, remove from old, add to new
+      const oldCatId = Object.keys(megaSubcategories).find(catKey => 
+        megaSubcategories[catKey].some(s => s.id === subId)
+      );
+      if (oldCatId && oldCatId !== subFormCatId) {
+        updatedSubs[oldCatId] = updatedSubs[oldCatId].filter(s => s.id !== subId);
+      }
+      
+      // Update or insert inside target category
+      const targetCatSubs = updatedSubs[subFormCatId] || [];
+      const exists = targetCatSubs.some(s => s.id === subId);
+      if (exists) {
+        updatedSubs[subFormCatId] = targetCatSubs.map(s => s.id === subId ? subObj : s);
+      } else {
+        updatedSubs[subFormCatId] = [...targetCatSubs, subObj];
+      }
+    } else {
+      // Add new
+      updatedSubs[subFormCatId] = [...(updatedSubs[subFormCatId] || []), subObj];
+    }
+    saveMegaSubcategories(updatedSubs);
+
+    // Update details
+    const updatedDetails = { ...megaDetails };
+    updatedDetails[subId] = {
+      title: subFormTitle,
+      desc: subFormDesc || 'Описание услуги',
+      price: subFormPrice || 'Цена договорная',
+      time: subFormTime || 'Выезд в течение дня',
+      warr: subFormWarr || 'Гарантия имеется'
+    };
+    saveMegaDetails(updatedDetails);
+
+    // Clean form
+    setEditingSub(null);
+    setSubFormTitle('');
+    setSubFormDesc('');
+    setSubFormPrice('');
+    setSubFormTime('');
+    setSubFormWarr('');
+    setShowSubForm(false);
+  };
+
+  const handleDeleteSubcategory = (catId, subId) => {
+    if (window.confirm('Вы уверены, что хотите удалить эту подкатегорию?')) {
+      const updatedSubs = { ...megaSubcategories };
+      updatedSubs[catId] = (updatedSubs[catId] || []).filter(s => s.id !== subId);
+      saveMegaSubcategories(updatedSubs);
+
+      const updatedDetails = { ...megaDetails };
+      delete updatedDetails[subId];
+      saveMegaDetails(updatedDetails);
+    }
   };
 
   // Auto-auth admin if already logged in as admin
@@ -605,22 +765,19 @@ export default function App() {
       });
   };
 
-  // Mega Menu Data structure
-  const megaTabs = [
+  // Default Menu Data structure
+  const defaultMegaTabs = [
     { id: 'okna', label: 'Окна' },
     { id: 'servis', label: 'Сервис' },
     { id: 'mebel', label: 'Мебель' }
   ];
 
-  const megaCategories = [
-    // Окна
+  const defaultMegaCategories = [
     { id: 'cat-okna-1', tab: 'okna', title: 'Москитные сетки', icon: 'ri-window-line' },
     { id: 'cat-okna-2', tab: 'okna', title: 'Детская защита и решетки', icon: 'ri-shield-check-line' },
     { id: 'cat-okna-3', tab: 'okna', title: 'Ремонт окон', icon: 'ri-tools-line' },
     { id: 'cat-okna-4', tab: 'okna', title: 'Изготовление окон', icon: 'ri-building-line' },
     { id: 'cat-okna-5', tab: 'okna', title: 'Ролл-шторы и жалюзи', icon: 'ri-layout-top-line' },
-
-    // Сервис
     { id: 'cat-srv-1', tab: 'servis', title: 'Ремонт стиральных машин', icon: 'ri-t-shirt-air-line' },
     { id: 'cat-srv-2', tab: 'servis', title: 'Ремонт холодильников', icon: 'ri-fridge-line' },
     { id: 'cat-srv-3', tab: 'servis', title: 'Ремонт кондиционеров и посудомоечных машин', icon: 'ri-temp-cold-line' },
@@ -629,13 +786,10 @@ export default function App() {
     { id: 'cat-srv-6', tab: 'servis', title: 'Сварка', icon: 'ri-flashlight-line' },
     { id: 'cat-srv-7', tab: 'servis', title: 'Металлоконструкции', icon: 'ri-grid-line' },
     { id: 'cat-srv-8', tab: 'servis', title: 'Электрика', icon: 'ri-lightbulb-flash-line' },
-
-    // Мебель
     { id: 'cat-meb-1', tab: 'mebel', title: 'Мебель на заказ (корпусная, мягкая)', icon: 'ri-sofa-line' }
   ];
 
-  const megaSubcategories = {
-    // Окна
+  const defaultMegaSubcategories = {
     'cat-okna-1': [
       { id: 'sub-okna-1-1', title: 'Москитные сетки Стандарт' },
       { id: 'sub-okna-1-2', title: 'Сетки Антикошка' },
@@ -665,8 +819,6 @@ export default function App() {
       { id: 'sub-okna-5-2', title: 'Горизонтальные жалюзи' },
       { id: 'sub-okna-5-3', title: 'Вертикальные жалюзи' }
     ],
-
-    // Сервис
     'cat-srv-1': [
       { id: 'sub-srv-1-1', title: 'Замена ТЭНа' },
       { id: 'sub-srv-1-2', title: 'Замена подшипников' },
@@ -710,8 +862,6 @@ export default function App() {
       { id: 'sub-srv-8-3', title: 'Сборка электрощитов' },
       { id: 'sub-srv-8-4', title: 'Устранение короткого замыкания' }
     ],
-
-    // Мебель
     'cat-meb-1': [
       { id: 'sub-meb-1-1', title: 'Корпусная мебель на заказ' },
       { id: 'sub-meb-1-2', title: 'Мягкая мебель на заказ' },
@@ -720,7 +870,7 @@ export default function App() {
     ]
   };
 
-  const megaDetails = {
+  const defaultMegaDetails = {
     'sub-okna-1-1': { title: 'Москитные сетки Стандарт', desc: 'Надежная защита от насекомых, тополиного пуха и пыли. Быстрое изготовление и установка по размеру вашего окна.', price: 'от 2 500 ₸', time: 'Изготовление: 1 день', warr: 'Гарантия: 1 год' },
     'sub-okna-1-2': { title: 'Сетки Антикошка', desc: 'Усиленное полотно из прочных нитей, устойчивое к когтям домашних животных. Гарантирует безопасность вашего питомца.', price: 'от 5 000 ₸', time: 'Изготовление: 1 день', warr: 'Гарантия: 1 год' },
     'sub-okna-1-3': { title: 'Сетки Антипыль', desc: 'Специальное мелкоячеистое полотно, задерживающее уличную пыль и аллергены. Идеально для аллергиков и семей с детьми.', price: 'от 4 500 ₸', time: 'Изготовление: 1 день', warr: 'Гарантия: 1 год' },
@@ -747,6 +897,26 @@ export default function App() {
     'sub-meb-1-1': { title: 'Корпусная мебель на заказ', desc: 'Индивидуальный дизайн и изготовление кухонных гарнитуров, шкафов-купе, гардеробных, столов и тумб из ЛДСП/МДФ.', price: 'от 45 000 ₸/п.м.', time: 'Изготовление: от 5 дней', warr: 'Гарантия: 2 года' },
     'sub-meb-1-2': { title: 'Мягкая мебель на заказ', desc: 'Изготовление стильных и комфортных диванов, кресел, кроватей, пуфов по индивидуальным размерам и эскизам.', price: 'от 60 000 ₸', time: 'Изготовление: от 7 дней', warr: 'Гарантия: 2 года' }
   };
+
+  const [megaTabs, setMegaTabs] = useState(() => {
+    const saved = localStorage.getItem('megaTabs');
+    return saved ? JSON.parse(saved) : defaultMegaTabs;
+  });
+
+  const [megaCategories, setMegaCategories] = useState(() => {
+    const saved = localStorage.getItem('megaCategories');
+    return saved ? JSON.parse(saved) : defaultMegaCategories;
+  });
+
+  const [megaSubcategories, setMegaSubcategories] = useState(() => {
+    const saved = localStorage.getItem('megaSubcategories');
+    return saved ? JSON.parse(saved) : defaultMegaSubcategories;
+  });
+
+  const [megaDetails, setMegaDetails] = useState(() => {
+    const saved = localStorage.getItem('megaDetails');
+    return saved ? JSON.parse(saved) : defaultMegaDetails;
+  });
 
   const activeSubObj = Object.values(megaSubcategories).flat().find(s => s.id === activeMegaSub);
   const activeCatObj = megaCategories.find(c => c.id === activeMegaCat);
@@ -1275,137 +1445,555 @@ const pageDataMap = {
           ) : (
             /* ADMIN DASHBOARD */
             <div className="admin-dashboard-container">
-
-              {/* Stats Cards */}
-              <div className="admin-stats-grid" style={{ marginBottom: '32px' }}>
-                {stats.map((s, i) => (
-                  <div key={i} className={`admin-stat-card ${s.class}`}>
-                    <div className="admin-stat-card-glow"></div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div className="admin-stat-icon-wrapper">
-                        <i className={s.icon}></i>
-                      </div>
-                      <span className="admin-stat-label">{s.label}</span>
-                    </div>
-                    <div className="admin-stat-value">{s.value}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Filters Row */}
-              <div className="admin-filters-bar" style={{ marginBottom: '20px' }}>
-                <div className="admin-filters-title">
-                  <i className="ri-filter-3-line"></i> Фильтры:
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <label className="admin-filter-date-label">Дата:</label>
-                  <input
-                    type="date" value={adminFilterDate} onChange={e => setAdminFilterDate(e.target.value)}
-                    className="admin-filter-date-input"
-                  />
-                  {adminFilterDate && (
-                    <button onClick={() => setAdminFilterDate('')} style={{
-                      background: 'rgba(255,122,89,0.1)', border: '1px solid rgba(255,122,89,0.2)',
-                      color: '#ff7a59', borderRadius: '6px', padding: '6px 10px',
-                      fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit'
-                    }}>✕ Сброс</button>
-                  )}
-                </div>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {['all', 'pending', 'in_progress', 'completed'].map(st => (
-                    <button key={st}
-                      onClick={() => setAdminFilterStatus(st)}
-                      className={`admin-status-filter-btn ${adminFilterStatus === st ? 'active' : ''}`}
-                    >
-                      {st === 'all' ? 'Все' : statusLabel(st)}
-                    </button>
-                  ))}
-                </div>
-                <button onClick={() => fetchAdminCallbacks()} style={{
-                  marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px',
-                  background: 'rgba(124,242,199,0.1)', border: '1px solid rgba(124,242,199,0.2)',
-                  color: 'var(--accent)', borderRadius: '8px', padding: '7px 14px',
-                  fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit'
-                }}>
-                  <i className={`ri-refresh-line ${adminLoading ? 'ri-spin' : ''}`}></i> Обновить
+              {/* Admin active tab selection subbar */}
+              <div className="admin-sub-tabs" style={{ display: 'flex', gap: '20px', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '4px' }}>
+                <button 
+                  onClick={() => setAdminActiveTab('orders')}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: adminActiveTab === 'orders' ? 'var(--accent)' : 'var(--muted)',
+                    fontSize: '16px',
+                    fontWeight: '750',
+                    cursor: 'pointer',
+                    padding: '8px 12px',
+                    borderBottom: adminActiveTab === 'orders' ? '3px solid var(--accent)' : '3px solid transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <i className="ri-file-list-3-line"></i> Заявки на звонки
+                </button>
+                <button 
+                  onClick={() => setAdminActiveTab('catalog')}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: adminActiveTab === 'catalog' ? 'var(--accent)' : 'var(--muted)',
+                    fontSize: '16px',
+                    fontWeight: '750',
+                    cursor: 'pointer',
+                    padding: '8px 12px',
+                    borderBottom: adminActiveTab === 'catalog' ? '3px solid var(--accent)' : '3px solid transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <i className="ri-folder-settings-line"></i> Настройка каталога услуг
                 </button>
               </div>
 
-              {/* Orders Table */}
-              <div className="admin-table-card">
-                <div className="admin-table-card-header">
-                  <div className="admin-table-card-title">
-                    <i className="ri-file-list-3-line" style={{ color: 'var(--accent)', marginRight: '8px' }}></i>
-                    Заявки
-                    <span className="admin-table-card-badge">{filteredCallbacks.length}</span>
+              {adminActiveTab === 'orders' ? (
+                <>
+                  {/* Stats Cards */}
+                  <div className="admin-stats-grid" style={{ marginBottom: '32px' }}>
+                    {stats.map((s, i) => (
+                      <div key={i} className={`admin-stat-card ${s.class}`}>
+                        <div className="admin-stat-card-glow"></div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div className="admin-stat-icon-wrapper">
+                            <i className={s.icon}></i>
+                          </div>
+                          <span className="admin-stat-label">{s.label}</span>
+                        </div>
+                        <div className="admin-stat-value">{s.value}</div>
+                      </div>
+                    ))}
                   </div>
-                </div>
 
-                {adminLoading ? (
-                  <div style={{ padding: '60px', textAlign: 'center', color: 'var(--muted)' }}>
-                    <i className="ri-loader-4-line ri-spin" style={{ fontSize: '32px', color: 'var(--accent)' }}></i>
-                    <div style={{ marginTop: '16px', fontSize: '14px' }}>Загрузка...</div>
+                  {/* Filters Row */}
+                  <div className="admin-filters-bar" style={{ marginBottom: '20px' }}>
+                    <div className="admin-filters-title">
+                      <i className="ri-filter-3-line"></i> Фильтры:
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <label className="admin-filter-date-label">Дата:</label>
+                      <input
+                        type="date" value={adminFilterDate} onChange={e => setAdminFilterDate(e.target.value)}
+                        className="admin-filter-date-input"
+                      />
+                      {adminFilterDate && (
+                        <button onClick={() => setAdminFilterDate('')} style={{
+                          background: 'rgba(255,122,89,0.1)', border: '1px solid rgba(255,122,89,0.2)',
+                          color: '#ff7a59', borderRadius: '6px', padding: '6px 10px',
+                          fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit'
+                        }}>✕ Сброс</button>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      {['all', 'pending', 'in_progress', 'completed'].map(st => (
+                        <button key={st}
+                          onClick={() => setAdminFilterStatus(st)}
+                          className={`admin-status-filter-btn ${adminFilterStatus === st ? 'active' : ''}`}
+                        >
+                          {st === 'all' ? 'Все' : statusLabel(st)}
+                        </button>
+                      ))}
+                    </div>
+                    <button onClick={() => fetchAdminCallbacks()} style={{
+                      marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px',
+                      background: 'rgba(124,242,199,0.1)', border: '1px solid rgba(124,242,199,0.2)',
+                      color: 'var(--accent)', borderRadius: '8px', padding: '7px 14px',
+                      fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit'
+                    }}>
+                      <i className={`ri-refresh-line ${adminLoading ? 'ri-spin' : ''}`}></i> Обновить
+                    </button>
                   </div>
-                ) : filteredCallbacks.length === 0 ? (
-                  <div style={{ padding: '60px', textAlign: 'center', color: 'var(--muted)', fontSize: '14px' }}>
-                    <i className="ri-inbox-line" style={{ fontSize: '40px', marginBottom: '12px', display: 'block', opacity: 0.4 }}></i>
-                    Заявки не найдены
+
+                  {/* Orders Table */}
+                  <div className="admin-table-card">
+                    <div className="admin-table-card-header">
+                      <div className="admin-table-card-title">
+                        <i className="ri-file-list-3-line" style={{ color: 'var(--accent)', marginRight: '8px' }}></i>
+                        Заявки
+                        <span className="admin-table-card-badge">{filteredCallbacks.length}</span>
+                      </div>
+                    </div>
+
+                    {adminLoading ? (
+                      <div style={{ padding: '60px', textAlign: 'center', color: 'var(--muted)' }}>
+                        <i className="ri-loader-4-line ri-spin" style={{ fontSize: '32px', color: 'var(--accent)' }}></i>
+                        <div style={{ marginTop: '16px', fontSize: '14px' }}>Загрузка...</div>
+                      </div>
+                    ) : filteredCallbacks.length === 0 ? (
+                      <div style={{ padding: '60px', textAlign: 'center', color: 'var(--muted)', fontSize: '14px' }}>
+                        <i className="ri-inbox-line" style={{ fontSize: '40px', marginBottom: '12px', display: 'block', opacity: 0.4 }}></i>
+                        Заявки не найдены
+                      </div>
+                    ) : (
+                      <div className="admin-table-wrapper">
+                        <table className="admin-table">
+                          <thead>
+                            <tr>
+                              {['ID', 'Имя', 'Телефон', 'Услуга', 'Описание', 'Город', 'Дата', 'Статус'].map(h => (
+                                <th key={h}>{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredCallbacks.map((cb, idx) => (
+                              <tr key={cb.id} className="admin-table-row">
+                                <td style={{ padding: '14px 16px', color: 'var(--muted)', fontFamily: 'monospace', fontSize: '12px' }}>#{cb.id}</td>
+                                <td style={{ padding: '14px 16px', fontWeight: '600' }}>{cb.name}</td>
+                                <td style={{ padding: '14px 16px', color: 'var(--muted)', fontFamily: 'monospace', fontSize: '13px' }}>{cb.phone}</td>
+                                <td style={{ padding: '14px 16px', maxWidth: '180px' }}>
+                                  <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cb.service}</div>
+                                </td>
+                                <td style={{ padding: '14px 16px', maxWidth: '200px' }}>
+                                  <div 
+                                    style={{ 
+                                      overflow: 'hidden', 
+                                      textOverflow: 'ellipsis', 
+                                      whiteSpace: 'nowrap',
+                                      cursor: cb.comment ? 'pointer' : 'default' 
+                                    }}
+                                    title={cb.comment}
+                                    onClick={() => cb.comment && alert(cb.comment)}
+                                  >
+                                    {cb.comment || <span style={{ opacity: 0.3, fontStyle: 'italic' }}>нет</span>}
+                                  </div>
+                                </td>
+                                <td style={{ padding: '14px 16px', color: 'var(--muted)' }}>{getCityDisplay(cb.city)}</td>
+                                <td style={{ padding: '14px 16px', color: 'var(--muted)', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                                  {new Date(cb.created_at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                </td>
+                                <td style={{ padding: '14px 16px' }}>
+                                  <select
+                                    value={cb.status}
+                                    onChange={e => handleAdminStatusChange(cb.id, e.target.value)}
+                                    className={`admin-status-select ${cb.status}`}
+                                  >
+                                    <option value="pending" style={{ background: 'var(--surface)', color: 'var(--text)' }}>Новая</option>
+                                    <option value="in_progress" style={{ background: 'var(--surface)', color: 'var(--text)' }}>В работе</option>
+                                    <option value="completed" style={{ background: 'var(--surface)', color: 'var(--text)' }}>Выполнена</option>
+                                  </select>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="admin-table-wrapper">
-                    <table className="admin-table">
-                      <thead>
-                        <tr>
-                          {['ID', 'Имя', 'Телефон', 'Услуга', 'Описание', 'Город', 'Дата', 'Статус'].map(h => (
-                            <th key={h}>{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredCallbacks.map((cb, idx) => (
-                          <tr key={cb.id} className="admin-table-row">
-                            <td style={{ padding: '14px 16px', color: 'var(--muted)', fontFamily: 'monospace', fontSize: '12px' }}>#{cb.id}</td>
-                            <td style={{ padding: '14px 16px', fontWeight: '600' }}>{cb.name}</td>
-                            <td style={{ padding: '14px 16px', color: 'var(--muted)', fontFamily: 'monospace', fontSize: '13px' }}>{cb.phone}</td>
-                            <td style={{ padding: '14px 16px', maxWidth: '180px' }}>
-                              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cb.service}</div>
-                            </td>
-                            <td style={{ padding: '14px 16px', maxWidth: '200px' }}>
-                              <div 
-                                style={{ 
-                                  overflow: 'hidden', 
-                                  textOverflow: 'ellipsis', 
-                                  whiteSpace: 'nowrap',
-                                  cursor: cb.comment ? 'pointer' : 'default' 
-                                }}
-                                title={cb.comment}
-                                onClick={() => cb.comment && alert(cb.comment)}
-                              >
-                                {cb.comment || <span style={{ opacity: 0.3, fontStyle: 'italic' }}>нет</span>}
-                              </div>
-                            </td>
-                            <td style={{ padding: '14px 16px', color: 'var(--muted)' }}>{getCityDisplay(cb.city)}</td>
-                            <td style={{ padding: '14px 16px', color: 'var(--muted)', fontSize: '12px', whiteSpace: 'nowrap' }}>
-                              {new Date(cb.created_at).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                            </td>
-                            <td style={{ padding: '14px 16px' }}>
-                              <select
-                                value={cb.status}
-                                onChange={e => handleAdminStatusChange(cb.id, e.target.value)}
-                                className={`admin-status-select ${cb.status}`}
-                              >
-                                <option value="pending" style={{ background: 'var(--surface)', color: 'var(--text)' }}>Новая</option>
-                                <option value="in_progress" style={{ background: 'var(--surface)', color: 'var(--text)' }}>В работе</option>
-                                <option value="completed" style={{ background: 'var(--surface)', color: 'var(--text)' }}>Выполнена</option>
-                              </select>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                </>
+              ) : (
+                /* CATALOG CONFIGURATION TAB */
+                <div className="catalog-manager">
+                  {/* Header row */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                    <div>
+                      <h2 style={{ fontSize: '20px', fontWeight: '850', margin: 0 }}>Управление структурой каталога</h2>
+                      <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '4px 0 0 0' }}>
+                        Редактируйте категории, подкатегории и их подробные описания
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        onClick={handleResetCatalog} 
+                        className="btn-ghost"
+                        style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', color: '#ff7a59', border: '1px solid rgba(255,122,89,0.2)' }}
+                      >
+                        <i className="ri-history-line"></i> Сбросить по умолчанию
+                      </button>
+                      {catalogSubTab === 'categories' ? (
+                        <button 
+                          onClick={() => {
+                            setEditingCat(null);
+                            setCatFormTab('okna');
+                            setCatFormTitle('');
+                            setCatFormIcon('ri-tools-line');
+                            setShowCatForm(true);
+                          }}
+                          className="btn-primary"
+                          style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        >
+                          <i className="ri-add-line"></i> Добавить категорию
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => {
+                            setEditingSub(null);
+                            setSubFormCatId(megaCategories[0]?.id || '');
+                            setSubFormTitle('');
+                            setSubFormDesc('');
+                            setSubFormPrice('');
+                            setSubFormTime('');
+                            setSubFormWarr('');
+                            setShowSubForm(true);
+                          }}
+                          className="btn-primary"
+                          style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        >
+                          <i className="ri-add-line"></i> Добавить подкатегорию
+                        </button>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
+
+                  {/* Sub-sub tab switcher */}
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', background: 'var(--card-bg)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)', width: 'fit-content' }}>
+                    <button
+                      onClick={() => setCatalogSubTab('categories')}
+                      style={{
+                        background: catalogSubTab === 'categories' ? 'var(--bg)' : 'transparent',
+                        border: 'none',
+                        color: catalogSubTab === 'categories' ? 'var(--text)' : 'var(--muted)',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <i className="ri-grid-line"></i> Категории ({megaCategories.length})
+                    </button>
+                    <button
+                      onClick={() => setCatalogSubTab('subcategories')}
+                      style={{
+                        background: catalogSubTab === 'subcategories' ? 'var(--bg)' : 'transparent',
+                        border: 'none',
+                        color: catalogSubTab === 'subcategories' ? 'var(--text)' : 'var(--muted)',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <i className="ri-list-check"></i> Подкатегории / Услуги ({Object.values(megaSubcategories).flat().length})
+                    </button>
+                  </div>
+
+                  {/* SUB-TAB CONTENTS: CATEGORIES */}
+                  {catalogSubTab === 'categories' && (
+                    <div className="admin-table-card">
+                      <div className="admin-table-wrapper">
+                        <table className="admin-table">
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>Иконка</th>
+                              <th>Название категории</th>
+                              <th>Раздел (Вкладка)</th>
+                              <th style={{ textAlign: 'right' }}>Действия</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {megaCategories.map(cat => (
+                              <tr key={cat.id} className="admin-table-row">
+                                <td style={{ color: 'var(--muted)', fontSize: '12px', fontFamily: 'monospace' }}>{cat.id}</td>
+                                <td>
+                                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(249, 115, 22, 0.12)', display: 'grid', placeItems: 'center', color: 'var(--accent)' }}>
+                                    <i className={cat.icon || 'ri-tools-line'}></i>
+                                  </div>
+                                </td>
+                                <td style={{ fontWeight: '600' }}>{cat.title}</td>
+                                <td>
+                                  <span style={{ fontSize: '12px', padding: '4px 8px', borderRadius: '6px', background: 'var(--border)', color: 'var(--text)', fontWeight: '600' }}>
+                                    {megaTabs.find(t => t.id === cat.tab)?.label || cat.tab}
+                                  </span>
+                                </td>
+                                <td style={{ textAlign: 'right' }}>
+                                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                    <button
+                                      onClick={() => {
+                                        setEditingCat(cat);
+                                        setCatFormTab(cat.tab);
+                                        setCatFormTitle(cat.title);
+                                        setCatFormIcon(cat.icon || 'ri-tools-line');
+                                        setShowCatForm(true);
+                                      }}
+                                      style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                    >
+                                      <i className="ri-pencil-line"></i> Изменить
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteCategory(cat.id)}
+                                      style={{ border: 'none', background: 'rgba(255,122,89,0.1)', color: '#ff7a59', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                    >
+                                      <i className="ri-delete-bin-line"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* SUB-TAB CONTENTS: SUBCATEGORIES */}
+                  {catalogSubTab === 'subcategories' && (
+                    <div className="admin-table-card">
+                      <div className="admin-table-wrapper">
+                        <table className="admin-table">
+                          <thead>
+                            <tr>
+                              <th>Родительская категория</th>
+                              <th>Подкатегория / Услуга</th>
+                              <th>Описание</th>
+                              <th>Стоимость</th>
+                              <th>Срок</th>
+                              <th>Гарантия</th>
+                              <th style={{ textAlign: 'right' }}>Действия</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {megaCategories.map(cat => {
+                              const subs = megaSubcategories[cat.id] || [];
+                              return subs.map(sub => {
+                                const details = megaDetails[sub.id] || {};
+                                return (
+                                  <tr key={sub.id} className="admin-table-row">
+                                    <td style={{ fontSize: '12px', fontWeight: '600', color: 'var(--muted)' }}>
+                                      {cat.title}
+                                    </td>
+                                    <td style={{ fontWeight: '600' }}>
+                                      <div>{sub.title}</div>
+                                      <span style={{ fontSize: '10px', fontFamily: 'monospace', color: 'var(--muted)' }}>{sub.id}</span>
+                                    </td>
+                                    <td style={{ maxWidth: '200px' }}>
+                                      <div style={{ fontSize: '12px', color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={details.desc}>
+                                        {details.desc || '-'}
+                                      </div>
+                                    </td>
+                                    <td style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '13px' }}>
+                                      {details.price || '-'}
+                                    </td>
+                                    <td style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
+                                      {details.time || '-'}
+                                    </td>
+                                    <td style={{ fontSize: '12px', color: '#7cf2c7', whiteSpace: 'nowrap' }}>
+                                      {details.warr || '-'}
+                                    </td>
+                                    <td style={{ textAlign: 'right' }}>
+                                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                        <button
+                                          onClick={() => {
+                                            setEditingSub(sub);
+                                            setSubFormCatId(cat.id);
+                                            setSubFormTitle(sub.title);
+                                            setSubFormDesc(details.desc || '');
+                                            setSubFormPrice(details.price || '');
+                                            setSubFormTime(details.time || '');
+                                            setSubFormWarr(details.warr || '');
+                                            setShowSubForm(true);
+                                          }}
+                                          style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                        >
+                                          <i className="ri-pencil-line"></i>
+                                        </button>
+                                        <button
+                                          onClick={() => handleDeleteSubcategory(cat.id, sub.id)}
+                                          style={{ border: 'none', background: 'rgba(255,122,89,0.1)', color: '#ff7a59', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                        >
+                                          <i className="ri-delete-bin-line"></i>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              });
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODAL: CATEGORY FORM */}
+                  {showCatForm && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
+                      <div className="cb-form-card" style={{ maxWidth: '480px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+                        <button onClick={() => setShowCatForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+                        <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="ri-grid-line" style={{ color: 'var(--accent)' }}></i>
+                          {editingCat ? 'Редактировать категорию' : 'Добавить категорию'}
+                        </h3>
+                        <form onSubmit={handleSaveCategory} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Раздел</label>
+                            <select 
+                              value={catFormTab} 
+                              onChange={e => setCatFormTab(e.target.value)}
+                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            >
+                              {megaTabs.map(t => (
+                                <option key={t.id} value={t.id}>{t.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название категории</label>
+                            <input 
+                              type="text" 
+                              required 
+                              value={catFormTitle} 
+                              onChange={e => setCatFormTitle(e.target.value)}
+                              placeholder="Например: Москитные сетки"
+                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            />
+                          </div>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Иконка RemixIcon</label>
+                            <input 
+                              type="text" 
+                              required 
+                              value={catFormIcon} 
+                              onChange={e => setCatFormIcon(e.target.value)}
+                              placeholder="Например: ri-window-line"
+                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            />
+                            <span style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '4px', display: 'block' }}>
+                              Используйте класс из RemixIcon (например, ri-tools-line, ri-sofa-line)
+                            </span>
+                          </div>
+                          <button type="submit" className="btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', marginTop: '10px' }}>
+                            Сохранить
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODAL: SUBCATEGORY FORM */}
+                  {showSubForm && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
+                      <div className="cb-form-card" style={{ maxWidth: '520px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+                        <button onClick={() => setShowSubForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+                        <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="ri-list-check" style={{ color: 'var(--accent)' }}></i>
+                          {editingSub ? 'Редактировать подкатегорию' : 'Добавить подкатегорию'}
+                        </h3>
+                        <form onSubmit={handleSaveSubcategory} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Родительская категория</label>
+                            <select 
+                              value={subFormCatId} 
+                              onChange={e => setSubFormCatId(e.target.value)}
+                              style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            >
+                              {megaCategories.map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.title} ({megaTabs.find(t=>t.id===cat.tab)?.label})</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Название подкатегории / услуги</label>
+                            <input 
+                              type="text" 
+                              required 
+                              value={subFormTitle} 
+                              onChange={e => setSubFormTitle(e.target.value)}
+                              placeholder="Например: Сетки Антикошка"
+                              style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            />
+                          </div>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание услуги</label>
+                            <textarea 
+                              value={subFormDesc} 
+                              onChange={e => setSubFormDesc(e.target.value)}
+                              placeholder="Детальное описание услуги для карточки товара..."
+                              style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', minHeight: '80px', fontFamily: 'inherit', resize: 'vertical' }}
+                            />
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Цена</label>
+                              <input 
+                                type="text" 
+                                value={subFormPrice} 
+                                onChange={e => setSubFormPrice(e.target.value)}
+                                placeholder="от 5 000 ₸"
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                              />
+                            </div>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Сроки исполнения</label>
+                              <input 
+                                type="text" 
+                                value={subFormTime} 
+                                onChange={e => setSubFormTime(e.target.value)}
+                                placeholder="Изготовление: 1 день"
+                                style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                              />
+                            </div>
+                          </div>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Гарантия</label>
+                            <input 
+                              type="text" 
+                              value={subFormWarr} 
+                              onChange={e => setSubFormWarr(e.target.value)}
+                              placeholder="Гарантия: 1 год"
+                              style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            />
+                          </div>
+                          <button type="submit" className="btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', marginTop: '10px' }}>
+                            Сохранить подкатегорию
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
