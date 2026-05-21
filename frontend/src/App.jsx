@@ -524,6 +524,39 @@ export default function App() {
     return t(cityKey);
   };
 
+  // Helper to get 3D character for each category
+  const getCategoryCharacter = (catId) => {
+    switch (catId) {
+      // Окна
+      case 'cat-okna-1':
+      case 'cat-okna-2':
+      case 'cat-okna-3':
+      case 'cat-okna-4':
+      case 'cat-okna-5':
+        return './char_window_master.png';
+      
+      // Сервис
+      case 'cat-srv-1':
+      case 'cat-srv-2':
+      case 'cat-srv-3':
+      case 'cat-srv-4':
+      case 'cat-srv-5':
+        return './char_appliance_master.png';
+      case 'cat-srv-6':
+      case 'cat-srv-7':
+        return './char_welding_master.png';
+      case 'cat-srv-8':
+        return './char_electric_master.png';
+      
+      // Мебель
+      case 'cat-meb-1':
+        return './char_furniture_master.png';
+      
+      default:
+        return './char_window_master.png';
+    }
+  };
+
   // Handle Callback Submit
   const handleCallbackSubmit = (e) => {
     e.preventDefault();
@@ -1785,42 +1818,52 @@ const pageDataMap = {
 
               {/* Col 3: Details & Preview */}
               <div className="mega-col3">
-                <div className="mega-service-preview">
-                  <h4 className="mega-preview-price" style={{ fontSize: '24px', marginBottom: '16px' }}>{t(currentDetail.title)}</h4>
-                  <p className="mega-preview-desc">{t(currentDetail.desc)}</p>
-                  <div className="mega-preview-price">{t(currentDetail.price)}</div>
-                  <div className="mega-preview-meta">
-                    <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
-                    <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
+                <div className="mega-service-preview" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h4 className="mega-preview-price" style={{ fontSize: '24px', marginBottom: '16px' }}>{t(currentDetail.title)}</h4>
+                    <p className="mega-preview-desc">{t(currentDetail.desc)}</p>
+                    <div className="mega-preview-price">{t(currentDetail.price)}</div>
+                    <div className="mega-preview-meta">
+                      <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
+                      <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                      <a
+                        href="#contact"
+                        className="btn-primary"
+                        onClick={() => {
+                          setFormService(t(currentDetail.title));
+                          setMegaMenuOpen(false);
+                        }}
+                      >
+                        {t('srv_btn')}
+                      </a>
+                      <button
+                        className="btn-ghost"
+                        style={{ padding: '10px 20px', fontSize: '13px' }}
+                        onClick={() => {
+                          setSelectedCategoryPageObj({
+                            id: activeMegaSub,
+                            title: currentDetail.title,
+                            parentCatId: activeMegaCat,
+                            parentTabId: activeMegaTab
+                          });
+                          setActivePage('category');
+                          setMegaMenuOpen(false);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                      >
+                        {t('srv_more_btn')}
+                      </button>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
-                    <a
-                      href="#contact"
-                      className="btn-primary"
-                      onClick={() => {
-                        setFormService(t(currentDetail.title));
-                        setMegaMenuOpen(false);
-                      }}
-                    >
-                      {t('srv_btn')}
-                    </a>
-                    <button
-                      className="btn-ghost"
-                      style={{ padding: '10px 20px', fontSize: '13px' }}
-                      onClick={() => {
-                        setSelectedCategoryPageObj({
-                          id: activeMegaSub,
-                          title: currentDetail.title,
-                          parentCatId: activeMegaCat,
-                          parentTabId: activeMegaTab
-                        });
-                        setActivePage('category');
-                        setMegaMenuOpen(false);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                    >
-                      {t('srv_more_btn')}
-                    </button>
+                  {/* 3D Character image */}
+                  <div className="mega-preview-character-container">
+                    <img 
+                      src={getCategoryCharacter(activeMegaCat)} 
+                      alt="Category character" 
+                      className="mega-preview-character"
+                    />
                   </div>
                 </div>
               </div>
