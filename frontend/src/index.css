@@ -1720,10 +1720,13 @@ body.light-theme .assistant-tooltip-arrow::after {
 
 
 /* Widescreen constraints to remove stretched look */
-@media (min-width: 1440px) {
-  section:not(.hero) {
-    padding-left: calc((100vw - 1420px) / 2) !important;
-    padding-right: calc((100vw - 1420px) / 2) !important;
+@media (min-width: 1240px) {
+  section:not(.hero),
+  .category-page-container,
+  .hero-slides-viewport,
+  .topbar {
+    padding-left: calc((100vw - 1200px) / 2) !important;
+    padding-right: calc((100vw - 1200px) / 2) !important;
   }
 }
 
