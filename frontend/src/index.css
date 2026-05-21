@@ -26,16 +26,20 @@ img{max-width:100%;display:block}
 h1,h2,h3,h4{font-family:'Outfit',sans-serif;letter-spacing:-.01em;line-height:1.1}
 section{padding:88px 6vw}
 
-/* TOPBAR (FLOATING GLASS PILL) */
+/* TOPBAR (100% WIDTH HEADER, NO ROUNDING) */
 .topbar{
-  position:sticky;top:16px;z-index:50;
+  position:sticky;top:0;z-index:50;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
-  margin:16px auto 0;padding:10px 24px;
-  width:calc(100% - 12vw);
-  max-width:1400px;
+  margin:0 auto !important;padding:14px 6vw;
+  width:100% !important;
+  max-width:none !important;
   background:rgba(15,21,43,0.75);backdrop-filter:blur(24px);
-  border:1px solid rgba(255,255,255,0.12);border-radius:999px;
-  box-shadow:0 20px 40px -15px rgba(0,0,0,0.6), 0 0 30px rgba(124,242,199,0.05);
+  border-top:none !important;
+  border-left:none !important;
+  border-right:none !important;
+  border-bottom:1px solid rgba(255,255,255,0.12) !important;
+  border-radius:0 !important;
+  box-shadow:0 10px 30px -10px rgba(0,0,0,0.4);
   transition:all 0.3s ease;white-space:nowrap;
 }
 .brand{display:flex;align-items:center;gap:12px;flex-shrink:0;white-space:nowrap}
@@ -195,8 +199,8 @@ body.light-theme .city-select { color: #0f172a; }
 body.light-theme .city-select option { background: #ffffff; color: #0f172a; }
 body.light-theme .topbar {
   background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(0, 0, 0, 0.1);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.12), 0 0 30px rgba(249, 115, 22, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
 }
 body.light-theme .logo { color: #ffffff; box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
 body.light-theme .brand-name { background: linear-gradient(135deg, #0f172a, #334155); -webkit-background-clip: text; }
