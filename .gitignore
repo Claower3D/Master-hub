@@ -15,3 +15,8 @@ Thumbs.db
 
 # Databases
 masterhub_data.json
+
+# Backups
+backup_site.zip
+backup/
+

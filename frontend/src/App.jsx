@@ -49,7 +49,7 @@ export default function App() {
   // Assistant Modal State
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantMessages, setAssistantMessages] = useState([
-    { sender: 'ai', text: 'Здравствуйте! Я виртуальный ассистент MasterHub. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
+    { sender: 'ai', text: 'Здравствуйте! Я виртуальный ассистент HUB MASTER. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
   ]);
   const [assistantInput, setAssistantInput] = useState('');
   const [showAssistantTooltip, setShowAssistantTooltip] = useState(false);
@@ -1541,9 +1541,9 @@ const pageDataMap = {
               background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
               display: 'grid', placeItems: 'center',
               fontSize: '16px', fontWeight: '900', color: '#0b1020'
-            }}>MH</div>
+            }}>HM</div>
             <div>
-              <div className="admin-header-title">MasterHub Admin</div>
+              <div className="admin-header-title">HUB MASTER Admin</div>
               <div className="admin-header-subtitle">Панель мониторинга</div>
             </div>
           </div>
@@ -1583,7 +1583,7 @@ const pageDataMap = {
                     <i className="ri-shield-keyhole-line"></i>
                   </div>
                   <div className="admin-login-title">Вход в панель</div>
-                  <div className="admin-login-subtitle">Доступ только для администраторов MasterHub</div>
+                  <div className="admin-login-subtitle">Доступ только для администраторов HUB MASTER</div>
                 </div>
 
                 {adminError && (
@@ -2948,7 +2948,7 @@ const pageDataMap = {
             
             const meta = categoryMetaMap[catId] || {
               img: './slide_windows.png',
-              desc: 'Профессиональные услуги и оригинальные комплектующие от сервисного центра MasterHub. Выезд квалифицированного специалиста по городу в течение 45 минут. Письменная официальная гарантия на все выполненные работы до 12 месяцев.',
+              desc: 'Профессиональные услуги и оригинальные комплектующие от сервисного центра HUB MASTER. Выезд квалифицированного специалиста по городу в течение 45 минут. Письменная официальная гарантия на все выполненные работы до 12 месяцев.',
               features: ['Бесплатный выезд специалиста на дом при проведении работ', 'Только проверенные оригинальные запчасти и комплектующие', 'Использование современного профессионального инструмента', 'Прозрачный прайс-лист без скрытых доплат и наценок'],
               specs: [
                 { label: 'Выезд мастера', value: 'за 45 минут' },
@@ -3388,7 +3388,7 @@ const pageDataMap = {
                             {/* Main Premium Category Visual Illustration Container */}
                             <div className="hero-img-container" style={{ position: 'relative', overflow: 'visible' }}>
                               <div className="hero-img-inner-wrapper" style={{ position: 'absolute', inset: 0, borderRadius: '24px', overflow: 'hidden' }}>
-                                <img src={slide.img} alt="MasterHub Premium Service" className="hero-main-img" style={{ transform: 'scale(1.02)', transition: 'all 0.5s ease' }} />
+                                <img src={slide.img} alt="HUB MASTER Premium Service" className="hero-main-img" style={{ transform: 'scale(1.02)', transition: 'all 0.5s ease' }} />
                                 <div className="hero-img-overlay"></div>
                               </div>
                               <div className="hero-card-container" style={{ bottom: '-35px' }}>
@@ -4655,7 +4655,7 @@ const pageDataMap = {
                             <div>
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                                 <span style={{ fontSize: '11px', letterSpacing: '1px', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'uppercase' }}>
-                                  MASTERHUB GUARANTEE
+                                  HUB MASTER GUARANTEE
                                 </span>
                                 <span style={{
                                   fontSize: '11px',
