@@ -2214,7 +2214,7 @@ const pageDataMap = {
               ];
 
               return (
-                <div className="hero-slides-viewport" style={{ overflow: 'hidden', width: '100%', padding: '0 6vw' }}>
+                <div className="hero-slides-viewport" style={{ overflow: 'hidden', width: '100%', maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}>
                   <div 
                     className="hero-slides-wrapper" 
                     style={{ 
