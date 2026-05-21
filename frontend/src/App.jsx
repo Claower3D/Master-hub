@@ -529,15 +529,20 @@ export default function App() {
     switch (catId) {
       // Окна
       case 'cat-okna-1':
+        return './char_mosquito.png';
       case 'cat-okna-2':
+        return './char_safety.png';
       case 'cat-okna-3':
       case 'cat-okna-4':
-      case 'cat-okna-5':
         return './char_window_master.png';
+      case 'cat-okna-5':
+        return './char_blinds.png';
       
       // Сервис
       case 'cat-srv-1':
+        return './char_washing.png';
       case 'cat-srv-2':
+        return './char_fridge.png';
       case 'cat-srv-3':
       case 'cat-srv-4':
       case 'cat-srv-5':
