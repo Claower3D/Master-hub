@@ -57,6 +57,16 @@ type ReviewRecord struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+type CategoryReviewRecord struct {
+	ID         int       `json:"id"`
+	CategoryID string    `json:"category_id"`
+	UserID     *int      `json:"user_id"`
+	Author     string    `json:"author"`
+	Text       string    `json:"text"`
+	Rating     int       `json:"rating"`
+	CreatedAt  time.Time `json:"created_at"`
+}
+
 // DB defines all database operations
 type DB interface {
 	CreateUser(name, email, phone, city, password string) (*User, error)
@@ -76,6 +86,8 @@ type DB interface {
 	GetTelegramSubscribers() ([]int64, error)
 	CreateReview(author, text string, rating int, userID *int) (*ReviewRecord, error)
 	GetReviews() ([]ReviewRecord, error)
+	CreateCategoryReview(categoryID string, author string, text string, rating int, userID *int) (*CategoryReviewRecord, error)
+	GetCategoryReviews(categoryID string) ([]CategoryReviewRecord, error)
 	Close() error
 }
 
@@ -138,6 +150,16 @@ func NewPostgresDB(connStr string) (*PostgresDB, error) {
 
 		CREATE TABLE IF NOT EXISTS reviews (
 			id SERIAL PRIMARY KEY,
+			user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+			author VARCHAR(255) NOT NULL,
+			text TEXT NOT NULL,
+			rating INTEGER NOT NULL DEFAULT 5,
+			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS category_reviews (
+			id SERIAL PRIMARY KEY,
+			category_id VARCHAR(255) NOT NULL,
 			user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
 			author VARCHAR(255) NOT NULL,
 			text TEXT NOT NULL,
@@ -464,6 +486,42 @@ func (p *PostgresDB) GetReviews() ([]ReviewRecord, error) {
 	return list, nil
 }
 
+func (p *PostgresDB) CreateCategoryReview(categoryID string, author string, text string, rating int, userID *int) (*CategoryReviewRecord, error) {
+	var r CategoryReviewRecord
+	err := p.db.QueryRow(`
+		INSERT INTO category_reviews (category_id, author, text, rating, user_id)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, category_id, user_id, author, text, rating, created_at
+	`, categoryID, author, text, rating, userID).Scan(&r.ID, &r.CategoryID, &r.UserID, &r.Author, &r.Text, &r.Rating, &r.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (p *PostgresDB) GetCategoryReviews(categoryID string) ([]CategoryReviewRecord, error) {
+	rows, err := p.db.Query(`
+		SELECT id, category_id, user_id, author, text, rating, created_at
+		FROM category_reviews
+		WHERE category_id = $1
+		ORDER BY created_at DESC
+	`, categoryID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var list []CategoryReviewRecord
+	for rows.Next() {
+		var r CategoryReviewRecord
+		if err := rows.Scan(&r.ID, &r.CategoryID, &r.UserID, &r.Author, &r.Text, &r.Rating, &r.CreatedAt); err != nil {
+			return nil, err
+		}
+		list = append(list, r)
+	}
+	return list, nil
+}
+
 type TgSubscriber struct {
 	ChatID int64  `json:"chat_id"`
 	Name   string `json:"name"`
@@ -474,11 +532,12 @@ type JsonDB struct {
 	filePath string
 	mu       sync.Mutex
 	Data     struct {
-		Users         []User           `json:"users"`
-		Sessions      []Session        `json:"sessions"`
-		Callbacks     []CallbackRecord `json:"callbacks"`
-		TgSubscribers []TgSubscriber   `json:"tg_subscribers"`
-		Reviews       []ReviewRecord   `json:"reviews"`
+		Users           []User                 `json:"users"`
+		Sessions        []Session              `json:"sessions"`
+		Callbacks       []CallbackRecord       `json:"callbacks"`
+		TgSubscribers   []TgSubscriber         `json:"tg_subscribers"`
+		Reviews         []ReviewRecord         `json:"reviews"`
+		CategoryReviews []CategoryReviewRecord `json:"category_reviews"`
 	}
 }
 
@@ -494,6 +553,7 @@ func NewJsonDB(filePath string) (*JsonDB, error) {
 		db.Data.Callbacks = []CallbackRecord{}
 		db.Data.TgSubscribers = []TgSubscriber{}
 		db.Data.Reviews = []ReviewRecord{}
+		db.Data.CategoryReviews = []CategoryReviewRecord{}
 		err = db.save()
 		if err != nil {
 			return nil, err
@@ -509,7 +569,29 @@ func (j *JsonDB) load() error {
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(file, &j.Data)
+	err = json.Unmarshal(file, &j.Data)
+	if err != nil {
+		return err
+	}
+	if j.Data.Users == nil {
+		j.Data.Users = []User{}
+	}
+	if j.Data.Sessions == nil {
+		j.Data.Sessions = []Session{}
+	}
+	if j.Data.Callbacks == nil {
+		j.Data.Callbacks = []CallbackRecord{}
+	}
+	if j.Data.TgSubscribers == nil {
+		j.Data.TgSubscribers = []TgSubscriber{}
+	}
+	if j.Data.Reviews == nil {
+		j.Data.Reviews = []ReviewRecord{}
+	}
+	if j.Data.CategoryReviews == nil {
+		j.Data.CategoryReviews = []CategoryReviewRecord{}
+	}
+	return nil
 }
 
 func (j *JsonDB) save() error {
@@ -805,6 +887,41 @@ func (j *JsonDB) GetReviews() ([]ReviewRecord, error) {
 	var list []ReviewRecord
 	for i := len(j.Data.Reviews) - 1; i >= 0; i-- {
 		list = append(list, j.Data.Reviews[i])
+	}
+	return list, nil
+}
+
+func (j *JsonDB) CreateCategoryReview(categoryID string, author string, text string, rating int, userID *int) (*CategoryReviewRecord, error) {
+	j.load()
+	id := 1
+	if len(j.Data.CategoryReviews) > 0 {
+		id = j.Data.CategoryReviews[len(j.Data.CategoryReviews)-1].ID + 1
+	}
+
+	r := CategoryReviewRecord{
+		ID:         id,
+		CategoryID: categoryID,
+		UserID:     userID,
+		Author:     author,
+		Text:       text,
+		Rating:     rating,
+		CreatedAt:  time.Now(),
+	}
+	j.Data.CategoryReviews = append(j.Data.CategoryReviews, r)
+	if err := j.save(); err != nil {
+		return nil, err
+	}
+	return &r, nil
+}
+
+func (j *JsonDB) GetCategoryReviews(categoryID string) ([]CategoryReviewRecord, error) {
+	j.load()
+	var list []CategoryReviewRecord
+	for i := len(j.Data.CategoryReviews) - 1; i >= 0; i-- {
+		cb := j.Data.CategoryReviews[i]
+		if cb.CategoryID == categoryID {
+			list = append(list, cb)
+		}
 	}
 	return list, nil
 }

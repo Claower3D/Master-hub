@@ -558,6 +558,113 @@ func main() {
 		json.NewEncoder(w).Encode(rev)
 	}))
 
+	// GET /api/category-reviews?category_id=XXX
+	mux.HandleFunc("/api/category-reviews", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodGet {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		catID := r.URL.Query().Get("category_id")
+		if catID == "" {
+			http.Error(w, "Missing category_id parameter", http.StatusBadRequest)
+			return
+		}
+
+		reviews, err := dbInstance.GetCategoryReviews(catID)
+		if err != nil {
+			http.Error(w, "Failed to get category reviews", http.StatusInternalServerError)
+			return
+		}
+
+		if len(reviews) == 0 {
+			reviews = []CategoryReviewRecord{
+				{
+					ID:         1,
+					CategoryID: catID,
+					Author:     "Арман, Алматы",
+					Text:       "Отличный сервис! Мастер приехал вовремя, всё сделал быстро и качественно. Очень рекомендую.",
+					Rating:     5,
+					CreatedAt:  time.Now().Add(-24 * time.Hour),
+				},
+				{
+					ID:         2,
+					CategoryID: catID,
+					Author:     "Айгерим",
+					Text:       "Все супер, цена соответствует качеству. Спасибо большое за оперативность!",
+					Rating:     5,
+					CreatedAt:  time.Now().Add(-3 * 24 * time.Hour),
+				},
+			}
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(reviews)
+	}))
+
+	// POST /api/category-reviews/new
+	mux.HandleFunc("/api/category-reviews/new", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var userID *int
+		var defaultAuthor = "Аноним"
+
+		user, err := getAuthenticatedUser(r, dbInstance)
+		if err == nil && user != nil {
+			userID = &user.ID
+			defaultAuthor = user.Name
+		}
+
+		var input struct {
+			CategoryID string `json:"category_id"`
+			Author     string `json:"author"`
+			Text       string `json:"text"`
+			Rating     int    `json:"rating"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+			http.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+
+		if input.CategoryID == "" {
+			http.Error(w, "category_id is required", http.StatusBadRequest)
+			return
+		}
+
+		author := input.Author
+		if author == "" {
+			author = defaultAuthor
+		}
+		text := input.Text
+		rating := input.Rating
+		if rating < 1 || rating > 5 {
+			rating = 5
+		}
+
+		if text == "" {
+			http.Error(w, "Review text is required", http.StatusBadRequest)
+			return
+		}
+
+		rev, err := dbInstance.CreateCategoryReview(input.CategoryID, author, text, rating, userID)
+		if err != nil {
+			http.Error(w, "Failed to create category review", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(rev)
+	}))
+
 	// Serve Static Files from dist / root directory (needed for deployment)
 	staticDir := "."
 	if _, err := os.Stat("index.html"); os.IsNotExist(err) {
