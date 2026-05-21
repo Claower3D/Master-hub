@@ -1811,7 +1811,7 @@ body.light-theme .cyber-tech-panel {
 }
 
 .cyber-panel-header {
-  font-family: 'Unbounded', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 2px;
@@ -2035,7 +2035,7 @@ body.light-theme .cyber-data-card {
   font-size: 22px;
   font-weight: 800;
   color: var(--accent);
-  font-family: 'Unbounded', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 body.light-theme .cyber-data-value {
