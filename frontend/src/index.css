@@ -876,11 +876,11 @@ blockquote cite{font-style:normal;color:var(--muted);font-size:13px;font-weight:
 .cb-feat{list-style:none;color:var(--accent);font-size:14px;line-height:2}
 .cb-form{display:grid;gap:14px}
 .cb-form label{display:grid;gap:6px;font-size:13px;color:var(--muted);font-weight:600}
-.cb-form input,.cb-form select{
+.cb-form input,.cb-form select,.cb-form textarea{
   background:var(--surface);border:1px solid var(--line);color:var(--text);
   padding:14px 16px;border-radius:12px;font:500 15px 'Manrope',sans-serif;
 }
-.cb-form input:focus,.cb-form select:focus{outline:0;border-color:var(--accent)}
+.cb-form input:focus,.cb-form select:focus,.cb-form textarea:focus{outline:0;border-color:var(--accent)}
 .ok{display:none;color:var(--accent);font-weight:600;text-align:center;padding:8px}
 
 /* FOOTER */

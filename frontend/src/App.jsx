@@ -40,6 +40,8 @@ export default function App() {
   // Callback form state
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
+  const [formCountryCode, setFormCountryCode] = useState('+7');
+  const [formComment, setFormComment] = useState('');
   const [formService, setFormService] = useState('Не знаю, нужна консультация');
   const [formCity, setFormCity] = useState(city);
   const [callbackStatus, setCallbackStatus] = useState(null);
@@ -565,11 +567,13 @@ export default function App() {
   // Handle Callback Submit
   const handleCallbackSubmit = (e) => {
     e.preventDefault();
+    const fullPhone = formPhone.startsWith('+') ? formPhone : (formCountryCode + ' ' + formPhone);
     const payload = {
       name: formName,
-      phone: formPhone,
+      phone: fullPhone,
       service: formService,
-      city: formCity
+      city: formCity,
+      comment: formComment
     };
 
     const headers = { 'Content-Type': 'application/json' };
@@ -587,6 +591,7 @@ export default function App() {
         setCallbackStatus({ type: 'success', message: data.message || t('call_ok') });
         setFormName('');
         setFormPhone('');
+        setFormComment('');
         if (token) {
           fetchMyCallbacks();
         }
@@ -596,6 +601,7 @@ export default function App() {
         setCallbackStatus({ type: 'success', message: t('call_ok') });
         setFormName('');
         setFormPhone('');
+        setFormComment('');
       });
   };
 
@@ -1350,7 +1356,7 @@ const pageDataMap = {
                     <table className="admin-table">
                       <thead>
                         <tr>
-                          {['ID', 'Имя', 'Телефон', 'Услуга', 'Город', 'Дата', 'Статус'].map(h => (
+                          {['ID', 'Имя', 'Телефон', 'Услуга', 'Описание', 'Город', 'Дата', 'Статус'].map(h => (
                             <th key={h}>{h}</th>
                           ))}
                         </tr>
@@ -1361,8 +1367,22 @@ const pageDataMap = {
                             <td style={{ padding: '14px 16px', color: 'var(--muted)', fontFamily: 'monospace', fontSize: '12px' }}>#{cb.id}</td>
                             <td style={{ padding: '14px 16px', fontWeight: '600' }}>{cb.name}</td>
                             <td style={{ padding: '14px 16px', color: 'var(--muted)', fontFamily: 'monospace', fontSize: '13px' }}>{cb.phone}</td>
-                            <td style={{ padding: '14px 16px', maxWidth: '200px' }}>
+                            <td style={{ padding: '14px 16px', maxWidth: '180px' }}>
                               <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cb.service}</div>
+                            </td>
+                            <td style={{ padding: '14px 16px', maxWidth: '200px' }}>
+                              <div 
+                                style={{ 
+                                  overflow: 'hidden', 
+                                  textOverflow: 'ellipsis', 
+                                  whiteSpace: 'nowrap',
+                                  cursor: cb.comment ? 'pointer' : 'default' 
+                                }}
+                                title={cb.comment}
+                                onClick={() => cb.comment && alert(cb.comment)}
+                              >
+                                {cb.comment || <span style={{ opacity: 0.3, fontStyle: 'italic' }}>нет</span>}
+                              </div>
                             </td>
                             <td style={{ padding: '14px 16px', color: 'var(--muted)' }}>{getCityDisplay(cb.city)}</td>
                             <td style={{ padding: '14px 16px', color: 'var(--muted)', fontSize: '12px', whiteSpace: 'nowrap' }}>
@@ -2802,13 +2822,32 @@ const pageDataMap = {
               </label>
               <label>
                 {t('call_lbl2')}
-                <input
-                  type="tel"
-                  required
-                  placeholder="+7 ___ ___ __ __"
-                  value={formPhone}
-                  onChange={(e) => setFormPhone(e.target.value)}
-                />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <select
+                    value={formCountryCode}
+                    onChange={(e) => setFormCountryCode(e.target.value)}
+                    style={{
+                      width: '100px',
+                      flexShrink: 0,
+                      cursor: 'pointer',
+                      padding: '14px 10px'
+                    }}
+                  >
+                    <option value="+7">🇰🇿 +7</option>
+                    <option value="+7">🇷🇺 +7</option>
+                    <option value="+996">🇰🇬 +996</option>
+                    <option value="+998">🇺🇿 +998</option>
+                    <option value="+375">🇧🇾 +375</option>
+                  </select>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="701 123 4567"
+                    value={formPhone}
+                    onChange={(e) => setFormPhone(e.target.value)}
+                    style={{ flex: 1 }}
+                  />
+                </div>
               </label>
               <label>
                 Город
@@ -2849,6 +2888,15 @@ const pageDataMap = {
                   <option value="Генеральная уборка">{t('Генеральная уборка')}</option>
                   <option value="Услуги сантехника">{t('Услуги сантехника')}</option>
                 </select>
+              </label>
+              <label>
+                {lang === 'ru' ? 'Описание проблемы или пожелания' : lang === 'kz' ? 'Мәселенің немесе тілектің сипаттамасы' : 'Problem description or wishes'}
+                <textarea
+                  placeholder={lang === 'ru' ? 'Например: дует из левой створки окна, нужен ремонт холодильника LG, стиралка не сливает воду...' : (lang === 'kz' ? 'Мысалы: терезенің сол жағынан соғып тұр, LG тоңазытқышын жөндеу керек...' : 'E.g. draft from left window sash, refrigerator repair, washer does not drain...')}
+                  value={formComment}
+                  onChange={(e) => setFormComment(e.target.value)}
+                  rows={3}
+                />
               </label>
               <button type="submit" className="btn-primary big" style={{ width: '100%', marginTop: '14px' }}>
                 {t('call_btn')}
@@ -3447,7 +3495,14 @@ const pageDataMap = {
                             {myCallbacks.map((cb) => (
                               <tr key={cb.id}>
                                 <td>#{cb.id}</td>
-                                <td>{cb.service}</td>
+                                <td>
+                                  <div style={{ fontWeight: '600' }}>{cb.service}</div>
+                                  {cb.comment && (
+                                    <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '4px', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={cb.comment}>
+                                      {cb.comment}
+                                    </div>
+                                  )}
+                                </td>
                                 <td>{getCityDisplay(cb.city)}</td>
                                 <td>
                                   <span className={`status-pill status-${cb.status}`}>

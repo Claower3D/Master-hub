@@ -71,6 +71,11 @@ func NotifyNewOrder(db DB, record *CallbackRecord) {
 		return
 	}
 
+	commentStr := record.Comment
+	if commentStr == "" {
+		commentStr = "не указано"
+	}
+
 	msg := fmt.Sprintf(
 		"🌐 <b>МастерХаб — Новая заявка с сайта</b>\n"+
 			"━━━━━━━━━━━━━━━━━━━━\n"+
@@ -79,6 +84,7 @@ func NotifyNewOrder(db DB, record *CallbackRecord) {
 			"📞 <b>Телефон:</b> %s\n"+
 			"🛠 <b>Услуга:</b> %s\n"+
 			"🏙 <b>Город:</b> %s\n"+
+			"💬 <b>Описание/Проблема:</b> %s\n"+
 			"🕐 <b>Время:</b> %s\n"+
 			"━━━━━━━━━━━━━━━━━━━━\n"+
 			"🔗 <i>master-hub-production.up.railway.app</i>",
@@ -87,6 +93,7 @@ func NotifyNewOrder(db DB, record *CallbackRecord) {
 		record.Phone,
 		record.Service,
 		record.City,
+		commentStr,
 		record.CreatedAt.Format("02.01.2006 15:04"),
 	)
 

@@ -19,6 +19,7 @@ type CallbackRequest struct {
 	Phone   string `json:"phone"`
 	Service string `json:"service"`
 	City    string `json:"city"`
+	Comment string `json:"comment"`
 }
 
 // APIUser represents a user profile safe to send in JSON responses to the frontend client
@@ -158,7 +159,7 @@ func main() {
 			return
 		}
 
-		log.Printf("Новая заявка: Имя: %s, Тел: %s, Услуга: %s, Город: %s (UserID: %v)\n", req.Name, req.Phone, req.Service, req.City, userID)
+		log.Printf("Новая заявка: Имя: %s, Тел: %s, Услуга: %s, Город: %s, Проблема: %s (UserID: %v)\n", req.Name, req.Phone, req.Service, req.City, req.Comment, userID)
 
 		// Send Telegram notification to all subscribers
 		go NotifyNewOrder(dbInstance, record)

@@ -42,6 +42,7 @@ type CallbackRecord struct {
 	Phone     string    `json:"phone"`
 	Service   string    `json:"service"`
 	City      string    `json:"city"`
+	Comment   string    `json:"comment"`
 	Status    string    `json:"status"` // "pending", "in_progress", "completed"
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -109,6 +110,7 @@ func NewPostgresDB(connStr string) (*PostgresDB, error) {
 		);
 
 		ALTER TABLE users ADD COLUMN IF NOT EXISTS bonuses INTEGER NOT NULL DEFAULT 0;
+		ALTER TABLE callbacks ADD COLUMN IF NOT EXISTS comment TEXT NOT NULL DEFAULT '';
 
 		CREATE TABLE IF NOT EXISTS sessions (
 			token VARCHAR(255) PRIMARY KEY,
@@ -123,6 +125,7 @@ func NewPostgresDB(connStr string) (*PostgresDB, error) {
 			phone VARCHAR(255) NOT NULL,
 			service VARCHAR(255) NOT NULL,
 			city VARCHAR(255) NOT NULL,
+			comment TEXT NOT NULL DEFAULT '',
 			status VARCHAR(50) NOT NULL DEFAULT 'pending',
 			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 		);
@@ -298,11 +301,11 @@ func (p *PostgresDB) CreateCallback(req CallbackRequest, userID *int) (*Callback
 	status := "pending"
 
 	err := p.db.QueryRow(`
-		INSERT INTO callbacks (user_id, name, phone, service, city, status)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		RETURNING id, user_id, name, phone, service, city, status, created_at
-	`, userID, req.Name, req.Phone, req.Service, req.City, status).Scan(
-		&record.ID, &record.UserID, &record.Name, &record.Phone, &record.Service, &record.City, &record.Status, &record.CreatedAt,
+		INSERT INTO callbacks (user_id, name, phone, service, city, comment, status)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING id, user_id, name, phone, service, city, comment, status, created_at
+	`, userID, req.Name, req.Phone, req.Service, req.City, req.Comment, status).Scan(
+		&record.ID, &record.UserID, &record.Name, &record.Phone, &record.Service, &record.City, &record.Comment, &record.Status, &record.CreatedAt,
 	)
 	if err != nil {
 		return nil, err
@@ -312,7 +315,7 @@ func (p *PostgresDB) CreateCallback(req CallbackRequest, userID *int) (*Callback
 
 func (p *PostgresDB) GetCallbacks(userID int, phone string) ([]CallbackRecord, error) {
 	rows, err := p.db.Query(`
-		SELECT id, user_id, name, phone, service, city, status, created_at
+		SELECT id, user_id, name, phone, service, city, comment, status, created_at
 		FROM callbacks
 		WHERE user_id = $1 OR phone = $2
 		ORDER BY created_at DESC
@@ -325,7 +328,7 @@ func (p *PostgresDB) GetCallbacks(userID int, phone string) ([]CallbackRecord, e
 	var list []CallbackRecord
 	for rows.Next() {
 		var r CallbackRecord
-		if err := rows.Scan(&r.ID, &r.UserID, &r.Name, &r.Phone, &r.Service, &r.City, &r.Status, &r.CreatedAt); err != nil {
+		if err := rows.Scan(&r.ID, &r.UserID, &r.Name, &r.Phone, &r.Service, &r.City, &r.Comment, &r.Status, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		list = append(list, r)
@@ -335,7 +338,7 @@ func (p *PostgresDB) GetCallbacks(userID int, phone string) ([]CallbackRecord, e
 
 func (p *PostgresDB) GetAllCallbacks() ([]CallbackRecord, error) {
 	rows, err := p.db.Query(`
-		SELECT id, user_id, name, phone, service, city, status, created_at
+		SELECT id, user_id, name, phone, service, city, comment, status, created_at
 		FROM callbacks
 		ORDER BY created_at DESC
 	`)
@@ -347,7 +350,7 @@ func (p *PostgresDB) GetAllCallbacks() ([]CallbackRecord, error) {
 	var list []CallbackRecord
 	for rows.Next() {
 		var r CallbackRecord
-		if err := rows.Scan(&r.ID, &r.UserID, &r.Name, &r.Phone, &r.Service, &r.City, &r.Status, &r.CreatedAt); err != nil {
+		if err := rows.Scan(&r.ID, &r.UserID, &r.Name, &r.Phone, &r.Service, &r.City, &r.Comment, &r.Status, &r.CreatedAt); err != nil {
 			return nil, err
 		}
 		list = append(list, r)
@@ -661,6 +664,7 @@ func (j *JsonDB) CreateCallback(req CallbackRequest, userID *int) (*CallbackReco
 		Phone:     req.Phone,
 		Service:   req.Service,
 		City:      req.City,
+		Comment:   req.Comment,
 		Status:    "pending",
 		CreatedAt: time.Now(),
 	}
