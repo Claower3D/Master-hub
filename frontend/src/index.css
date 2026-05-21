@@ -23,7 +23,7 @@
 html,body{background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
-h1,h2,h3,h4{font-family:'Outfit',sans-serif;letter-spacing:-.01em;line-height:1.1}
+h1,h2,h3,h4{font-family:'Montserrat',sans-serif;letter-spacing:-.01em;line-height:1.1}
 section{padding:88px 6vw}
 
 /* TOPBAR (100% WIDTH HEADER, NO ROUNDING) */
@@ -46,10 +46,10 @@ section{padding:88px 6vw}
 .logo{
   width:40px;height:40px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#0b1020;font-weight:800;font-size:15px;display:grid;place-items:center;font-family:'Outfit',sans-serif;
+  color:#0b1020;font-weight:800;font-size:15px;display:grid;place-items:center;font-family:'Montserrat',sans-serif;
   box-shadow:0 0 20px rgba(124,242,199,0.4);
 }
-.brand-name{font-family:'Outfit',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.02em;background:linear-gradient(135deg,#fff,var(--muted));-webkit-background-clip:text;color:transparent;white-space:nowrap}
+.brand-name{font-family:'Montserrat',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.02em;background:linear-gradient(135deg,#fff,var(--muted));-webkit-background-clip:text;color:transparent;white-space:nowrap}
 .brand-sub{font-size:10px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-top:2px;white-space:nowrap}
 .top-nav{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .catalog-btn {
@@ -382,7 +382,7 @@ body.light-theme .hero-dot.active {
 .hero-stats strong {
   display: block;
   font-size: 22px;
-  font-family: 'Outfit';
+  font-family: 'Montserrat';
   font-weight: 700;
 }
 .hero-stats span {
@@ -682,7 +682,7 @@ body.light-theme .hero-glow {
 .srv-card:hover .srv-icon { transform: scale(1.1) rotate(5deg); }
 
 .srv-title {
-  font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; color: var(--text);
+  font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 700; color: var(--text);
   margin-bottom: 12px; line-height: 1.3;
 }
 .srv-desc {
@@ -694,7 +694,7 @@ body.light-theme .hero-glow {
   border-top: 1px solid var(--line); padding-top: 20px; margin-top: auto;
 }
 .srv-price {
-  font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--accent);
+  font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 700; color: var(--accent);
 }
 .srv-btn {
   padding: 10px 20px; background: var(--surface-2); border: 1px solid var(--line);
@@ -772,7 +772,7 @@ body.light-theme .hero-glow {
   box-shadow: 0 10px 25px rgba(124, 242, 199, 0.3);
 }
 .t-num {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 800;
   font-size: 38px;
   color: transparent;
@@ -843,7 +843,7 @@ body.light-theme .hero-glow {
 .m-photo{
   width:84px;height:84px;border-radius:50%;margin:0 auto 16px;
   background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  color:#0b1020;font-family:'Outfit';font-weight:700;font-size:24px;display:grid;place-items:center;
+  color:#0b1020;font-family:'Montserrat';font-weight:700;font-size:24px;display:grid;place-items:center;
 }
 .m-photo.a2{background:linear-gradient(135deg,#ff7a59,#ffd166)}
 .m-photo.a3{background:linear-gradient(135deg,#b388ff,#5b8cff)}
@@ -889,7 +889,7 @@ footer{
   padding:60px 6vw 24px;border-top:1px solid var(--line);
   background:var(--bg-2);
 }
-.f-col h5{font-family:'Outfit';font-size:14px;margin-bottom:14px;letter-spacing:.04em}
+.f-col h5{font-family:'Montserrat';font-size:14px;margin-bottom:14px;letter-spacing:.04em}
 .f-col p,.f-col a{color:var(--muted);font-size:14px;line-height:1.8;display:block}
 .f-col a:hover{color:var(--accent)}
 .f-bot{grid-column:1/-1;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:12px;text-align:center;margin-top:20px}
@@ -1046,7 +1046,7 @@ footer{
 .mega-detail-group { display: none; animation: fadeIn 0.25s ease; }
 .mega-detail-group.active { display: block; }
 .mega-detail-title {
-  font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 700; color: var(--text);
+  font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: var(--text);
   margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--line);
   display: flex; align-items: center; gap: 12px;
 }
@@ -1112,7 +1112,7 @@ body.light-theme .mega-preview-character {
   display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600;
   color: var(--accent); background: rgba(124,242,199,0.12); padding: 8px 16px; border-radius: 999px;
 }
-.mega-preview-price { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 32px; }
+.mega-preview-price { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 32px; }
 .mega-preview-actions { display: flex; gap: 16px; }
 
 @keyframes fadeIn {
@@ -1811,7 +1811,7 @@ body.light-theme .cyber-tech-panel {
 }
 
 .cyber-panel-header {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 2px;
@@ -2035,7 +2035,7 @@ body.light-theme .cyber-data-card {
   font-size: 22px;
   font-weight: 800;
   color: var(--accent);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 body.light-theme .cyber-data-value {
@@ -3357,7 +3357,7 @@ body.light-theme .status-completed {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Outfit', 'Manrope', sans-serif;
+  font-family: 'Montserrat', 'Manrope', sans-serif;
   transition: background-color 0.3s, color 0.3s;
 }
 .admin-header {
