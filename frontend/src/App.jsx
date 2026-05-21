@@ -15,6 +15,7 @@ export default function App() {
   const [activeMegaTab, setActiveMegaTab] = useState('okna');
   const [activeMegaCat, setActiveMegaCat] = useState('cat-okna-1');
   const [activeMegaSub, setActiveMegaSub] = useState('none');
+  const [megaSearchQuery, setMegaSearchQuery] = useState('');
   
   // Dedicated Category Page & Modal States
   const [activePage, setActivePage] = useState(() => {
@@ -714,6 +715,41 @@ export default function App() {
     time: 'Выезд: 45 мин',
     warr: 'Гарантия: 1 год'
   };
+
+  // Helper to filter categories and subcategories
+  const getMegaSearchResults = () => {
+    if (!megaSearchQuery.trim()) return { categories: [], subcategories: [] };
+    const query = megaSearchQuery.toLowerCase();
+    
+    // Find matching categories
+    const matchingCats = megaCategories.filter(cat => {
+      const translatedTitle = t(cat.title).toLowerCase();
+      const rawTitle = cat.title.toLowerCase();
+      return rawTitle.includes(query) || translatedTitle.includes(query);
+    });
+
+    // Find matching subcategories
+    const matchingSubs = [];
+    Object.entries(megaSubcategories).forEach(([catId, subList]) => {
+      const parentCat = megaCategories.find(c => c.id === catId);
+      if (!parentCat) return;
+      subList.forEach(sub => {
+        const translatedTitle = t(sub.title).toLowerCase();
+        const rawTitle = sub.title.toLowerCase();
+        if (rawTitle.includes(query) || translatedTitle.includes(query)) {
+          matchingSubs.push({
+            ...sub,
+            parentCat
+          });
+        }
+      });
+    });
+
+    return { categories: matchingCats, subcategories: matchingSubs };
+  };
+
+  const searchResults = getMegaSearchResults();
+  const hasSearchResults = megaSearchQuery.trim().length > 0;
 
   // Service Catalog pills
   const catPills = [
@@ -1435,11 +1471,65 @@ const pageDataMap = {
               {t(tab.label)}
             </a>
           ))}
-          <button className="mega-nav-close" onClick={() => setMegaMenuOpen(false)} aria-label="Закрыть меню">
-            <i className="ri-close-line"></i>
-          </button>
         </div>
-        <div className="mega-body">
+
+        {/* Search Bar Row */}
+        <div className="mega-search-container" style={{
+          padding: '16px 3vw',
+          borderBottom: '1px solid var(--line)',
+          background: theme === 'light' ? 'rgba(0,0,0,0.01)' : 'rgba(255,255,255,0.01)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <i className="ri-search-line" style={{
+              position: 'absolute',
+              left: '16px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--muted)',
+              fontSize: '18px'
+            }}></i>
+            <input
+              type="text"
+              placeholder={lang === 'ru' ? 'Поиск услуг и категорий... (например: сетки, ремонт, кондиционеры)' : lang === 'kz' ? 'Қызметтер мен санаттарды іздеу...' : 'Search services and categories...'}
+              value={megaSearchQuery}
+              onChange={(e) => setMegaSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px 12px 48px',
+                background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
+                border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                color: theme === 'light' ? 'var(--text)' : '#fff',
+                fontSize: '14px',
+                outline: 'none',
+                transition: 'all 0.2s'
+              }}
+            />
+            {megaSearchQuery && (
+              <button
+                onClick={() => setMegaSearchQuery('')}
+                style={{
+                  position: 'absolute',
+                  right: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--muted)',
+                  cursor: 'pointer',
+                  fontSize: '18px'
+                }}
+              >
+                <i className="ri-close-circle-fill"></i>
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mega-body" style={hasSearchResults ? { display: 'block', minHeight: '300px', paddingBottom: '30px' } : undefined}>
           {/* Mobile Only Controls */}
           <div className="mega-mobile-controls">
             <div className="city-switch">
@@ -1486,136 +1576,256 @@ const pageDataMap = {
               </button>
             )}
           </div>
-          {/* Col 1: Categories */}
-          <div className="mega-col1">
-            {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => (
-              <div
-                key={cat.id}
-                className={`mega-cat ${activeMegaCat === cat.id ? 'active' : ''}`}
-                onMouseEnter={() => {
-                  setActiveMegaCat(cat.id);
-                  const firstSub = megaSubcategories[cat.id]?.[0];
-                  setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                }}
-                onClick={() => {
-                  setActiveMegaCat(cat.id);
-                  const firstSub = megaSubcategories[cat.id]?.[0];
-                  setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                }}
-              >
-                <i className={`mega-cat-icon ${cat.icon}`}></i>
-                <span className="mega-cat-link">{t(cat.title)}</span>
-                <button
-                  className="btn-ghost"
-                  style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedCategoryPageObj({
-                      id: cat.id,
-                      title: cat.title,
-                      parentCatId: cat.id,
-                      parentTabId: activeMegaTab
-                    });
-                    setActivePage('category');
-                    setMegaMenuOpen(false);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  title="Открыть страницу категории"
-                >
-                  Открыть ↗
-                </button>
-              </div>
-            ))}
-          </div>
 
-          {/* Col 2: Subcategories */}
-          <div className="mega-col2">
-            {megaCategories.find(c => c.id === activeMegaCat) && (
-              <div
-                className="mega-sub all-cat-link"
-                style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700' }}
-                onClick={() => {
-                  const currCat = megaCategories.find(c => c.id === activeMegaCat);
-                  setSelectedCategoryPageObj({
-                    id: currCat.id,
-                    title: currCat.title,
-                    parentCatId: currCat.id,
-                    parentTabId: activeMegaTab
-                  });
-                  setActivePage('category');
-                  setMegaMenuOpen(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              >
-                <span className="mega-sub-link">⚡ Все услуги: {t(megaCategories.find(c => c.id === activeMegaCat)?.title)}</span>
-                <i className="ri-arrow-right-line mega-sub-arrow" style={{ color: 'var(--accent)' }}></i>
-              </div>
-            )}
-            {(megaSubcategories[activeMegaCat] || []).map(sub => (
-              <div
-                key={sub.id}
-                className={`mega-sub ${activeMegaSub === sub.id ? 'active' : ''}`}
-                onMouseEnter={() => setActiveMegaSub(sub.id)}
-                onClick={() => {
-                  setActiveMegaSub(sub.id);
-                  setSelectedCategoryPageObj({
-                    id: sub.id,
-                    title: sub.title,
-                    parentCatId: activeMegaCat,
-                    parentTabId: activeMegaTab
-                  });
-                  setActivePage('category');
-                  setMegaMenuOpen(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              >
-                <span className="mega-sub-link">{t(sub.title)}</span>
-                <i className="ri-arrow-right-s-line mega-sub-arrow"></i>
-              </div>
-            ))}
-          </div>
+          {hasSearchResults ? (
+            <div className="mega-search-results" style={{ padding: '20px 3vw', display: 'flex', flexDirection: 'column', gap: '30px' }}>
+              {/* Category matches */}
+              {searchResults.categories.length > 0 && (
+                <div>
+                  <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--accent)', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {lang === 'ru' ? 'Категории' : lang === 'kz' ? 'Санаттар' : 'Categories'}
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+                    {searchResults.categories.map(cat => (
+                      <div
+                        key={cat.id}
+                        onClick={() => {
+                          setSelectedCategoryPageObj({
+                            id: cat.id,
+                            title: cat.title,
+                            parentCatId: cat.id,
+                            parentTabId: cat.tab
+                          });
+                          setActivePage('category');
+                          setMegaMenuOpen(false);
+                          setMegaSearchQuery('');
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        style={{
+                          background: theme === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
+                          border: '1px solid var(--line)',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          transition: 'all 0.2s'
+                        }}
+                        className="search-result-item"
+                      >
+                        <i className={cat.icon} style={{ fontSize: '20px', color: 'var(--accent)' }}></i>
+                        <div>
+                          <div style={{ fontWeight: '750', fontSize: '14px', color: theme === 'light' ? 'var(--text)' : '#fff' }}>{t(cat.title)}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>
+                            {cat.tab === 'okna' ? (lang === 'ru' ? 'Раздел: Окна' : 'Windows') : cat.tab === 'servis' ? (lang === 'ru' ? 'Раздел: Сервис' : 'Service') : (lang === 'ru' ? 'Раздел: Мебель' : 'Furniture')}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-          {/* Col 3: Details & Preview */}
-          <div className="mega-col3">
-            <div className="mega-service-preview">
-              <h4 className="mega-preview-price" style={{ fontSize: '24px', marginBottom: '16px' }}>{t(currentDetail.title)}</h4>
-              <p className="mega-preview-desc">{t(currentDetail.desc)}</p>
-              <div className="mega-preview-price">{t(currentDetail.price)}</div>
-              <div className="mega-preview-meta">
-                <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
-                <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
-              </div>
-              <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
-                <a
-                  href="#contact"
-                  className="btn-primary"
-                  onClick={() => {
-                    setFormService(t(currentDetail.title));
-                    setMegaMenuOpen(false);
-                  }}
-                >
-                  {t('srv_btn')}
-                </a>
-                <button
-                  className="btn-ghost"
-                  style={{ padding: '10px 20px', fontSize: '13px' }}
-                  onClick={() => {
-                    setSelectedCategoryPageObj({
-                      id: activeMegaSub,
-                      title: currentDetail.title,
-                      parentCatId: activeMegaCat,
-                      parentTabId: activeMegaTab
-                    });
-                    setActivePage('category');
-                    setMegaMenuOpen(false);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                >
-                  {t('srv_more_btn')}
-                </button>
-              </div>
+              {/* Subcategory matches */}
+              {searchResults.subcategories.length > 0 && (
+                <div>
+                  <h4 style={{ fontSize: '14px', fontWeight: '800', color: 'var(--accent)', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {lang === 'ru' ? 'Услуги и виды работ' : lang === 'kz' ? 'Қызметтер мен жұмыс түрлері' : 'Services & Works'}
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+                    {searchResults.subcategories.map(sub => (
+                      <div
+                        key={sub.id}
+                        onClick={() => {
+                          setSelectedCategoryPageObj({
+                            id: sub.parentCat.id,
+                            title: sub.parentCat.title,
+                            parentCatId: sub.parentCat.id,
+                            parentTabId: sub.parentCat.tab
+                          });
+                          setActivePage('category');
+                          setMegaMenuOpen(false);
+                          setMegaSearchQuery('');
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          setTimeout(() => {
+                            setSelectedModalItem({
+                              title: sub.title,
+                              type: 'service',
+                              parentTitle: sub.parentCat.title
+                            });
+                          }, 300);
+                        }}
+                        style={{
+                          background: theme === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
+                          border: '1px solid var(--line)',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          transition: 'all 0.2s'
+                        }}
+                        className="search-result-item"
+                      >
+                        <i className="ri-tools-line" style={{ fontSize: '20px', color: 'var(--accent-2)' }}></i>
+                        <div>
+                          <div style={{ fontWeight: '750', fontSize: '14px', color: theme === 'light' ? 'var(--text)' : '#fff' }}>{t(sub.title)}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>
+                            {t(sub.parentCat.title)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* No results */}
+              {searchResults.categories.length === 0 && searchResults.subcategories.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--muted)' }}>
+                  <i className="ri-search-eye-line" style={{ fontSize: '48px', color: 'var(--line)', marginBottom: '15px', display: 'block' }}></i>
+                  <p style={{ fontSize: '15px' }}>
+                    {lang === 'ru' ? 'Ничего не найдено по вашему запросу' : lang === 'kz' ? 'Сұранысыңыз бойынша ештеңе табылмады' : 'No results found for your query'}
+                  </p>
+                </div>
+              )}
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Col 1: Categories */}
+              <div className="mega-col1">
+                {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => (
+                  <div
+                    key={cat.id}
+                    className={`mega-cat ${activeMegaCat === cat.id ? 'active' : ''}`}
+                    onMouseEnter={() => {
+                      setActiveMegaCat(cat.id);
+                      const firstSub = megaSubcategories[cat.id]?.[0];
+                      setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                    }}
+                    onClick={() => {
+                      setActiveMegaCat(cat.id);
+                      const firstSub = megaSubcategories[cat.id]?.[0];
+                      setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                    }}
+                  >
+                    <i className={`mega-cat-icon ${cat.icon}`}></i>
+                    <span className="mega-cat-link">{t(cat.title)}</span>
+                    <button
+                      className="btn-ghost"
+                      style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCategoryPageObj({
+                          id: cat.id,
+                          title: cat.title,
+                          parentCatId: cat.id,
+                          parentTabId: activeMegaTab
+                        });
+                        setActivePage('category');
+                        setMegaMenuOpen(false);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      title="Открыть страницу категории"
+                    >
+                      Открыть ↗
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Col 2: Subcategories */}
+              <div className="mega-col2">
+                {megaCategories.find(c => c.id === activeMegaCat) && (
+                  <div
+                    className="mega-sub all-cat-link"
+                    style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700' }}
+                    onClick={() => {
+                      const currCat = megaCategories.find(c => c.id === activeMegaCat);
+                      setSelectedCategoryPageObj({
+                        id: currCat.id,
+                        title: currCat.title,
+                        parentCatId: currCat.id,
+                        parentTabId: activeMegaTab
+                      });
+                      setActivePage('category');
+                      setMegaMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    <span className="mega-sub-link">⚡ Все услуги: {t(megaCategories.find(c => c.id === activeMegaCat)?.title)}</span>
+                    <i className="ri-arrow-right-line mega-sub-arrow" style={{ color: 'var(--accent)' }}></i>
+                  </div>
+                )}
+                {(megaSubcategories[activeMegaCat] || []).map(sub => (
+                  <div
+                    key={sub.id}
+                    className={`mega-sub ${activeMegaSub === sub.id ? 'active' : ''}`}
+                    onMouseEnter={() => setActiveMegaSub(sub.id)}
+                    onClick={() => {
+                      setActiveMegaSub(sub.id);
+                      setSelectedCategoryPageObj({
+                        id: sub.id,
+                        title: sub.title,
+                        parentCatId: activeMegaCat,
+                        parentTabId: activeMegaTab
+                      });
+                      setActivePage('category');
+                      setMegaMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                  >
+                    <span className="mega-sub-link">{t(sub.title)}</span>
+                    <i className="ri-arrow-right-s-line mega-sub-arrow"></i>
+                  </div>
+                ))}
+              </div>
+
+              {/* Col 3: Details & Preview */}
+              <div className="mega-col3">
+                <div className="mega-service-preview">
+                  <h4 className="mega-preview-price" style={{ fontSize: '24px', marginBottom: '16px' }}>{t(currentDetail.title)}</h4>
+                  <p className="mega-preview-desc">{t(currentDetail.desc)}</p>
+                  <div className="mega-preview-price">{t(currentDetail.price)}</div>
+                  <div className="mega-preview-meta">
+                    <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
+                    <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                    <a
+                      href="#contact"
+                      className="btn-primary"
+                      onClick={() => {
+                        setFormService(t(currentDetail.title));
+                        setMegaMenuOpen(false);
+                      }}
+                    >
+                      {t('srv_btn')}
+                    </a>
+                    <button
+                      className="btn-ghost"
+                      style={{ padding: '10px 20px', fontSize: '13px' }}
+                      onClick={() => {
+                        setSelectedCategoryPageObj({
+                          id: activeMegaSub,
+                          title: currentDetail.title,
+                          parentCatId: activeMegaCat,
+                          parentTabId: activeMegaTab
+                        });
+                        setActivePage('category');
+                        setMegaMenuOpen(false);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      {t('srv_more_btn')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
       <div className={`mega-overlay ${megaMenuOpen ? 'open' : ''}`} onClick={() => setMegaMenuOpen(false)}></div>
