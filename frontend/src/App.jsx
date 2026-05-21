@@ -2385,15 +2385,15 @@ const pageDataMap = {
             {/* REVIEW FORM */}
             <div className="review-form-container" style={{
               marginTop: '40px',
-              background: 'rgba(20, 27, 52, 0.6)',
+              background: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(20, 27, 52, 0.6)',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '16px',
               padding: '30px',
               maxWidth: '600px',
               marginInline: 'auto'
             }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '15px', color: '#fff', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '15px', color: theme === 'light' ? 'var(--text)' : '#fff', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <i className="ri-message-3-line" style={{ color: 'var(--accent)' }}></i>
                 {lang === 'ru' ? 'Оставить отзыв' : lang === 'kz' ? 'Пікір қалдыру' : 'Leave a Review'}
               </h3>
@@ -2439,11 +2439,11 @@ const pageDataMap = {
                       onChange={(e) => setReviewAuthor(e.target.value)}
                       style={{
                         width: '100%',
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        background: theme === 'light' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.04)',
+                        border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: '10px',
                         padding: '10px 14px',
-                        color: '#fff',
+                        color: theme === 'light' ? 'var(--text)' : '#fff',
                         fontSize: '14px',
                         outline: 'none'
                       }}
@@ -2452,10 +2452,10 @@ const pageDataMap = {
                 )}
 
                 {user && (
-                  <div style={{ fontSize: '13px', color: 'var(--muted)', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                  <div style={{ fontSize: '13px', color: 'var(--muted)', background: theme === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: theme === 'light' ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.04)' }}>
                     <i className="ri-user-line" style={{ marginRight: '6px', color: 'var(--accent)' }}></i>
                     {lang === 'ru' ? 'Вы пишите отзыв от имени: ' : lang === 'kz' ? 'Сіз келесі атпен пікір жазып жатырсыз: ' : 'Posting as: '} 
-                    <strong style={{ color: '#fff' }}>{user.name}</strong>
+                    <strong style={{ color: theme === 'light' ? 'var(--text)' : '#fff' }}>{user.name}</strong>
                   </div>
                 )}
 
@@ -2471,11 +2471,11 @@ const pageDataMap = {
                     onChange={(e) => setReviewText(e.target.value)}
                     style={{
                       width: '100%',
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: theme === 'light' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.04)',
+                      border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.1)' : '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '10px',
                       padding: '10px 14px',
-                      color: '#fff',
+                      color: theme === 'light' ? 'var(--text)' : '#fff',
                       fontSize: '14px',
                       outline: 'none',
                       resize: 'none'
@@ -2487,7 +2487,7 @@ const pageDataMap = {
                   background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
                   border: 'none',
                   borderRadius: '10px',
-                  color: '#0b1020',
+                  color: theme === 'light' ? '#fff' : '#0b1020',
                   padding: '12px',
                   fontWeight: 'bold',
                   fontSize: '14px',
@@ -2496,7 +2496,7 @@ const pageDataMap = {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 15px rgba(124, 242, 199, 0.2)',
+                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
                   transition: 'transform 0.15s ease, opacity 0.15s ease'
                 }}>
                   <i className="ri-send-plane-line"></i>
