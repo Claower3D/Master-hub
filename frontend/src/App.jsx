@@ -71,7 +71,13 @@ export default function App() {
   const [adminFilterDate, setAdminFilterDate] = useState('');
   const [adminFilterStatus, setAdminFilterStatus] = useState('all');
   const [adminActiveTab, setAdminActiveTab] = useState('orders'); // 'orders' or 'catalog'
-  const [catalogSubTab, setCatalogSubTab] = useState('categories'); // 'categories' or 'subcategories'
+  const [catalogSubTab, setCatalogSubTab] = useState('tabs'); // 'tabs', 'categories', or 'subcategories'
+
+  // Section (Tab) Form State
+  const [showTabForm, setShowTabForm] = useState(false);
+  const [editingTabObj, setEditingTabObj] = useState(null);
+  const [tabFormId, setTabFormId] = useState('');
+  const [tabFormLabel, setTabFormLabel] = useState('');
 
   // Category Form State
   const [showCatForm, setShowCatForm] = useState(false);
@@ -176,8 +182,76 @@ export default function App() {
     localStorage.setItem('megaDetails', JSON.stringify(newDetails));
   };
 
+  const saveMegaTabs = (newTabs) => {
+    setMegaTabs(newTabs);
+    localStorage.setItem('megaTabs', JSON.stringify(newTabs));
+  };
+
+  const handleSaveTab = (e) => {
+    e.preventDefault();
+    if (!tabFormLabel.trim() || !tabFormId.trim()) return;
+
+    const cleanId = tabFormId.trim().toLowerCase();
+    const cleanLabel = tabFormLabel.trim();
+
+    // Check if ID is unique when adding new tab
+    if (!editingTabObj && megaTabs.some(t => t.id === cleanId)) {
+      alert('Раздел с таким ID уже существует! Пожалуйста, выберите другой уникальный ID.');
+      return;
+    }
+
+    if (editingTabObj) {
+      // Edit
+      const updated = megaTabs.map(t => 
+        t.id === editingTabObj.id ? { ...t, label: cleanLabel } : t
+      );
+      saveMegaTabs(updated);
+      setEditingTabObj(null);
+    } else {
+      // Add
+      const newTabObj = { id: cleanId, label: cleanLabel };
+      saveMegaTabs([...megaTabs, newTabObj]);
+    }
+
+    setTabFormId('');
+    setTabFormLabel('');
+    setShowTabForm(false);
+  };
+
+  const handleDeleteTab = (tabId) => {
+    if (window.confirm('Удаление раздела сотрет все его категории и подкатегории! Вы действительно хотите удалить данный раздел?')) {
+      const updatedTabs = megaTabs.filter(t => t.id !== tabId);
+      saveMegaTabs(updatedTabs);
+
+      // Find all categories belonging to this tab
+      const catsToDelete = megaCategories.filter(c => c.tab === tabId);
+      const catIdsToDelete = catsToDelete.map(c => c.id);
+
+      // Filter megaCategories
+      const updatedCats = megaCategories.filter(c => c.tab !== tabId);
+      saveMegaCategories(updatedCats);
+
+      // Filter subcategories and details
+      const updatedSubs = { ...megaSubcategories };
+      const updatedDetails = { ...megaDetails };
+
+      catIdsToDelete.forEach(catId => {
+        const subList = updatedSubs[catId] || [];
+        delete updatedSubs[catId];
+        subList.forEach(sub => {
+          delete updatedDetails[sub.id];
+        });
+      });
+
+      saveMegaSubcategories(updatedSubs);
+      saveMegaDetails(updatedDetails);
+    }
+  };
+
   const handleResetCatalog = () => {
     if (window.confirm('Вы уверены, что хотите сбросить весь каталог к исходным настройкам по умолчанию? Все ваши изменения будут стерты.')) {
+      setMegaTabs(defaultMegaTabs);
+      localStorage.removeItem('megaTabs');
       setMegaCategories(defaultMegaCategories);
       localStorage.removeItem('megaCategories');
       setMegaSubcategories(defaultMegaSubcategories);
@@ -1630,7 +1704,7 @@ const pageDataMap = {
                     <div>
                       <h2 style={{ fontSize: '20px', fontWeight: '850', margin: 0 }}>Управление структурой каталога</h2>
                       <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '4px 0 0 0' }}>
-                        Редактируйте категории, подкатегории и их подробные описания
+                        Редактируйте разделы, категории, подкатегории и их подробные описания
                       </p>
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
@@ -1641,11 +1715,25 @@ const pageDataMap = {
                       >
                         <i className="ri-history-line"></i> Сбросить по умолчанию
                       </button>
-                      {catalogSubTab === 'categories' ? (
+                      {catalogSubTab === 'tabs' && (
+                        <button 
+                          onClick={() => {
+                            setEditingTabObj(null);
+                            setTabFormId('');
+                            setTabFormLabel('');
+                            setShowTabForm(true);
+                          }}
+                          className="btn-primary"
+                          style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        >
+                          <i className="ri-add-line"></i> Добавить раздел
+                        </button>
+                      )}
+                      {catalogSubTab === 'categories' && (
                         <button 
                           onClick={() => {
                             setEditingCat(null);
-                            setCatFormTab('okna');
+                            setCatFormTab(megaTabs[0]?.id || '');
                             setCatFormTitle('');
                             setCatFormIcon('ri-tools-line');
                             setShowCatForm(true);
@@ -1655,7 +1743,8 @@ const pageDataMap = {
                         >
                           <i className="ri-add-line"></i> Добавить категорию
                         </button>
-                      ) : (
+                      )}
+                      {catalogSubTab === 'subcategories' && (
                         <button 
                           onClick={() => {
                             setEditingSub(null);
@@ -1678,6 +1767,25 @@ const pageDataMap = {
 
                   {/* Sub-sub tab switcher */}
                   <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', background: 'var(--card-bg)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)', width: 'fit-content' }}>
+                    <button
+                      onClick={() => setCatalogSubTab('tabs')}
+                      style={{
+                        background: catalogSubTab === 'tabs' ? 'var(--bg)' : 'transparent',
+                        border: 'none',
+                        color: catalogSubTab === 'tabs' ? 'var(--text)' : 'var(--muted)',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontWeight: '700',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <i className="ri-folder-line"></i> Разделы ({megaTabs.length})
+                    </button>
                     <button
                       onClick={() => setCatalogSubTab('categories')}
                       style={{
@@ -1717,6 +1825,52 @@ const pageDataMap = {
                       <i className="ri-list-check"></i> Подкатегории / Услуги ({Object.values(megaSubcategories).flat().length})
                     </button>
                   </div>
+
+                  {/* SUB-TAB CONTENTS: SECTIONS / TABS */}
+                  {catalogSubTab === 'tabs' && (
+                    <div className="admin-table-card">
+                      <div className="admin-table-wrapper">
+                        <table className="admin-table">
+                          <thead>
+                            <tr>
+                              <th>ID (Англ. код)</th>
+                              <th>Название раздела</th>
+                              <th style={{ textAlign: 'right' }}>Действия</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {megaTabs.map(tab => (
+                              <tr key={tab.id} className="admin-table-row">
+                                <td style={{ color: 'var(--muted)', fontSize: '13px', fontFamily: 'monospace', fontWeight: '600' }}>{tab.id}</td>
+                                <td style={{ fontWeight: '600' }}>{tab.label}</td>
+                                <td style={{ textAlign: 'right' }}>
+                                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                    <button
+                                      onClick={() => {
+                                        setEditingTabObj(tab);
+                                        setTabFormId(tab.id);
+                                        setTabFormLabel(tab.label);
+                                        setShowTabForm(true);
+                                      }}
+                                      style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                    >
+                                      <i className="ri-pencil-line"></i> Изменить
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteTab(tab.id)}
+                                      style={{ border: 'none', background: 'rgba(255,122,89,0.1)', color: '#ff7a59', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                    >
+                                      <i className="ri-delete-bin-line"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
 
                   {/* SUB-TAB CONTENTS: CATEGORIES */}
                   {catalogSubTab === 'categories' && (
@@ -1852,6 +2006,52 @@ const pageDataMap = {
                             })}
                           </tbody>
                         </table>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* MODAL: SECTION / TAB FORM */}
+                  {showTabForm && (
+                    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
+                      <div className="cb-form-card" style={{ maxWidth: '480px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+                        <button onClick={() => setShowTabForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+                        <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="ri-folder-line" style={{ color: 'var(--accent)' }}></i>
+                          {editingTabObj ? 'Редактировать раздел' : 'Добавить раздел'}
+                        </h3>
+                        <form onSubmit={handleSaveTab} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>ID раздела (Английские буквы)</label>
+                            <input 
+                              type="text" 
+                              required 
+                              disabled={!!editingTabObj}
+                              value={tabFormId} 
+                              onChange={e => setTabFormId(e.target.value)}
+                              placeholder="Например: electro"
+                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            />
+                            {!editingTabObj && (
+                              <span style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '4px', display: 'block' }}>
+                                Код раздела используется внутренне и не может быть изменен позже
+                              </span>
+                            )}
+                          </div>
+                          <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название раздела (Отображаемое имя)</label>
+                            <input 
+                              type="text" 
+                              required 
+                              value={tabFormLabel} 
+                              onChange={e => setTabFormLabel(e.target.value)}
+                              placeholder="Например: Электрика"
+                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            />
+                          </div>
+                          <button type="submit" className="btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', marginTop: '10px' }}>
+                            Сохранить раздел
+                          </button>
+                        </form>
                       </div>
                     </div>
                   )}
