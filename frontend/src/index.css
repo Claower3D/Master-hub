@@ -1723,7 +1723,6 @@ body.light-theme .assistant-tooltip-arrow::after {
 @media (min-width: 1240px) {
   section:not(.hero),
   .category-page-container,
-  .hero-slides-viewport,
   .topbar {
     padding-left: calc((100vw - 1200px) / 2) !important;
     padding-right: calc((100vw - 1200px) / 2) !important;
