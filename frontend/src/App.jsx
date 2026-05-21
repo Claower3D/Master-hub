@@ -4181,7 +4181,7 @@ const pageDataMap = {
                   <i className="ri-robot-2-fill"></i>
                 </div>
                 <div>
-                  <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text)' }}>Айя · Ассистент</div>
+                  <div style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text)' }}>Ирина · Ассистент</div>
                   <div style={{ fontSize: '12px', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', animation: 'pulse 2s infinite' }}></span> Онлайн
                   </div>
@@ -4255,7 +4255,7 @@ const pageDataMap = {
           >
             <div className="assistant-tooltip-arrow"></div>
             <i className="ri-robot-line" style={{ color: 'var(--accent)', marginRight: '6px' }}></i>
-            <span>Айя: Нужна помощь с выбором услуги? 🤖</span>
+            <span>Ирина: Нужна помощь с выбором услуги? 🤖</span>
             <button
               onClick={(e) => {
                 e.stopPropagation();
