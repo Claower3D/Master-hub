@@ -109,16 +109,7 @@ func main() {
 		json.NewEncoder(w).Encode(stats)
 	}))
 
-	// Reviews endpoint
-	mux.HandleFunc("/api/reviews", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		reviews := []ReviewItem{
-			{Text: "«Заказали клининг после ремонта + вывоз мусора. Приехали через час, всё сделали за вечер. Цена не выросла ни на тенге».", Author: "— Алия, Бостандыкский р-н"},
-			{Text: "«Сломалась стиралка вечером. Мастер был у нас в 9 утра, починил за 40 минут. Дали гарантию на год».", Author: "— Ержан, мкр Самал"},
-			{Text: "«Перетяжка дивана — как новый. Забрали, через 4 дня привезли. Очень аккуратно».", Author: "— Динара, ЖК «Альпийский»"},
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(reviews)
-	}))
+
 
 	// Services catalog endpoint
 	mux.HandleFunc("/api/services", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
