@@ -69,6 +69,7 @@ type DB interface {
 	GetCallbacks(userID int, phone string) ([]CallbackRecord, error)
 	GetAllCallbacks() ([]CallbackRecord, error)
 	UpdateCallbackStatus(id int, status string) error
+	DeleteCallback(id int) error
 	UpdateUser(id int, name, phone, city, password string) (*User, error)
 	AddTelegramSubscriber(chatID int64, name string) error
 	RemoveTelegramSubscriber(chatID int64) error
@@ -385,6 +386,11 @@ func (p *PostgresDB) UpdateCallbackStatus(id int, status string) error {
 	}
 
 	return tx.Commit()
+}
+
+func (p *PostgresDB) DeleteCallback(id int) error {
+	_, err := p.db.Exec("DELETE FROM callbacks WHERE id = $1", id)
+	return err
 }
 
 func (p *PostgresDB) Close() error {
@@ -717,6 +723,24 @@ func (j *JsonDB) UpdateCallbackStatus(id int, status string) error {
 		}
 	}
 	return errors.New("callback not found")
+}
+
+func (j *JsonDB) DeleteCallback(id int) error {
+	j.load()
+	found := false
+	var updated []CallbackRecord
+	for _, cb := range j.Data.Callbacks {
+		if cb.ID == id {
+			found = true
+			continue
+		}
+		updated = append(updated, cb)
+	}
+	if !found {
+		return errors.New("callback not found")
+	}
+	j.Data.Callbacks = updated
+	return j.save()
 }
 
 func (j *JsonDB) AddTelegramSubscriber(chatID int64, name string) error {

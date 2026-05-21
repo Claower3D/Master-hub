@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -424,6 +425,49 @@ func main() {
 		err = dbInstance.UpdateCallbackStatus(input.ID, input.Status)
 		if err != nil {
 			http.Error(w, "Failed to update status", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "success"})
+	}))
+
+	// DELETE /api/callbacks/delete (admin only, delete callback)
+	mux.HandleFunc("/api/callbacks/delete", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodDelete {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		user, err := getAuthenticatedUser(r, dbInstance)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+
+		if user.Role != "admin" {
+			http.Error(w, "Forbidden (Admin only)", http.StatusForbidden)
+			return
+		}
+
+		idStr := r.URL.Query().Get("id")
+		if idStr == "" {
+			http.Error(w, "Missing id parameter", http.StatusBadRequest)
+			return
+		}
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+			return
+		}
+
+		err = dbInstance.DeleteCallback(id)
+		if err != nil {
+			http.Error(w, "Failed to delete callback: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 

@@ -166,6 +166,19 @@ export default function App() {
       .catch(err => console.error(err));
   };
 
+  const handleAdminDeleteCallback = (id) => {
+    if (!confirm('Вы уверены, что хотите удалить эту заявку?')) return;
+    fetch(`${API_BASE}/api/callbacks/delete?id=${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => { 
+        if (!res.ok) throw new Error('Не удалось удалить заявку'); 
+        fetchAdminCallbacks(); 
+      })
+      .catch(err => alert(err.message));
+  };
+
   // Save functions
   const saveMegaCategories = (newCats) => {
     setMegaCategories(newCats);
@@ -1645,8 +1658,8 @@ const pageDataMap = {
                         <table className="admin-table">
                           <thead>
                             <tr>
-                              {['ID', 'Имя', 'Телефон', 'Услуга', 'Описание', 'Город', 'Дата', 'Статус'].map(h => (
-                                <th key={h}>{h}</th>
+                              {['ID', 'Имя', 'Телефон', 'Услуга', 'Описание', 'Город', 'Дата', 'Статус', 'Действия'].map(h => (
+                                <th key={h} style={{ textAlign: h === 'Действия' ? 'center' : 'left' }}>{h}</th>
                               ))}
                             </tr>
                           </thead>
@@ -1687,6 +1700,27 @@ const pageDataMap = {
                                     <option value="in_progress" style={{ background: 'var(--surface)', color: 'var(--text)' }}>В работе</option>
                                     <option value="completed" style={{ background: 'var(--surface)', color: 'var(--text)' }}>Выполнена</option>
                                   </select>
+                                </td>
+                                <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                                  <button
+                                    onClick={() => handleAdminDeleteCallback(cb.id)}
+                                    title="Удалить заявку"
+                                    style={{
+                                      background: 'rgba(255,122,89,0.1)',
+                                      border: '1px solid rgba(255,122,89,0.2)',
+                                      color: '#ff7a59',
+                                      borderRadius: '8px',
+                                      padding: '8px 10px',
+                                      cursor: 'pointer',
+                                      fontSize: '14px',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      transition: 'all 0.2s'
+                                    }}
+                                  >
+                                    <i className="ri-delete-bin-line"></i>
+                                  </button>
                                 </td>
                               </tr>
                             ))}
