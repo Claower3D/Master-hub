@@ -282,29 +282,47 @@ export default function App() {
       });
   };
 
+  const saveCatalog = ({ tabs, categories, subcategories, details }) => {
+    if (tabs !== undefined) {
+      setMegaTabs(tabs);
+      localStorage.setItem('megaTabs', JSON.stringify(tabs));
+    }
+    if (categories !== undefined) {
+      setMegaCategories(categories);
+      localStorage.setItem('megaCategories', JSON.stringify(categories));
+    }
+    if (subcategories !== undefined) {
+      setMegaSubcategories(subcategories);
+      localStorage.setItem('megaSubcategories', JSON.stringify(subcategories));
+    }
+    if (details !== undefined) {
+      setMegaDetails(details);
+      localStorage.setItem('megaDetails', JSON.stringify(details));
+    }
+
+    const finalTabs = tabs !== undefined ? tabs : megaTabs;
+    const finalCats = categories !== undefined ? categories : megaCategories;
+    const finalSubs = subcategories !== undefined ? subcategories : megaSubcategories;
+    const finalDetails = details !== undefined ? details : megaDetails;
+
+    syncCatalogWithBackend(finalTabs, finalCats, finalSubs, finalDetails);
+  };
+
   // Save functions
   const saveMegaCategories = (newCats) => {
-    setMegaCategories(newCats);
-    localStorage.setItem('megaCategories', JSON.stringify(newCats));
-    syncCatalogWithBackend(megaTabs, newCats, megaSubcategories, megaDetails);
+    saveCatalog({ categories: newCats });
   };
 
   const saveMegaSubcategories = (newSubs) => {
-    setMegaSubcategories(newSubs);
-    localStorage.setItem('megaSubcategories', JSON.stringify(newSubs));
-    syncCatalogWithBackend(megaTabs, megaCategories, newSubs, megaDetails);
+    saveCatalog({ subcategories: newSubs });
   };
 
   const saveMegaDetails = (newDetails) => {
-    setMegaDetails(newDetails);
-    localStorage.setItem('megaDetails', JSON.stringify(newDetails));
-    syncCatalogWithBackend(megaTabs, megaCategories, megaSubcategories, newDetails);
+    saveCatalog({ details: newDetails });
   };
 
   const saveMegaTabs = (newTabs) => {
-    setMegaTabs(newTabs);
-    localStorage.setItem('megaTabs', JSON.stringify(newTabs));
-    syncCatalogWithBackend(newTabs, megaCategories, megaSubcategories, megaDetails);
+    saveCatalog({ tabs: newTabs });
   };
 
   const handleSaveTab = (e) => {
@@ -341,7 +359,6 @@ export default function App() {
   const handleDeleteTab = (tabId) => {
     if (window.confirm('Удаление раздела сотрет все его категории и подкатегории! Вы действительно хотите удалить данный раздел?')) {
       const updatedTabs = megaTabs.filter(t => t.id !== tabId);
-      saveMegaTabs(updatedTabs);
 
       // Find all categories belonging to this tab
       const catsToDelete = megaCategories.filter(c => c.tab === tabId);
@@ -349,7 +366,6 @@ export default function App() {
 
       // Filter megaCategories
       const updatedCats = megaCategories.filter(c => c.tab !== tabId);
-      saveMegaCategories(updatedCats);
 
       // Filter subcategories and details
       const updatedSubs = { ...megaSubcategories };
@@ -363,8 +379,12 @@ export default function App() {
         });
       });
 
-      saveMegaSubcategories(updatedSubs);
-      saveMegaDetails(updatedDetails);
+      saveCatalog({
+        tabs: updatedTabs,
+        categories: updatedCats,
+        subcategories: updatedSubs,
+        details: updatedDetails
+      });
     }
   };
 
@@ -392,18 +412,20 @@ export default function App() {
       const updated = megaCategories.map(c => 
         c.id === editingCat.id ? { ...c, title: catFormTitle, icon: catFormIcon, tab: catFormTab } : c
       );
-      saveMegaCategories(updated);
+      saveCatalog({ categories: updated });
       setEditingCat(null);
     } else {
       // Add
       const newId = `cat-${Date.now()}`;
       const newCatObj = { id: newId, tab: catFormTab, title: catFormTitle, icon: catFormIcon };
-      saveMegaCategories([...megaCategories, newCatObj]);
-
-      // Initialize empty subcategory array for it
-      saveMegaSubcategories({
+      const updatedCats = [...megaCategories, newCatObj];
+      const updatedSubs = {
         ...megaSubcategories,
         [newId]: []
+      };
+      saveCatalog({
+        categories: updatedCats,
+        subcategories: updatedSubs
       });
     }
 
@@ -414,20 +436,23 @@ export default function App() {
   const handleDeleteCategory = (catId) => {
     if (window.confirm('Удаление категории сотрет все привязанные к ней подкатегории. Вы уверены?')) {
       const updatedCats = megaCategories.filter(c => c.id !== catId);
-      saveMegaCategories(updatedCats);
 
       // Clean subcategories
       const updatedSubs = { ...megaSubcategories };
       const subList = updatedSubs[catId] || [];
       delete updatedSubs[catId];
-      saveMegaSubcategories(updatedSubs);
 
       // Clean details
       const updatedDetails = { ...megaDetails };
       subList.forEach(sub => {
         delete updatedDetails[sub.id];
       });
-      saveMegaDetails(updatedDetails);
+
+      saveCatalog({
+        categories: updatedCats,
+        subcategories: updatedSubs,
+        details: updatedDetails
+      });
     }
   };
 
@@ -461,7 +486,6 @@ export default function App() {
       // Add new
       updatedSubs[subFormCatId] = [...(updatedSubs[subFormCatId] || []), subObj];
     }
-    saveMegaSubcategories(updatedSubs);
 
     // Update details
     const updatedDetails = { ...megaDetails };
@@ -472,7 +496,11 @@ export default function App() {
       time: subFormTime || 'Выезд в течение дня',
       warr: subFormWarr || 'Гарантия имеется'
     };
-    saveMegaDetails(updatedDetails);
+
+    saveCatalog({
+      subcategories: updatedSubs,
+      details: updatedDetails
+    });
 
     // Clean form
     setEditingSub(null);
@@ -488,11 +516,14 @@ export default function App() {
     if (window.confirm('Вы уверены, что хотите удалить эту подкатегорию?')) {
       const updatedSubs = { ...megaSubcategories };
       updatedSubs[catId] = (updatedSubs[catId] || []).filter(s => s.id !== subId);
-      saveMegaSubcategories(updatedSubs);
 
       const updatedDetails = { ...megaDetails };
       delete updatedDetails[subId];
-      saveMegaDetails(updatedDetails);
+
+      saveCatalog({
+        subcategories: updatedSubs,
+        details: updatedDetails
+      });
     }
   };
 
