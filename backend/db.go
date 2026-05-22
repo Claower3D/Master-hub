@@ -88,6 +88,8 @@ type DB interface {
 	GetReviews() ([]ReviewRecord, error)
 	CreateCategoryReview(categoryID string, author string, text string, rating int, userID *int) (*CategoryReviewRecord, error)
 	GetCategoryReviews(categoryID string) ([]CategoryReviewRecord, error)
+	GetCatalog() (string, error)
+	SaveCatalog(catalogJSON string) error
 	Close() error
 }
 
@@ -165,6 +167,12 @@ func NewPostgresDB(connStr string) (*PostgresDB, error) {
 			text TEXT NOT NULL,
 			rating INTEGER NOT NULL DEFAULT 5,
 			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS catalog (
+			id INTEGER PRIMARY KEY,
+			data TEXT NOT NULL,
+			updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 		);
 	`)
 	if err != nil {
@@ -522,6 +530,25 @@ func (p *PostgresDB) GetCategoryReviews(categoryID string) ([]CategoryReviewReco
 	return list, nil
 }
 
+func (p *PostgresDB) GetCatalog() (string, error) {
+	var data string
+	err := p.db.QueryRow("SELECT data FROM catalog WHERE id = 1").Scan(&data)
+	if err == sql.ErrNoRows {
+		return "", nil
+	}
+	return data, err
+}
+
+func (p *PostgresDB) SaveCatalog(catalogJSON string) error {
+	_, err := p.db.Exec(`
+		INSERT INTO catalog (id, data, updated_at)
+		VALUES (1, $1, CURRENT_TIMESTAMP)
+		ON CONFLICT (id)
+		DO UPDATE SET data = EXCLUDED.data, updated_at = CURRENT_TIMESTAMP
+	`, catalogJSON)
+	return err
+}
+
 type TgSubscriber struct {
 	ChatID int64  `json:"chat_id"`
 	Name   string `json:"name"`
@@ -538,6 +565,7 @@ type JsonDB struct {
 		TgSubscribers   []TgSubscriber         `json:"tg_subscribers"`
 		Reviews         []ReviewRecord         `json:"reviews"`
 		CategoryReviews []CategoryReviewRecord `json:"category_reviews"`
+		Catalog         string                 `json:"catalog,omitempty"`
 	}
 }
 
@@ -924,6 +952,17 @@ func (j *JsonDB) GetCategoryReviews(categoryID string) ([]CategoryReviewRecord, 
 		}
 	}
 	return list, nil
+}
+
+func (j *JsonDB) GetCatalog() (string, error) {
+	j.load()
+	return j.Data.Catalog, nil
+}
+
+func (j *JsonDB) SaveCatalog(catalogJSON string) error {
+	j.load()
+	j.Data.Catalog = catalogJSON
+	return j.save()
 }
 
 // Helper function to initialize database connection

@@ -138,7 +138,14 @@ func main() {
 		if r.Method == http.MethodGet {
 			w.Header().Set("Content-Type", "application/json")
 
-			// Check if catalog file exists
+			// Check database first
+			dbCatalog, err := dbInstance.GetCatalog()
+			if err == nil && dbCatalog != "" {
+				w.Write([]byte(dbCatalog))
+				return
+			}
+
+			// Fallback to catalog file if exists
 			data, err := os.ReadFile(filePath)
 			if err == nil {
 				w.Write(data)
@@ -323,18 +330,21 @@ func main() {
 				return
 			}
 
-			// Save JSON body to file
+			// Save JSON body to database and file
 			data, err := io.ReadAll(r.Body)
 			if err != nil {
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
 
-			err = os.WriteFile(filePath, data, 0644)
+			// Save to database
+			err = dbInstance.SaveCatalog(string(data))
 			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
+				log.Printf("⚠️ Failed to save catalog to database: %v\n", err)
 			}
+
+			// Save to file (as local copy/fallback)
+			_ = os.WriteFile(filePath, data, 0644)
 
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(`{"status":"success"}`))
