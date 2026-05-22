@@ -70,10 +70,23 @@ export default function App() {
         return res.json();
       })
       .then(data => {
-        if (data.tabs) setMegaTabs(data.tabs);
-        if (data.categories) setMegaCategories(data.categories);
-        if (data.subcategories) setMegaSubcategories(data.subcategories);
-        if (data.details) setMegaDetails(data.details);
+        // Backend is source of truth — update both state and localStorage
+        if (data.tabs) {
+          setMegaTabs(data.tabs);
+          localStorage.setItem('megaTabs', JSON.stringify(data.tabs));
+        }
+        if (data.categories) {
+          setMegaCategories(data.categories);
+          localStorage.setItem('megaCategories', JSON.stringify(data.categories));
+        }
+        if (data.subcategories) {
+          setMegaSubcategories(data.subcategories);
+          localStorage.setItem('megaSubcategories', JSON.stringify(data.subcategories));
+        }
+        if (data.details) {
+          setMegaDetails(data.details);
+          localStorage.setItem('megaDetails', JSON.stringify(data.details));
+        }
       })
       .catch(err => console.error('Error loading catalog from backend:', err));
   }, []);
@@ -3486,7 +3499,7 @@ const pageDataMap = {
                         <div>
                           <div style={{ fontWeight: '750', fontSize: '14px', color: theme === 'light' ? 'var(--text)' : '#fff' }}>{t(cat.title)}</div>
                           <div style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>
-                            {cat.tab === 'okna' ? (lang === 'ru' ? 'Раздел: Окна' : 'Windows') : cat.tab === 'servis' ? (lang === 'ru' ? 'Раздел: Сервис' : 'Service') : (lang === 'ru' ? 'Раздел: Мебель' : 'Furniture')}
+                            {(() => { const parentTab = megaTabs.find(tab => tab.id === cat.tab); return parentTab ? `${lang === 'ru' ? 'Раздел' : lang === 'kz' ? 'Бөлім' : 'Section'}: ${t(parentTab.label)}` : cat.tab; })()}
                           </div>
                         </div>
                       </div>
