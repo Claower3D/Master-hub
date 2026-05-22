@@ -4145,6 +4145,67 @@ body.light-theme .reviews-floating-btn:hover {
     background: var(--accent);
     color: #0b1020 !important;
   }
+
+  /* Mobile services catalog optimization */
+  .cat-nav-pills {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    margin-left: -6vw;
+    margin-right: -6vw;
+    padding: 10px 6vw;
+    margin-bottom: 24px;
+    background: transparent;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  .cat-pill {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .srv-cards-grid {
+    gap: 16px;
+  }
+  .srv-card {
+    padding: 16px !important;
+    border-radius: 16px;
+  }
+  .srv-card:hover {
+    transform: none !important;
+    box-shadow: var(--shadow) !important;
+    border-color: var(--line) !important;
+  }
+  .srv-card:active {
+    transform: scale(0.98) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 8px 24px rgba(124, 242, 199, 0.15) !important;
+  }
+  .cyber-sub-badge {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+  
+  /* Category Page Card optimizations for mobile */
+  .cat-page-card {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+  .cat-page-card:hover {
+    transform: none !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+    border-color: var(--line) !important;
+  }
+  .cat-page-card:active {
+    transform: scale(0.98) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 8px 24px rgba(124, 242, 199, 0.1) !important;
+  }
+  .cat-page-grid {
+    gap: 12px !important;
+  }
 }
 
 @media (min-width: 961px) {

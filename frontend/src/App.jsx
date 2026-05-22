@@ -4975,7 +4975,10 @@ const pageDataMap = {
                 <button
                   key={p.id}
                   className={`cat-pill ${activeCatPill === p.id ? 'active' : ''}`}
-                  onClick={() => setActiveCatPill(p.id)}
+                  onClick={(e) => {
+                    e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    setActiveCatPill(p.id);
+                  }}
                   dangerouslySetInnerHTML={{ __html: t(p.label) }}
                 ></button>
               ))}
@@ -5102,7 +5105,10 @@ const pageDataMap = {
                 <button
                   key={p.id}
                   className={`cat-pill ${activeMasterCat === p.id ? 'active' : ''}`}
-                  onClick={() => setActiveMasterCat(p.id)}
+                  onClick={(e) => {
+                    e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                    setActiveMasterCat(p.id);
+                  }}
                   dangerouslySetInnerHTML={{ __html: t(p.label) }}
                 ></button>
               ))}
