@@ -42,6 +42,7 @@ export default function App() {
   const [activeMegaCat, setActiveMegaCat] = useState('cat-okna-1');
   const [activeMegaSub, setActiveMegaSub] = useState('none');
   const [megaSearchQuery, setMegaSearchQuery] = useState('');
+  const [isMegaSearchExpanded, setIsMegaSearchExpanded] = useState(false);
   // Overflow tabs state
   const [megaNavHiddenFrom, setMegaNavHiddenFrom] = useState(99);
   const [megaNavMoreOpen, setMegaNavMoreOpen] = useState(false);
@@ -128,6 +129,7 @@ export default function App() {
       requestAnimationFrame(measureNavOverflow);
     } else {
       setMegaNavMoreOpen(false);
+      setIsMegaSearchExpanded(false);
     }
   }, [megaMenuOpen, measureNavOverflow]);
 
@@ -3332,166 +3334,216 @@ const pageDataMap = {
 
           {/* Desktop tab row with overflow → "More" dropdown */}
           <div
-            ref={megaNavTabsWrapRef}
             className="mega-tab-links-desktop"
-            style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%', overflow: 'hidden', minWidth: 0 }}
+            style={{ display: 'flex', gap: '16px', alignItems: 'center', width: '100%', minWidth: 0 }}
           >
-            {/* Visible tabs */}
-            {megaTabs.map((tab, idx) => (
-              <a
-                key={tab.id}
-                ref={el => { megaNavTabEls.current[idx] = el; }}
-                href="#"
-                className={activeMegaTab === tab.id ? 'active' : ''}
-                style={idx >= megaNavHiddenFrom ? { visibility: 'hidden', pointerEvents: 'none', position: 'absolute' } : {}}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveMegaTab(tab.id);
-                  setMegaNavMoreOpen(false);
-                  const firstCat = megaCategories.find(c => c.tab === tab.id);
-                  if (firstCat) {
-                    setActiveMegaCat(firstCat.id);
-                    const firstSub = megaSubcategories[firstCat.id]?.[0];
-                    setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                  }
-                }}
-                onDoubleClick={(e) => {
-                  e.preventDefault();
-                  const firstCat = megaCategories.find(c => c.tab === tab.id);
-                  if (firstCat) {
-                    setSelectedCategoryPageObj({
-                      id: firstCat.id,
-                      title: firstCat.title,
-                      parentCatId: firstCat.id,
-                      parentTabId: tab.id
-                    });
-                    setActivePage('category');
-                    setMegaMenuOpen(false);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }
-                }}
-                title="Дважды нажмите, чтобы открыть раздел целиком"
-              >
-                {t(tab.label)}
-              </a>
-            ))}
-
-            {/* "Ещё" dropdown for overflow tabs */}
-            {megaNavHiddenFrom < megaTabs.length && (
-              <div style={{ position: 'relative', flexShrink: 0 }}>
-                <button
-                  onClick={() => setMegaNavMoreOpen(prev => !prev)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '5px',
-                    padding: '6px 12px', borderRadius: '999px',
-                    background: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
-                      ? 'var(--accent)' : (theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'),
-                    color: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
-                      ? '#0b1020' : 'var(--text)',
-                    border: '1.5px solid var(--line)',
-                    fontSize: '13px', fontWeight: '700', cursor: 'pointer',
-                    transition: 'all 0.2s', whiteSpace: 'nowrap'
+            {/* 1. Tabs & More Button Wrapper (Overflow calculated here) */}
+            <div
+              ref={megaNavTabsWrapRef}
+              style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1, overflow: 'hidden', minWidth: 0 }}
+            >
+              {/* Visible tabs */}
+              {megaTabs.map((tab, idx) => (
+                <a
+                  key={tab.id}
+                  ref={el => { megaNavTabEls.current[idx] = el; }}
+                  href="#"
+                  className={activeMegaTab === tab.id ? 'active' : ''}
+                  style={idx >= megaNavHiddenFrom ? { visibility: 'hidden', pointerEvents: 'none', position: 'absolute' } : {}}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveMegaTab(tab.id);
+                    setMegaNavMoreOpen(false);
+                    const firstCat = megaCategories.find(c => c.tab === tab.id);
+                    if (firstCat) {
+                      setActiveMegaCat(firstCat.id);
+                      const firstSub = megaSubcategories[firstCat.id]?.[0];
+                      setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                    }
                   }}
+                  onDoubleClick={(e) => {
+                    e.preventDefault();
+                    const firstCat = megaCategories.find(c => c.tab === tab.id);
+                    if (firstCat) {
+                      setSelectedCategoryPageObj({
+                        id: firstCat.id,
+                        title: firstCat.title,
+                        parentCatId: firstCat.id,
+                        parentTabId: tab.id
+                      });
+                      setActivePage('category');
+                      setMegaMenuOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  title="Дважды нажмите, чтобы открыть раздел целиком"
                 >
-                  {megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
-                    ? t(megaTabs.find(tb => tb.id === activeMegaTab)?.label || '')
-                    : (lang === 'ru' ? 'Ещё' : lang === 'kz' ? 'Көбірек' : 'More')}
-                  <span style={{ fontSize: '10px' }}>{megaNavMoreOpen ? '▲' : '▼'}</span>
-                </button>
+                  {t(tab.label)}
+                </a>
+              ))}
 
-                {megaNavMoreOpen && (
-                  <div
+              {/* "Ещё" dropdown for overflow tabs */}
+              {megaNavHiddenFrom < megaTabs.length && (
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <button
+                    onClick={() => setMegaNavMoreOpen(prev => !prev)}
                     style={{
-                      position: 'absolute', top: 'calc(100% + 8px)', left: 0,
-                      background: 'var(--surface)',
-                      border: '1px solid var(--line)',
-                      borderRadius: '14px',
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
-                      minWidth: '180px', zIndex: 999,
-                      padding: '6px',
-                      display: 'flex', flexDirection: 'column', gap: '2px'
+                      display: 'flex', alignItems: 'center', gap: '5px',
+                      padding: '10px 20px', borderRadius: '999px',
+                      background: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
+                        ? 'var(--accent)' : (theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'),
+                      color: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
+                        ? '#0b1020' : 'var(--text)',
+                      border: '1.5px solid var(--line)',
+                      fontSize: '13px', fontWeight: '700', cursor: 'pointer',
+                      transition: 'all 0.2s', whiteSpace: 'nowrap'
                     }}
                   >
-                    {megaTabs.slice(megaNavHiddenFrom).map(tab => (
-                      <a
-                        key={tab.id}
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setActiveMegaTab(tab.id);
-                          setMegaNavMoreOpen(false);
-                          const firstCat = megaCategories.find(c => c.tab === tab.id);
-                          if (firstCat) {
-                            setActiveMegaCat(firstCat.id);
-                            const firstSub = megaSubcategories[firstCat.id]?.[0];
-                            setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                          }
-                        }}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '8px',
-                          padding: '9px 12px', borderRadius: '10px',
-                          fontSize: '13px', fontWeight: '600',
-                          color: activeMegaTab === tab.id ? '#0b1020' : 'var(--text)',
-                          background: activeMegaTab === tab.id ? 'var(--accent)' : 'transparent',
-                          textDecoration: 'none',
-                          transition: 'all 0.15s',
-                          whiteSpace: 'nowrap'
-                        }}
-                        className="mega-more-item"
-                      >
-                        <i className="ri-folder-line" style={{ fontSize: '14px', opacity: 0.6 }}></i>
-                        {t(tab.label)}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                    {megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
+                      ? t(megaTabs.find(tb => tb.id === activeMegaTab)?.label || '')
+                      : (lang === 'ru' ? 'Ещё' : lang === 'kz' ? 'Көбірек' : 'More')}
+                    <span style={{ fontSize: '10px' }}>{megaNavMoreOpen ? '▲' : '▼'}</span>
+                  </button>
 
-            {/* ── Inline search filter ── */}
-            <div style={{ position: 'relative', flex: 1, maxWidth: '260px', marginLeft: 'auto', flexShrink: 0 }}>
-              <i className="ri-search-line" style={{
-                position: 'absolute', left: '12px', top: '50%',
-                transform: 'translateY(-50%)',
-                color: megaSearchQuery ? 'var(--accent)' : 'var(--muted)',
-                fontSize: '14px', pointerEvents: 'none', transition: 'color 0.2s'
-              }}></i>
-              <input
-                type="text"
-                placeholder={lang === 'ru' ? 'Поиск по каталогу...' : lang === 'kz' ? 'Іздеу...' : 'Search...'}
-                value={megaSearchQuery}
-                onChange={(e) => setMegaSearchQuery(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '7px 34px 7px 34px',
-                  background: megaSearchQuery
-                    ? (theme === 'light' ? 'rgba(124,242,199,0.09)' : 'rgba(124,242,199,0.07)')
-                    : (theme === 'light' ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.07)'),
-                  border: megaSearchQuery ? '1.5px solid var(--accent)' : (theme === 'light' ? '1.5px solid rgba(0,0,0,0.1)' : '1.5px solid rgba(255,255,255,0.12)'),
-                  borderRadius: '999px',
-                  color: theme === 'light' ? 'var(--text)' : '#fff',
-                  fontSize: '13px', fontWeight: '500', outline: 'none',
-                  transition: 'all 0.2s',
-                  boxShadow: megaSearchQuery ? '0 0 0 3px rgba(124,242,199,0.13)' : 'none'
-                }}
-              />
-              {megaSearchQuery && (
-                <button
-                  onClick={() => setMegaSearchQuery('')}
-                  style={{
-                    position: 'absolute', right: '10px', top: '50%',
+                  {megaNavMoreOpen && (
+                    <div
+                      style={{
+                        position: 'absolute', top: 'calc(100% + 8px)', left: 0,
+                        background: 'var(--surface)',
+                        border: '1px solid var(--line)',
+                        borderRadius: '14px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
+                        minWidth: '180px', zIndex: 999,
+                        padding: '6px',
+                        display: 'flex', flexDirection: 'column', gap: '2px'
+                      }}
+                    >
+                      {megaTabs.slice(megaNavHiddenFrom).map(tab => (
+                        <a
+                          key={tab.id}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setActiveMegaTab(tab.id);
+                            setMegaNavMoreOpen(false);
+                            const firstCat = megaCategories.find(c => c.tab === tab.id);
+                            if (firstCat) {
+                              setActiveMegaCat(firstCat.id);
+                              const firstSub = megaSubcategories[firstCat.id]?.[0];
+                              setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                            }
+                          }}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            padding: '9px 12px', borderRadius: '10px',
+                            fontSize: '13px', fontWeight: '600',
+                            color: activeMegaTab === tab.id ? '#0b1020' : 'var(--text)',
+                            background: activeMegaTab === tab.id ? 'var(--accent)' : 'transparent',
+                            textDecoration: 'none',
+                            transition: 'all 0.15s',
+                            whiteSpace: 'nowrap'
+                          }}
+                          className="mega-more-item"
+                        >
+                          <i className="ri-folder-line" style={{ fontSize: '14px', opacity: 0.6 }}></i>
+                          {t(tab.label)}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* 2. Interactive Search/Filter Button or Input (Always visible, expands smoothly) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+              {isMegaSearchExpanded || megaSearchQuery ? (
+                <div style={{ position: 'relative', width: '260px', display: 'flex', alignItems: 'center' }}>
+                  <i className="ri-search-line" style={{
+                    position: 'absolute', left: '12px', top: '50%',
                     transform: 'translateY(-50%)',
-                    background: 'none', border: 'none',
-                    color: 'var(--accent)', cursor: 'pointer',
-                    fontSize: '14px', display: 'flex', alignItems: 'center', padding: 0
+                    color: megaSearchQuery ? 'var(--accent)' : 'var(--muted)',
+                    fontSize: '14px', pointerEvents: 'none', transition: 'color 0.2s'
+                  }}></i>
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder={lang === 'ru' ? 'Поиск по каталогу...' : lang === 'kz' ? 'Іздеу...' : 'Search...'}
+                    value={megaSearchQuery}
+                    onChange={(e) => setMegaSearchQuery(e.target.value)}
+                    onBlur={() => {
+                      if (!megaSearchQuery) {
+                        setIsMegaSearchExpanded(false);
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '8px 36px 8px 34px',
+                      background: megaSearchQuery
+                        ? (theme === 'light' ? 'rgba(124,242,199,0.09)' : 'rgba(124,242,199,0.07)')
+                        : (theme === 'light' ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.07)'),
+                      border: megaSearchQuery ? '1.5px solid var(--accent)' : (theme === 'light' ? '1.5px solid rgba(0,0,0,0.1)' : '1.5px solid rgba(255,255,255,0.12)'),
+                      borderRadius: '999px',
+                      color: theme === 'light' ? 'var(--text)' : '#fff',
+                      fontSize: '13px', fontWeight: '500', outline: 'none',
+                      transition: 'all 0.2s',
+                      boxShadow: megaSearchQuery ? '0 0 0 3px rgba(124,242,199,0.13)' : 'none'
+                    }}
+                  />
+                  {(megaSearchQuery || isMegaSearchExpanded) && (
+                    <button
+                      onClick={() => {
+                        setMegaSearchQuery('');
+                        setIsMegaSearchExpanded(false);
+                      }}
+                      style={{
+                        position: 'absolute', right: '10px', top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none', border: 'none',
+                        color: 'var(--accent)', cursor: 'pointer',
+                        fontSize: '14px', display: 'flex', alignItems: 'center', padding: 0
+                      }}
+                      title={lang === 'ru' ? 'Скрыть/Сбросить' : 'Hide/Clear'}
+                    >
+                      <i className="ri-close-circle-fill"></i>
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsMegaSearchExpanded(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '10px 20px',
+                    borderRadius: '999px',
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--line)',
+                    color: 'var(--text)',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    whiteSpace: 'nowrap'
                   }}
-                  title="Очистить"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--accent)';
+                    e.currentTarget.style.color = 'var(--accent)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--line)';
+                    e.currentTarget.style.color = 'var(--text)';
+                  }}
+                  title={lang === 'ru' ? 'Поиск и фильтрация услуг' : 'Search and filter services'}
                 >
-                  <i className="ri-close-circle-fill"></i>
+                  <i className="ri-search-line" style={{ fontSize: '15px' }}></i>
+                  <span>{lang === 'ru' ? 'Фильтр' : lang === 'kz' ? 'Сүзгі' : 'Filter'}</span>
                 </button>
               )}
             </div>
 
+            {/* 3. Close Button (Always visible) */}
             <button
               onClick={() => setMegaMenuOpen(false)}
               className="mega-nav-close"
