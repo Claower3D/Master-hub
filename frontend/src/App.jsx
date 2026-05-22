@@ -51,7 +51,10 @@ export default function App() {
   
   // Dedicated Category Page & Modal States
   const [activePage, setActivePage] = useState(() => {
-    return window.location.hash === '#/admin' ? 'admin' : 'home';
+    const path = window.location.pathname;
+    if (path.startsWith('/admin')) return 'admin';
+    if (path.startsWith('/category') || path.startsWith('/service')) return 'category';
+    return 'home';
   }); // 'home' | 'category' | 'admin'
   const [selectedCategoryPageObj, setSelectedCategoryPageObj] = useState(null);
   const [selectedModalItem, setSelectedModalItem] = useState(null); // { title, type: 'brand' | 'service', parentTitle }
@@ -93,6 +96,7 @@ export default function App() {
           setMegaDetails(data.details);
           localStorage.setItem('megaDetails', JSON.stringify(data.details));
         }
+        parseUrlToState(data.tabs || [], data.categories || [], data.subcategories || {});
       })
       .catch(err => console.error('Error loading catalog from backend:', err));
   }, []);
@@ -225,6 +229,10 @@ export default function App() {
   const [catFormTab, setCatFormTab] = useState('okna');
   const [catFormTitle, setCatFormTitle] = useState('');
   const [catFormIcon, setCatFormIcon] = useState('ri-tools-line');
+  const [catFormDesc, setCatFormDesc] = useState('');
+  const [catFormImg, setCatFormImg] = useState('');
+  const [catFormFeatures, setCatFormFeatures] = useState('');
+  const [catFormSpecs, setCatFormSpecs] = useState('');
 
   // Subcategory Form State
   const [showSubForm, setShowSubForm] = useState(false);
@@ -237,16 +245,7 @@ export default function App() {
   const [subFormWarr, setSubFormWarr] = useState('');
   const [subFormSectionFilter, setSubFormSectionFilter] = useState('all');
 
-  // Hash routing: detect #/admin
-  useEffect(() => {
-    const handleHash = () => {
-      if (window.location.hash === '#/admin') {
-        setActivePage('admin');
-      }
-    };
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
-  }, []);
+
 
   const handleResponse = async (res) => {
     const contentType = res.headers.get('content-type');
@@ -475,29 +474,59 @@ export default function App() {
     e.preventDefault();
     if (!catFormTitle.trim()) return;
 
+    const catId = editingCat ? editingCat.id : `cat-${Date.now()}`;
+    const newCatObj = { id: catId, tab: catFormTab, title: catFormTitle, icon: catFormIcon };
+
+    let updatedCats;
+    const updatedSubs = { ...megaSubcategories };
+
     if (editingCat) {
-      // Edit
-      const updated = megaCategories.map(c => 
-        c.id === editingCat.id ? { ...c, title: catFormTitle, icon: catFormIcon, tab: catFormTab } : c
-      );
-      saveCatalog({ categories: updated });
-      setEditingCat(null);
+      updatedCats = megaCategories.map(c => c.id === catId ? newCatObj : c);
     } else {
-      // Add
-      const newId = `cat-${Date.now()}`;
-      const newCatObj = { id: newId, tab: catFormTab, title: catFormTitle, icon: catFormIcon };
-      const updatedCats = [...megaCategories, newCatObj];
-      const updatedSubs = {
-        ...megaSubcategories,
-        [newId]: []
-      };
-      saveCatalog({
-        categories: updatedCats,
-        subcategories: updatedSubs
-      });
+      updatedCats = [...megaCategories, newCatObj];
+      updatedSubs[catId] = [];
     }
 
+    const updatedDetails = { ...megaDetails };
+    
+    // Parse features (one per line)
+    const parsedFeatures = catFormFeatures
+      ? catFormFeatures.split('\n').map(f => f.trim()).filter(Boolean)
+      : [];
+      
+    // Parse specs (format: Label: Value)
+    const parsedSpecs = catFormSpecs
+      ? catFormSpecs.split('\n').map(s => {
+          const colonIdx = s.indexOf(':');
+          if (colonIdx === -1) return null;
+          return {
+            label: s.substring(0, colonIdx).trim(),
+            value: s.substring(colonIdx + 1).trim()
+          };
+        }).filter(item => item && item.label && item.value)
+      : [];
+
+    updatedDetails[catId] = {
+      title: catFormTitle,
+      desc: catFormDesc || 'Описание категории',
+      img: catFormImg || './why_bg.png',
+      features: parsedFeatures,
+      specs: parsedSpecs
+    };
+
+    saveCatalog({
+      categories: updatedCats,
+      subcategories: updatedSubs,
+      details: updatedDetails
+    });
+
+    setEditingCat(null);
     setCatFormTitle('');
+    setCatFormIcon('ri-tools-line');
+    setCatFormDesc('');
+    setCatFormImg('');
+    setCatFormFeatures('');
+    setCatFormSpecs('');
     setShowCatForm(false);
   };
 
@@ -1385,6 +1414,111 @@ export default function App() {
     return saved ? JSON.parse(saved) : defaultMegaDetails;
   });
 
+  // PATH-BASED ROUTING FOR SECTIONS, CATEGORIES, SERVICES, AND ADMIN
+  function parseUrlToState(
+    currentTabs = megaTabs,
+    currentCats = megaCategories,
+    currentSubs = megaSubcategories
+  ) {
+    const path = window.location.pathname;
+    const pathParts = path.split('/').filter(Boolean); // e.g. ["category", "okna"] or ["admin"]
+    
+    if (pathParts[0] === 'admin') {
+      setActivePage('admin');
+      setSelectedCategoryPageObj(null);
+      setSelectedModalItem(null);
+    } else if (pathParts[0] === 'category' && pathParts[1]) {
+      const catId = pathParts[1];
+      const cat = currentCats.find(c => c.id === catId);
+      if (cat) {
+        setSelectedCategoryPageObj({
+          id: cat.id,
+          title: cat.title,
+          parentCatId: cat.id,
+          parentTabId: cat.tab
+        });
+        setActivePage('category');
+        setSelectedModalItem(null);
+      } else {
+        setSelectedCategoryPageObj({
+          id: catId,
+          title: catId,
+          parentCatId: catId,
+          parentTabId: 'okna'
+        });
+        setActivePage('category');
+        setSelectedModalItem(null);
+      }
+    } else if (pathParts[0] === 'section' && pathParts[1]) {
+      const tabId = pathParts[1];
+      setActiveMegaTab(tabId);
+      setActivePage('home');
+      setSelectedCategoryPageObj(null);
+      setSelectedModalItem(null);
+    } else if (pathParts[0] === 'service' && pathParts[1]) {
+      const serviceId = pathParts[1];
+      let foundSub = null;
+      let foundCatId = null;
+      Object.entries(currentSubs).forEach(([catId, subs]) => {
+        const sub = subs.find(s => s.id === serviceId);
+        if (sub) {
+          foundSub = sub;
+          foundCatId = catId;
+        }
+      });
+      if (foundSub && foundCatId) {
+        const cat = currentCats.find(c => c.id === foundCatId);
+        setSelectedCategoryPageObj({
+          id: foundCatId,
+          title: cat ? cat.title : foundCatId,
+          parentCatId: foundCatId,
+          parentTabId: cat ? cat.tab : 'okna'
+        });
+        setActivePage('category');
+        setSelectedModalItem({
+          title: foundSub.title,
+          type: 'service',
+          parentTitle: cat ? cat.title : foundCatId
+        });
+      } else {
+        setActivePage('home');
+        setSelectedCategoryPageObj(null);
+        setSelectedModalItem(null);
+      }
+    } else {
+      setActivePage('home');
+      setSelectedCategoryPageObj(null);
+      setSelectedModalItem(null);
+    }
+  }
+
+  function navigateTo(url) {
+    window.history.pushState(null, '', url);
+    parseUrlToState();
+  }
+
+  function closeServiceModal() {
+    if (window.location.pathname.startsWith('/service/')) {
+      navigateTo(`/category/${selectedCategoryPageObj?.id || 'okna'}`);
+    } else {
+      setSelectedModalItem(null);
+    }
+  }
+
+  // Popstate listener (back/forward browser buttons)
+  useEffect(() => {
+    const handlePop = () => {
+      parseUrlToState();
+    };
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, [megaTabs, megaCategories, megaSubcategories]);
+
+  // Initial URL parsing on mount
+  useEffect(() => {
+    parseUrlToState();
+  }, []);
+
   const [catFilterTab, setCatFilterTab] = useState('all');
   const [subFilterTab, setSubFilterTab] = useState('all');
   const [catSearch, setCatSearch] = useState('');
@@ -1764,6 +1898,18 @@ const pageDataMap = {
       };
     }
 
+    const subcats = megaSubcategories[pageObj.id] || megaSubcategories[pageObj.parentCatId] || [];
+    if (subcats.length > 0) {
+      const dbMeta = megaDetails[pageObj.id] || {};
+      const customBrands = (dbMeta.specs || []).map(s => s.label + ': ' + s.value);
+      return {
+        parentTabLabel: parentTab.label,
+        parentCatTitle: parentCat.title,
+        brands: customBrands.length > 0 ? customBrands : ['Гарантия качества', 'Проверенные мастера', 'Качественные материалы'],
+        services: subcats.map(sub => sub.title)
+      };
+    }
+
     if (parentTab.id === 'okna') {
       return {
         parentTabLabel: parentTab.label,
@@ -1832,7 +1978,7 @@ const pageDataMap = {
       <div className="admin-page">
         {/* Admin Topbar */}
         <div className="admin-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => navigateTo('/')} title="На главную">
             <div style={{
               width: '36px', height: '36px', borderRadius: '10px',
               background: 'linear-gradient(135deg, var(--accent), var(--accent-2))',
@@ -1855,7 +2001,7 @@ const pageDataMap = {
                   <span className="admin-header-username">{user?.name || user?.email}</span>
                 </div>
                 <button
-                  onClick={() => { setAdminAuthed(false); setToken(''); setUser(null); localStorage.removeItem('token'); localStorage.removeItem('user'); }}
+                  onClick={() => { setAdminAuthed(false); setToken(''); setUser(null); localStorage.removeItem('token'); localStorage.removeItem('user'); navigateTo('/'); }}
                   style={{
                     background: 'rgba(255,122,89,0.1)', border: '1px solid rgba(255,122,89,0.3)',
                     color: '#ff7a59', borderRadius: '8px', padding: '6px 14px',
@@ -2179,6 +2325,10 @@ const pageDataMap = {
                             setCatFormTab(megaTabs[0]?.id || '');
                             setCatFormTitle('');
                             setCatFormIcon('ri-tools-line');
+                            setCatFormDesc('');
+                            setCatFormImg('');
+                            setCatFormFeatures('');
+                            setCatFormSpecs('');
                             setShowCatForm(true);
                           }}
                           className="btn-primary"
@@ -2456,6 +2606,11 @@ const pageDataMap = {
                                         setCatFormTab(cat.tab);
                                         setCatFormTitle(cat.title);
                                         setCatFormIcon(cat.icon || 'ri-tools-line');
+                                        const details = megaDetails[cat.id] || {};
+                                        setCatFormDesc(details.desc || '');
+                                        setCatFormImg(details.img || '');
+                                        setCatFormFeatures((details.features || []).join('\n'));
+                                        setCatFormSpecs((details.specs || []).map(s => `${s.label}: ${s.value}`).join('\n'));
                                         setShowCatForm(true);
                                       }}
                                       style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
@@ -2726,49 +2881,91 @@ const pageDataMap = {
                   {/* MODAL: CATEGORY FORM */}
                   {showCatForm && (
                     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
-                      <div className="cb-form-card" style={{ maxWidth: '480px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+                       <div className="cb-form-card" style={{ maxWidth: '540px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
                         <button onClick={() => setShowCatForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
                         <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <i className="ri-grid-line" style={{ color: 'var(--accent)' }}></i>
                           {editingCat ? 'Редактировать категорию' : 'Добавить категорию'}
                         </h3>
                         <form onSubmit={handleSaveCategory} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                          <div className="cb-form-group">
-                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Раздел</label>
-                            <select 
-                              value={catFormTab} 
-                              onChange={e => setCatFormTab(e.target.value)}
-                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
-                            >
-                              {megaTabs.map(t => (
-                                <option key={t.id} value={t.id}>{t.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="cb-form-group">
-                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название категории</label>
-                            <input 
-                              type="text" 
-                              required 
-                              value={catFormTitle} 
-                              onChange={e => setCatFormTitle(e.target.value)}
-                              placeholder="Например: Москитные сетки"
-                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
-                            />
-                          </div>
-                          <div className="cb-form-group">
-                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Иконка RemixIcon</label>
-                            <input 
-                              type="text" 
-                              required 
-                              value={catFormIcon} 
-                              onChange={e => setCatFormIcon(e.target.value)}
-                              placeholder="Например: ri-window-line"
-                              style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
-                            />
-                            <span style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '4px', display: 'block' }}>
-                              Используйте класс из RemixIcon (например, ri-tools-line, ri-sofa-line)
-                            </span>
+                          <div style={{ maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px', paddingRight: '8px' }}>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Раздел</label>
+                              <select 
+                                value={catFormTab} 
+                                onChange={e => setCatFormTab(e.target.value)}
+                                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                              >
+                                {megaTabs.map(t => (
+                                  <option key={t.id} value={t.id}>{t.label}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название категории</label>
+                              <input 
+                                type="text" 
+                                required 
+                                value={catFormTitle} 
+                                onChange={e => setCatFormTitle(e.target.value)}
+                                placeholder="Например: Москитные сетки"
+                                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                              />
+                            </div>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Иконка RemixIcon</label>
+                              <input 
+                                type="text" 
+                                required 
+                                value={catFormIcon} 
+                                onChange={e => setCatFormIcon(e.target.value)}
+                                placeholder="Например: ri-window-line"
+                                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                              />
+                              <span style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '4px', display: 'block' }}>
+                                Используйте класс из RemixIcon (например, ri-tools-line, ri-sofa-line)
+                              </span>
+                            </div>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Описание страницы категории</label>
+                              <textarea 
+                                value={catFormDesc} 
+                                onChange={e => setCatFormDesc(e.target.value)}
+                                placeholder="Подробное описание услуг категории для отображения на ее странице..."
+                                rows={3}
+                                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'inherit', resize: 'vertical' }}
+                              />
+                            </div>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ссылка на изображение/обложку (URL)</label>
+                              <input 
+                                type="text" 
+                                value={catFormImg} 
+                                onChange={e => setCatFormImg(e.target.value)}
+                                placeholder="Например: ./cat_moskit.png"
+                                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                              />
+                            </div>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Преимущества (Одно на строку)</label>
+                              <textarea 
+                                value={catFormFeatures} 
+                                onChange={e => setCatFormFeatures(e.target.value)}
+                                placeholder="Например:&#10;Гарантия на полотно 2 года&#10;Установка за 24 часа&#10;Бесплатный замер"
+                                rows={4}
+                                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'inherit', resize: 'vertical' }}
+                              />
+                            </div>
+                            <div className="cb-form-group">
+                              <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Характеристики (Формат: Имя: Значение, одна на строку)</label>
+                              <textarea 
+                                value={catFormSpecs} 
+                                onChange={e => setCatFormSpecs(e.target.value)}
+                                placeholder="Например:&#10;Изготовление: за 24 часа&#10;Материал полотна: Нейлон / ПЭ&#10;Профиль рамки: Алюминий 1мм"
+                                rows={4}
+                                style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'inherit', resize: 'vertical' }}
+                              />
+                            </div>
                           </div>
                           <button type="submit" className="btn-primary" style={{ width: '100%', padding: '14px', borderRadius: '12px', marginTop: '10px' }}>
                             Сохранить
@@ -3223,7 +3420,7 @@ const pageDataMap = {
         <div 
           className="brand" 
           style={{ cursor: 'pointer' }} 
-          onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          onClick={() => { navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           title="На главную"
         >
           <div className="logo">HM</div>
@@ -3369,16 +3566,10 @@ const pageDataMap = {
                     e.preventDefault();
                     const firstCat = megaCategories.find(c => c.tab === tab.id);
                     if (firstCat) {
-                      setSelectedCategoryPageObj({
-                        id: firstCat.id,
-                        title: firstCat.title,
-                        parentCatId: firstCat.id,
-                        parentTabId: tab.id
-                      });
-                      setActivePage('category');
                       setMegaMenuOpen(false);
                       setMegaSearchQuery('');
                       setIsMegaSearchExpanded(false);
+                      navigateTo(`/category/${firstCat.id}`);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }}
@@ -3718,15 +3909,9 @@ const pageDataMap = {
                       <div
                         key={cat.id}
                         onClick={() => {
-                          setSelectedCategoryPageObj({
-                            id: cat.id,
-                            title: cat.title,
-                            parentCatId: cat.id,
-                            parentTabId: cat.tab
-                          });
-                          setActivePage('category');
                           setMegaMenuOpen(false);
                           setMegaSearchQuery('');
+                          navigateTo(`/category/${cat.id}`);
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                         style={{
@@ -3766,23 +3951,10 @@ const pageDataMap = {
                       <div
                         key={sub.id}
                         onClick={() => {
-                          setSelectedCategoryPageObj({
-                            id: sub.parentCat.id,
-                            title: sub.parentCat.title,
-                            parentCatId: sub.parentCat.id,
-                            parentTabId: sub.parentCat.tab
-                          });
-                          setActivePage('category');
                           setMegaMenuOpen(false);
                           setMegaSearchQuery('');
+                          navigateTo(`/service/${sub.id}`);
                           window.scrollTo({ top: 0, behavior: 'smooth' });
-                          setTimeout(() => {
-                            setSelectedModalItem({
-                              title: sub.title,
-                              type: 'service',
-                              parentTitle: sub.parentCat.title
-                            });
-                          }, 300);
                         }}
                         style={{
                           background: theme === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
@@ -3846,14 +4018,8 @@ const pageDataMap = {
                       style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedCategoryPageObj({
-                          id: cat.id,
-                          title: cat.title,
-                          parentCatId: cat.id,
-                          parentTabId: activeMegaTab
-                        });
-                        setActivePage('category');
                         setMegaMenuOpen(false);
+                        navigateTo(`/category/${cat.id}`);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       title="Открыть страницу категории"
@@ -3872,14 +4038,8 @@ const pageDataMap = {
                     style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700' }}
                     onClick={() => {
                       const currCat = megaCategories.find(c => c.id === activeMegaCat);
-                      setSelectedCategoryPageObj({
-                        id: currCat.id,
-                        title: currCat.title,
-                        parentCatId: currCat.id,
-                        parentTabId: activeMegaTab
-                      });
-                      setActivePage('category');
                       setMegaMenuOpen(false);
+                      navigateTo(`/category/${currCat.id}`);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                   >
@@ -3894,14 +4054,8 @@ const pageDataMap = {
                     onMouseEnter={() => setActiveMegaSub(sub.id)}
                     onClick={() => {
                       setActiveMegaSub(sub.id);
-                      setSelectedCategoryPageObj({
-                        id: sub.id,
-                        title: sub.title,
-                        parentCatId: activeMegaCat,
-                        parentTabId: activeMegaTab
-                      });
-                      setActivePage('category');
                       setMegaMenuOpen(false);
+                      navigateTo(`/service/${sub.id}`);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                   >
@@ -3937,14 +4091,8 @@ const pageDataMap = {
                         className="btn-ghost"
                         style={{ padding: '10px 20px', fontSize: '13px' }}
                         onClick={() => {
-                          setSelectedCategoryPageObj({
-                            id: activeMegaSub,
-                            title: currentDetail.title,
-                            parentCatId: activeMegaCat,
-                            parentTabId: activeMegaTab
-                          });
-                          setActivePage('category');
                           setMegaMenuOpen(false);
+                          navigateTo(`/service/${activeMegaSub}`);
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
                       >
@@ -3973,7 +4121,7 @@ const pageDataMap = {
         <section className="category-page-container" style={{ padding: '40px 6vw', minHeight: '70vh', animation: 'fadeIn 0.3s ease' }}>
           {/* Breadcrumbs */}
           <div className="breadcrumbs" style={{ marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '12px', fontSize: '14px', color: 'var(--muted)', flexWrap: 'wrap' }}>
-            <a href="#" onClick={(e) => { e.preventDefault(); setActivePage('home'); }} style={{ color: 'var(--accent)', fontWeight: '600' }}>Главная</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); navigateTo('/'); }} style={{ color: 'var(--accent)', fontWeight: '600' }}>Главная</a>
             <span>/</span>
             <span>{t(catPageData.parentTabLabel)}</span>
             <span>/</span>
@@ -3981,7 +4129,7 @@ const pageDataMap = {
             <span>/</span>
             <span style={{ color: 'var(--text)', fontWeight: '700' }}>{t(selectedCategoryPageObj.title)}</span>
             
-            <button className="btn-ghost" style={{ marginLeft: 'auto', padding: '6px 16px', fontSize: '12px' }} onClick={() => setActivePage('home')}>
+            <button className="btn-ghost" style={{ marginLeft: 'auto', padding: '6px 16px', fontSize: '12px' }} onClick={() => navigateTo('/')}>
               ← Назад на главную
             </button>
           </div>
@@ -4104,11 +4252,12 @@ const pageDataMap = {
               }
             };
             
+            const dbMeta = megaDetails[catId] || {};
             const meta = categoryMetaMap[catId] || {
-              img: './slide_windows.png',
-              desc: 'Профессиональные услуги и оригинальные комплектующие от сервисного центра HUB MASTER. Выезд квалифицированного специалиста по городу в течение 45 минут. Письменная официальная гарантия на все выполненные работы до 12 месяцев.',
-              features: ['Бесплатный выезд специалиста на дом при проведении работ', 'Только проверенные оригинальные запчасти и комплектующие', 'Использование современного профессионального инструмента', 'Прозрачный прайс-лист без скрытых доплат и наценок'],
-              specs: [
+              img: dbMeta.img || './slide_windows.png',
+              desc: dbMeta.desc || 'Профессиональные услуги и оригинальные комплектующие от сервисного центра HUB MASTER. Выезд квалифицированного специалиста по городу в течение 45 минут. Письменная официальная гарантия на все выполненные работы до 12 месяцев.',
+              features: (dbMeta.features && dbMeta.features.length > 0) ? dbMeta.features : ['Бесплатный выезд специалиста на дом при проведении работ', 'Только проверенные оригинальные запчасти и комплектующие', 'Использование современного профессионального инструмента', 'Прозрачный прайс-лист без скрытых доплат и наценок'],
+              specs: (dbMeta.specs && dbMeta.specs.length > 0) ? dbMeta.specs : [
                 { label: 'Выезд мастера', value: 'за 45 минут' },
                 { label: 'Диагностика', value: 'Бесплатно' },
                 { label: 'Гарантия', value: 'до 12 месяцев' }
@@ -4213,8 +4362,13 @@ const pageDataMap = {
                   key={idx}
                   className="cat-page-card"
                   onClick={() => {
-                    setFormService(srv);
-                    setSelectedModalItem({ title: srv, type: 'service', parentTitle: t(selectedCategoryPageObj.title) });
+                    const foundSub = Object.values(megaSubcategories).flat().find(sub => sub.title === srv || t(sub.title) === srv);
+                    if (foundSub) {
+                      navigateTo(`/service/${foundSub.id}`);
+                    } else {
+                      setFormService(srv);
+                      setSelectedModalItem({ title: srv, type: 'service', parentTitle: t(selectedCategoryPageObj.title) });
+                    }
                   }}
                 >
                   <div>
@@ -5150,7 +5304,7 @@ const pageDataMap = {
           <div 
             className="brand" 
             style={{ marginBottom: '16px', cursor: 'pointer' }} 
-            onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onClick={() => { navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             title="На главную"
           >
             <div className="logo">HM</div>
@@ -5192,7 +5346,7 @@ const pageDataMap = {
 
       {/* CATEGORY ITEM MODAL - CYBERNETIC COCKPIT LAYOUT */}
       {selectedModalItem && (
-        <div className="cyber-modal-overlay" onClick={() => setSelectedModalItem(null)}>
+        <div className="cyber-modal-overlay" onClick={() => closeServiceModal()}>
           <div className="cyber-modal-container" onClick={(e) => e.stopPropagation()}>
             
             {/* Left Column: Tech Status Panel */}
@@ -5247,7 +5401,7 @@ const pageDataMap = {
             <div className="cyber-content-console">
               <button
                 className="cyber-close-btn"
-                onClick={() => setSelectedModalItem(null)}
+                onClick={() => closeServiceModal()}
                 aria-label="Закрыть"
               >
                 <i className="ri-close-line"></i>
@@ -5307,7 +5461,7 @@ const pageDataMap = {
                   style={{ flex: 2, minWidth: '200px' }}
                   onClick={() => {
                     setFormService(selectedModalItem.title);
-                    setSelectedModalItem(null);
+                    closeServiceModal();
                     document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
@@ -5316,7 +5470,7 @@ const pageDataMap = {
                 <button 
                   className="btn-ghost" 
                   style={{ flex: 1, minWidth: '100px' }}
-                  onClick={() => setSelectedModalItem(null)}
+                  onClick={() => closeServiceModal()}
                 >
                   {lang === 'ru' ? 'Закрыть' : (lang === 'kz' ? 'Жабу' : 'Close')}
                 </button>

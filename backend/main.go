@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -906,7 +907,16 @@ func main() {
 			http.NotFound(w, r)
 			return
 		}
-		fileServer.ServeHTTP(w, r)
+		// Check if file exists in static directory
+		cleanPath := filepath.Clean(r.URL.Path)
+		filePath := filepath.Join(staticDir, cleanPath)
+		fi, err := os.Stat(filePath)
+		if err == nil && !fi.IsDir() {
+			fileServer.ServeHTTP(w, r)
+			return
+		}
+		// If file doesn't exist, serve index.html for client-side routing
+		http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
 	}))
 
 	// Check environment PORT or fallback to 8080
