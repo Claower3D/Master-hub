@@ -3339,7 +3339,7 @@ const pageDataMap = {
             className="mega-tab-links-desktop"
             style={{ display: 'flex', gap: '16px', alignItems: 'center', width: '100%', minWidth: 0 }}
           >
-            {/* 1. Tabs & More Button Wrapper (Overflow calculated here) */}
+            {/* 1. Tabs Wrapper (Overflow calculated here) */}
             <div
               ref={megaNavTabsWrapRef}
               style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1, overflow: 'hidden', minWidth: 0 }}
@@ -3387,81 +3387,82 @@ const pageDataMap = {
                   {t(tab.label)}
                 </a>
               ))}
+            </div>
 
-              {/* "Ещё" dropdown for overflow tabs */}
-              {megaNavHiddenFrom < megaTabs.length && (
-                <div style={{ position: 'relative', flexShrink: 0 }}>
-                  <button
-                    onClick={() => setMegaNavMoreOpen(prev => !prev)}
+            {/* "Ещё" dropdown for overflow tabs (Outside the overflow wrapper!) */}
+            {megaNavHiddenFrom < megaTabs.length && (
+              <div style={{ position: 'relative', flexShrink: 0 }}>
+                <button
+                  onClick={() => setMegaNavMoreOpen(prev => !prev)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '5px',
+                    padding: '10px 20px', borderRadius: '999px',
+                    background: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
+                      ? 'var(--accent)' : (theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'),
+                    color: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
+                      ? '#0b1020' : 'var(--text)',
+                    border: '1.5px solid var(--line)',
+                    fontSize: '13px', fontWeight: '700', cursor: 'pointer',
+                    transition: 'all 0.2s', whiteSpace: 'nowrap'
+                  }}
+                >
+                  {megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
+                    ? t(megaTabs.find(tb => tb.id === activeMegaTab)?.label || '')
+                    : (lang === 'ru' ? 'Ещё' : lang === 'kz' ? 'Көбірек' : 'More')}
+                  <span style={{ fontSize: '10px' }}>{megaNavMoreOpen ? '▲' : '▼'}</span>
+                </button>
+
+                {megaNavMoreOpen && (
+                  <div
                     style={{
-                      display: 'flex', alignItems: 'center', gap: '5px',
-                      padding: '10px 20px', borderRadius: '999px',
-                      background: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
-                        ? 'var(--accent)' : (theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'),
-                      color: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
-                        ? '#0b1020' : 'var(--text)',
-                      border: '1.5px solid var(--line)',
-                      fontSize: '13px', fontWeight: '700', cursor: 'pointer',
-                      transition: 'all 0.2s', whiteSpace: 'nowrap'
+                      position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                      background: 'var(--surface)',
+                      border: '1px solid var(--line)',
+                      borderRadius: '14px',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
+                      minWidth: '180px', zIndex: 999,
+                      padding: '6px',
+                      display: 'flex', flexDirection: 'column', gap: '2px'
                     }}
                   >
-                    {megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
-                      ? t(megaTabs.find(tb => tb.id === activeMegaTab)?.label || '')
-                      : (lang === 'ru' ? 'Ещё' : lang === 'kz' ? 'Көбірек' : 'More')}
-                    <span style={{ fontSize: '10px' }}>{megaNavMoreOpen ? '▲' : '▼'}</span>
-                  </button>
+                    {megaTabs.slice(megaNavHiddenFrom).map(tab => (
+                      <a
+                        key={tab.id}
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveMegaTab(tab.id);
+                          setMegaNavMoreOpen(false);
+                          setMegaSearchQuery('');
+                          setIsMegaSearchExpanded(false);
+                          const firstCat = megaCategories.find(c => c.tab === tab.id);
+                          if (firstCat) {
+                            setActiveMegaCat(firstCat.id);
+                            const firstSub = megaSubcategories[firstCat.id]?.[0];
+                            setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                          }
+                        }}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px',
+                          padding: '9px 12px', borderRadius: '10px',
+                          fontSize: '13px', fontWeight: '600',
+                          color: activeMegaTab === tab.id ? '#0b1020' : 'var(--text)',
+                          background: activeMegaTab === tab.id ? 'var(--accent)' : 'transparent',
+                          textDecoration: 'none',
+                          transition: 'all 0.15s',
+                          whiteSpace: 'nowrap'
+                        }}
+                        className="mega-more-item"
+                      >
+                        <i className="ri-folder-line" style={{ fontSize: '14px', opacity: 0.6 }}></i>
+                        {t(tab.label)}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-                  {megaNavMoreOpen && (
-                    <div
-                      style={{
-                        position: 'absolute', top: 'calc(100% + 8px)', left: 0,
-                        background: 'var(--surface)',
-                        border: '1px solid var(--line)',
-                        borderRadius: '14px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
-                        minWidth: '180px', zIndex: 999,
-                        padding: '6px',
-                        display: 'flex', flexDirection: 'column', gap: '2px'
-                      }}
-                    >
-                      {megaTabs.slice(megaNavHiddenFrom).map(tab => (
-                        <a
-                          key={tab.id}
-                          href="#"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setActiveMegaTab(tab.id);
-                            setMegaNavMoreOpen(false);
-                            setMegaSearchQuery('');
-                            setIsMegaSearchExpanded(false);
-                            const firstCat = megaCategories.find(c => c.tab === tab.id);
-                            if (firstCat) {
-                              setActiveMegaCat(firstCat.id);
-                              const firstSub = megaSubcategories[firstCat.id]?.[0];
-                              setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                            }
-                          }}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: '8px',
-                            padding: '9px 12px', borderRadius: '10px',
-                            fontSize: '13px', fontWeight: '600',
-                            color: activeMegaTab === tab.id ? '#0b1020' : 'var(--text)',
-                            background: activeMegaTab === tab.id ? 'var(--accent)' : 'transparent',
-                            textDecoration: 'none',
-                            transition: 'all 0.15s',
-                            whiteSpace: 'nowrap'
-                          }}
-                          className="mega-more-item"
-                        >
-                          <i className="ri-folder-line" style={{ fontSize: '14px', opacity: 0.6 }}></i>
-                          {t(tab.label)}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
 
             {/* 2. Interactive Search/Filter Button or Input (Always visible, expands smoothly) */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
