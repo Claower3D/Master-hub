@@ -976,6 +976,10 @@ footer{
 .mega-nav-close:hover {
   background: var(--accent-3); color: #fff; border-color: var(--accent-3); transform: rotate(90deg);
 }
+.mega-more-item:hover {
+  background: var(--surface-2) !important;
+  color: var(--accent) !important;
+}
 
 .mega-body {
   display: grid; grid-template-columns: 340px 380px 1fr; flex: 1;

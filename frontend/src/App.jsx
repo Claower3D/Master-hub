@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { translations } from './translations';
 
 const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -42,6 +42,11 @@ export default function App() {
   const [activeMegaCat, setActiveMegaCat] = useState('cat-okna-1');
   const [activeMegaSub, setActiveMegaSub] = useState('none');
   const [megaSearchQuery, setMegaSearchQuery] = useState('');
+  // Overflow tabs state
+  const [megaNavHiddenFrom, setMegaNavHiddenFrom] = useState(99);
+  const [megaNavMoreOpen, setMegaNavMoreOpen] = useState(false);
+  const megaNavTabsWrapRef = useRef(null);
+  const megaNavTabEls = useRef([]);
   
   // Dedicated Category Page & Modal States
   const [activePage, setActivePage] = useState(() => {
@@ -90,7 +95,54 @@ export default function App() {
       })
       .catch(err => console.error('Error loading catalog from backend:', err));
   }, []);
-  
+
+  // Measure which tabs overflow the mega-nav and must go into the "More" dropdown
+  const measureNavOverflow = useCallback(() => {
+    const wrap = megaNavTabsWrapRef.current;
+    if (!wrap) return;
+    const wrapRight = wrap.getBoundingClientRect().right;
+    const els = megaNavTabEls.current;
+    let hiddenFrom = els.length;
+    for (let i = 0; i < els.length; i++) {
+      if (els[i] && els[i].getBoundingClientRect().right > wrapRight + 2) {
+        hiddenFrom = i;
+        break;
+      }
+    }
+    setMegaNavHiddenFrom(hiddenFrom);
+  }, []);
+
+  useEffect(() => {
+    const wrap = megaNavTabsWrapRef.current;
+    if (!wrap) return;
+    const nav = wrap.closest('.mega-nav') || wrap.parentElement;
+    const observer = new ResizeObserver(measureNavOverflow);
+    if (nav) observer.observe(nav);
+    measureNavOverflow();
+    return () => observer.disconnect();
+  }, [megaTabs, measureNavOverflow]);
+
+  // Re-measure when menu opens; also close "More" dropdown when menu closes
+  useEffect(() => {
+    if (megaMenuOpen) {
+      requestAnimationFrame(measureNavOverflow);
+    } else {
+      setMegaNavMoreOpen(false);
+    }
+  }, [megaMenuOpen, measureNavOverflow]);
+
+  // Close "More" dropdown on outside click
+  useEffect(() => {
+    if (!megaNavMoreOpen) return;
+    const handler = (e) => {
+      if (!e.target.closest('.mega-tab-links-desktop')) {
+        setMegaNavMoreOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [megaNavMoreOpen]);
+
   // Callback form state
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
@@ -3273,15 +3325,24 @@ const pageDataMap = {
             </select>
           </div>
 
-          <div className="mega-tab-links-desktop" style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
-            {megaTabs.map(tab => (
+          {/* Desktop tab row with overflow → "More" dropdown */}
+          <div
+            ref={megaNavTabsWrapRef}
+            className="mega-tab-links-desktop"
+            style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%', overflow: 'hidden', minWidth: 0 }}
+          >
+            {/* Visible tabs */}
+            {megaTabs.map((tab, idx) => (
               <a
                 key={tab.id}
+                ref={el => { megaNavTabEls.current[idx] = el; }}
                 href="#"
                 className={activeMegaTab === tab.id ? 'active' : ''}
+                style={idx >= megaNavHiddenFrom ? { visibility: 'hidden', pointerEvents: 'none', position: 'absolute' } : {}}
                 onClick={(e) => {
                   e.preventDefault();
                   setActiveMegaTab(tab.id);
+                  setMegaNavMoreOpen(false);
                   const firstCat = megaCategories.find(c => c.tab === tab.id);
                   if (firstCat) {
                     setActiveMegaCat(firstCat.id);
@@ -3310,8 +3371,80 @@ const pageDataMap = {
               </a>
             ))}
 
-            {/* ── Inline filter inside mega-nav ── */}
-            <div style={{ position: 'relative', flex: 1, maxWidth: '280px', marginLeft: 'auto' }}>
+            {/* "Ещё" dropdown for overflow tabs */}
+            {megaNavHiddenFrom < megaTabs.length && (
+              <div style={{ position: 'relative', flexShrink: 0 }}>
+                <button
+                  onClick={() => setMegaNavMoreOpen(prev => !prev)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '5px',
+                    padding: '6px 12px', borderRadius: '999px',
+                    background: megaTabs.slice(megaNavHiddenFrom).some(t => t.id === activeMegaTab)
+                      ? 'var(--accent)' : (theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'),
+                    color: megaTabs.slice(megaNavHiddenFrom).some(t => t.id === activeMegaTab)
+                      ? '#0b1020' : 'var(--text)',
+                    border: '1.5px solid var(--line)',
+                    fontSize: '13px', fontWeight: '700', cursor: 'pointer',
+                    transition: 'all 0.2s', whiteSpace: 'nowrap'
+                  }}
+                >
+                  {megaTabs.slice(megaNavHiddenFrom).some(t => t.id === activeMegaTab)
+                    ? t(megaTabs.find(t => t.id === activeMegaTab)?.label || '')
+                    : (lang === 'ru' ? 'Ещё' : lang === 'kz' ? 'Көбірек' : 'More')}
+                  <span style={{ fontSize: '10px' }}>{megaNavMoreOpen ? '▲' : '▼'}</span>
+                </button>
+
+                {megaNavMoreOpen && (
+                  <div
+                    style={{
+                      position: 'absolute', top: 'calc(100% + 8px)', left: 0,
+                      background: 'var(--surface)',
+                      border: '1px solid var(--line)',
+                      borderRadius: '14px',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
+                      minWidth: '180px', zIndex: 999,
+                      padding: '6px',
+                      display: 'flex', flexDirection: 'column', gap: '2px'
+                    }}
+                  >
+                    {megaTabs.slice(megaNavHiddenFrom).map(tab => (
+                      <a
+                        key={tab.id}
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveMegaTab(tab.id);
+                          setMegaNavMoreOpen(false);
+                          const firstCat = megaCategories.find(c => c.tab === tab.id);
+                          if (firstCat) {
+                            setActiveMegaCat(firstCat.id);
+                            const firstSub = megaSubcategories[firstCat.id]?.[0];
+                            setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                          }
+                        }}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '8px',
+                          padding: '9px 12px', borderRadius: '10px',
+                          fontSize: '13px', fontWeight: '600',
+                          color: activeMegaTab === tab.id ? '#0b1020' : 'var(--text)',
+                          background: activeMegaTab === tab.id ? 'var(--accent)' : 'transparent',
+                          textDecoration: 'none',
+                          transition: 'all 0.15s',
+                          whiteSpace: 'nowrap'
+                        }}
+                        className="mega-more-item"
+                      >
+                        <i className="ri-folder-line" style={{ fontSize: '14px', opacity: 0.6 }}></i>
+                        {t(tab.label)}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Inline search filter ── */}
+            <div style={{ position: 'relative', flex: 1, maxWidth: '260px', marginLeft: 'auto', flexShrink: 0 }}>
               <i className="ri-search-line" style={{
                 position: 'absolute', left: '12px', top: '50%',
                 transform: 'translateY(-50%)',
@@ -3354,10 +3487,10 @@ const pageDataMap = {
               )}
             </div>
 
-            <button 
-              onClick={() => setMegaMenuOpen(false)} 
-              className="mega-nav-close" 
-              style={{ display: 'grid' }}
+            <button
+              onClick={() => setMegaMenuOpen(false)}
+              className="mega-nav-close"
+              style={{ display: 'grid', flexShrink: 0 }}
               title="Закрыть каталог"
             >
               ✕
