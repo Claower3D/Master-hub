@@ -3309,6 +3309,51 @@ const pageDataMap = {
                 {t(tab.label)}
               </a>
             ))}
+
+            {/* ── Inline filter inside mega-nav ── */}
+            <div style={{ position: 'relative', flex: 1, maxWidth: '280px', marginLeft: 'auto' }}>
+              <i className="ri-search-line" style={{
+                position: 'absolute', left: '12px', top: '50%',
+                transform: 'translateY(-50%)',
+                color: megaSearchQuery ? 'var(--accent)' : 'var(--muted)',
+                fontSize: '14px', pointerEvents: 'none', transition: 'color 0.2s'
+              }}></i>
+              <input
+                type="text"
+                placeholder={lang === 'ru' ? 'Поиск по каталогу...' : lang === 'kz' ? 'Іздеу...' : 'Search...'}
+                value={megaSearchQuery}
+                onChange={(e) => setMegaSearchQuery(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '7px 34px 7px 34px',
+                  background: megaSearchQuery
+                    ? (theme === 'light' ? 'rgba(124,242,199,0.09)' : 'rgba(124,242,199,0.07)')
+                    : (theme === 'light' ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.07)'),
+                  border: megaSearchQuery ? '1.5px solid var(--accent)' : (theme === 'light' ? '1.5px solid rgba(0,0,0,0.1)' : '1.5px solid rgba(255,255,255,0.12)'),
+                  borderRadius: '999px',
+                  color: theme === 'light' ? 'var(--text)' : '#fff',
+                  fontSize: '13px', fontWeight: '500', outline: 'none',
+                  transition: 'all 0.2s',
+                  boxShadow: megaSearchQuery ? '0 0 0 3px rgba(124,242,199,0.13)' : 'none'
+                }}
+              />
+              {megaSearchQuery && (
+                <button
+                  onClick={() => setMegaSearchQuery('')}
+                  style={{
+                    position: 'absolute', right: '10px', top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none', border: 'none',
+                    color: 'var(--accent)', cursor: 'pointer',
+                    fontSize: '14px', display: 'flex', alignItems: 'center', padding: 0
+                  }}
+                  title="Очистить"
+                >
+                  <i className="ri-close-circle-fill"></i>
+                </button>
+              )}
+            </div>
+
             <button 
               onClick={() => setMegaMenuOpen(false)} 
               className="mega-nav-close" 
