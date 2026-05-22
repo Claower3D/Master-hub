@@ -170,7 +170,21 @@ func handleTgUpdate(db DB, upd tgUpdate) {
 					tgSendMessage(chatID, fmt.Sprintf("⚠️ Заявка #%s найдена, но не удалось обновить её статус в базе.", orderID))
 					return
 				}
-				tgSendMessage(chatID, fmt.Sprintf("✅ Оператор %s принял заявку #%s. Статус обновлен на «В обработке».", firstName, orderID))
+				subscribers, errSub := db.GetTelegramSubscribers()
+				msg := fmt.Sprintf("✅ Оператор %s принял заявку #%s. Статус обновлен на «В обработке».", firstName, orderID)
+				
+				sentToCurrent := false
+				if errSub == nil {
+					for _, subChatID := range subscribers {
+						tgSendMessage(subChatID, msg)
+						if subChatID == chatID {
+							sentToCurrent = true
+						}
+					}
+				}
+				if !sentToCurrent {
+					tgSendMessage(chatID, msg)
+				}
 				return
 			}
 		}
