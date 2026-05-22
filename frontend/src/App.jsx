@@ -62,6 +62,21 @@ export default function App() {
     }, 10000);
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    fetch(API_BASE + '/api/catalog')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch catalog');
+        return res.json();
+      })
+      .then(data => {
+        if (data.tabs) setMegaTabs(data.tabs);
+        if (data.categories) setMegaCategories(data.categories);
+        if (data.subcategories) setMegaSubcategories(data.subcategories);
+        if (data.details) setMegaDetails(data.details);
+      })
+      .catch(err => console.error('Error loading catalog from backend:', err));
+  }, []);
   
   // Callback form state
   const [formName, setFormName] = useState('');
@@ -237,25 +252,59 @@ export default function App() {
       .catch(err => alert(err.message));
   };
 
+  const syncCatalogWithBackend = (tabs = megaTabs, categories = megaCategories, subcategories = megaSubcategories, details = megaDetails) => {
+    const t = localStorage.getItem('token') || token;
+    if (!t) return;
+
+    fetch(API_BASE + '/api/catalog', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${t}`
+      },
+      body: JSON.stringify({
+        tabs,
+        categories,
+        subcategories,
+        details
+      })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Не удалось синхронизировать каталог с сервером');
+        return res.json();
+      })
+      .then(data => {
+        console.log('Catalog synced successfully with backend');
+      })
+      .catch(err => {
+        console.error('Error syncing catalog:', err);
+        alert(err.message);
+      });
+  };
+
   // Save functions
   const saveMegaCategories = (newCats) => {
     setMegaCategories(newCats);
     localStorage.setItem('megaCategories', JSON.stringify(newCats));
+    syncCatalogWithBackend(megaTabs, newCats, megaSubcategories, megaDetails);
   };
 
   const saveMegaSubcategories = (newSubs) => {
     setMegaSubcategories(newSubs);
     localStorage.setItem('megaSubcategories', JSON.stringify(newSubs));
+    syncCatalogWithBackend(megaTabs, megaCategories, newSubs, megaDetails);
   };
 
   const saveMegaDetails = (newDetails) => {
     setMegaDetails(newDetails);
     localStorage.setItem('megaDetails', JSON.stringify(newDetails));
+    syncCatalogWithBackend(megaTabs, megaCategories, megaSubcategories, newDetails);
   };
 
   const saveMegaTabs = (newTabs) => {
     setMegaTabs(newTabs);
     localStorage.setItem('megaTabs', JSON.stringify(newTabs));
+    syncCatalogWithBackend(newTabs, megaCategories, megaSubcategories, megaDetails);
   };
 
   const handleSaveTab = (e) => {
@@ -329,6 +378,7 @@ export default function App() {
       localStorage.removeItem('megaSubcategories');
       setMegaDetails(defaultMegaDetails);
       localStorage.removeItem('megaDetails');
+      syncCatalogWithBackend(defaultMegaTabs, defaultMegaCategories, defaultMegaSubcategories, defaultMegaDetails);
       alert('Каталог успешно сброшен к исходным настройкам.');
     }
   };
