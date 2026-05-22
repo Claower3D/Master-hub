@@ -1233,6 +1233,10 @@ export default function App() {
 
   const [catFilterTab, setCatFilterTab] = useState('all');
   const [subFilterTab, setSubFilterTab] = useState('all');
+  const [catSearch, setCatSearch] = useState('');
+  const [catSort, setCatSort] = useState('default');
+  const [subSearch, setSubSearch] = useState('');
+  const [subSort, setSubSort] = useState('default');
 
   const activeSubObj = Object.values(megaSubcategories).flat().find(s => s.id === activeMegaSub);
   const activeCatObj = megaCategories.find(c => c.id === activeMegaCat);
@@ -2201,6 +2205,51 @@ const pageDataMap = {
                         ))}
                       </div>
 
+                      {/* Search and Sort controls */}
+                      <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', padding: '0 4px', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+                          <i className="ri-search-line" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '16px' }}></i>
+                          <input
+                            type="text"
+                            value={catSearch}
+                            onChange={e => setCatSearch(e.target.value)}
+                            placeholder="Поиск категории по названию или ID..."
+                            style={{
+                              width: '100%',
+                              padding: '10px 16px 10px 40px',
+                              borderRadius: '12px',
+                              background: 'var(--surface-2)',
+                              border: '1px solid var(--line)',
+                              color: 'var(--text)',
+                              fontSize: '14px',
+                              outline: 'none',
+                              transition: 'all 0.2s'
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="ri-sort-asc" style={{ color: 'var(--muted)', fontSize: '18px' }}></i>
+                          <select
+                            value={catSort}
+                            onChange={e => setCatSort(e.target.value)}
+                            style={{
+                              padding: '10px 16px',
+                              borderRadius: '12px',
+                              background: 'var(--surface-2)',
+                              border: '1px solid var(--line)',
+                              color: 'var(--text)',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              outline: 'none'
+                            }}
+                          >
+                            <option value="default">По умолчанию</option>
+                            <option value="asc">А – Я (по алфавиту)</option>
+                            <option value="desc">Я – А (в обратном порядке)</option>
+                          </select>
+                        </div>
+                      </div>
+
                       <div className="admin-table-card">
                         <div className="admin-table-wrapper">
                           <table className="admin-table">
@@ -2216,6 +2265,20 @@ const pageDataMap = {
                             <tbody>
                               {megaCategories
                                 .filter(cat => catFilterTab === 'all' || cat.tab === catFilterTab)
+                                .filter(cat => {
+                                  if (!catSearch.trim()) return true;
+                                  const q = catSearch.toLowerCase();
+                                  return cat.title.toLowerCase().includes(q) || cat.id.toLowerCase().includes(q);
+                                })
+                                .sort((a, b) => {
+                                  if (catSort === 'asc') {
+                                    return a.title.localeCompare(b.title, 'ru');
+                                  }
+                                  if (catSort === 'desc') {
+                                    return b.title.localeCompare(a.title, 'ru');
+                                  }
+                                  return 0;
+                                })
                                 .map(cat => (
                               <tr key={cat.id} className="admin-table-row">
                                 <td style={{ color: 'var(--muted)', fontSize: '12px', fontFamily: 'monospace' }}>{cat.id}</td>
@@ -2305,6 +2368,51 @@ const pageDataMap = {
                         ))}
                       </div>
 
+                      {/* Search and Sort controls */}
+                      <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', padding: '0 4px', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <div style={{ position: 'relative', flex: 1, minWidth: '240px' }}>
+                          <i className="ri-search-line" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)', fontSize: '16px' }}></i>
+                          <input
+                            type="text"
+                            value={subSearch}
+                            onChange={e => setSubSearch(e.target.value)}
+                            placeholder="Поиск услуги по названию, категории или описанию..."
+                            style={{
+                              width: '100%',
+                              padding: '10px 16px 10px 40px',
+                              borderRadius: '12px',
+                              background: 'var(--surface-2)',
+                              border: '1px solid var(--line)',
+                              color: 'var(--text)',
+                              fontSize: '14px',
+                              outline: 'none',
+                              transition: 'all 0.2s'
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className="ri-sort-asc" style={{ color: 'var(--muted)', fontSize: '18px' }}></i>
+                          <select
+                            value={subSort}
+                            onChange={e => setSubSort(e.target.value)}
+                            style={{
+                              padding: '10px 16px',
+                              borderRadius: '12px',
+                              background: 'var(--surface-2)',
+                              border: '1px solid var(--line)',
+                              color: 'var(--text)',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              outline: 'none'
+                            }}
+                          >
+                            <option value="default">По умолчанию</option>
+                            <option value="asc">А – Я (по алфавиту)</option>
+                            <option value="desc">Я – А (в обратном порядке)</option>
+                          </select>
+                        </div>
+                      </div>
+
                       <div className="admin-table-card">
                         <div className="admin-table-wrapper">
                           <table className="admin-table">
@@ -2320,64 +2428,92 @@ const pageDataMap = {
                               </tr>
                             </thead>
                             <tbody>
-                              {megaCategories
-                                .filter(cat => subFilterTab === 'all' || cat.tab === subFilterTab)
-                                .map(cat => {
-                              const subs = megaSubcategories[cat.id] || [];
-                              return subs.map(sub => {
-                                const details = megaDetails[sub.id] || {};
-                                return (
-                                  <tr key={sub.id} className="admin-table-row">
-                                    <td style={{ fontSize: '12px', fontWeight: '600', color: 'var(--muted)' }}>
-                                      {cat.title}
-                                    </td>
-                                    <td style={{ fontWeight: '600' }}>
-                                      <div>{sub.title}</div>
-                                      <span style={{ fontSize: '10px', fontFamily: 'monospace', color: 'var(--muted)' }}>{sub.id}</span>
-                                    </td>
-                                    <td style={{ maxWidth: '200px' }}>
-                                      <div style={{ fontSize: '12px', color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={details.desc}>
-                                        {details.desc || '-'}
-                                      </div>
-                                    </td>
-                                    <td style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '13px' }}>
-                                      {details.price || '-'}
-                                    </td>
-                                    <td style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
-                                      {details.time || '-'}
-                                    </td>
-                                    <td style={{ fontSize: '12px', color: '#7cf2c7', whiteSpace: 'nowrap' }}>
-                                      {details.warr || '-'}
-                                    </td>
-                                    <td style={{ textAlign: 'right' }}>
-                                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                        <button
-                                          onClick={() => {
-                                            setEditingSub(sub);
-                                            setSubFormCatId(cat.id);
-                                            setSubFormTitle(sub.title);
-                                            setSubFormDesc(details.desc || '');
-                                            setSubFormPrice(details.price || '');
-                                            setSubFormTime(details.time || '');
-                                            setSubFormWarr(details.warr || '');
-                                            setShowSubForm(true);
-                                          }}
-                                          style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
-                                        >
-                                          <i className="ri-pencil-line"></i>
-                                        </button>
-                                        <button
-                                          onClick={() => handleDeleteSubcategory(cat.id, sub.id)}
-                                          style={{ border: 'none', background: 'rgba(255,122,89,0.1)', color: '#ff7a59', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
-                                        >
-                                          <i className="ri-delete-bin-line"></i>
-                                        </button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              });
-                            })}
+                              {(() => {
+                                const flattenedSubs = [];
+                                megaCategories
+                                  .filter(cat => subFilterTab === 'all' || cat.tab === subFilterTab)
+                                  .forEach(cat => {
+                                    const subs = megaSubcategories[cat.id] || [];
+                                    subs.forEach(sub => {
+                                      flattenedSubs.push({
+                                        cat,
+                                        sub,
+                                        details: megaDetails[sub.id] || {}
+                                      });
+                                    });
+                                  });
+
+                                return flattenedSubs
+                                  .filter(item => {
+                                    if (!subSearch.trim()) return true;
+                                    const q = subSearch.toLowerCase();
+                                    return (
+                                      item.sub.title.toLowerCase().includes(q) ||
+                                      item.sub.id.toLowerCase().includes(q) ||
+                                      item.cat.title.toLowerCase().includes(q) ||
+                                      (item.details.desc && item.details.desc.toLowerCase().includes(q))
+                                    );
+                                  })
+                                  .sort((a, b) => {
+                                    if (subSort === 'asc') {
+                                      return a.sub.title.localeCompare(b.sub.title, 'ru');
+                                    }
+                                    if (subSort === 'desc') {
+                                      return b.sub.title.localeCompare(a.sub.title, 'ru');
+                                    }
+                                    return 0;
+                                  })
+                                  .map(({ cat, sub, details }) => (
+                                    <tr key={sub.id} className="admin-table-row">
+                                      <td style={{ fontSize: '12px', fontWeight: '600', color: 'var(--muted)' }}>
+                                        {cat.title}
+                                      </td>
+                                      <td style={{ fontWeight: '600' }}>
+                                        <div>{sub.title}</div>
+                                        <span style={{ fontSize: '10px', fontFamily: 'monospace', color: 'var(--muted)' }}>{sub.id}</span>
+                                      </td>
+                                      <td style={{ maxWidth: '200px' }}>
+                                        <div style={{ fontSize: '12px', color: 'var(--muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={details.desc}>
+                                          {details.desc || '-'}
+                                        </div>
+                                      </td>
+                                      <td style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '13px' }}>
+                                        {details.price || '-'}
+                                      </td>
+                                      <td style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
+                                        {details.time || '-'}
+                                      </td>
+                                      <td style={{ fontSize: '12px', color: '#7cf2c7', whiteSpace: 'nowrap' }}>
+                                        {details.warr || '-'}
+                                      </td>
+                                      <td style={{ textAlign: 'right' }}>
+                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                          <button
+                                            onClick={() => {
+                                              setEditingSub(sub);
+                                              setSubFormCatId(cat.id);
+                                              setSubFormTitle(sub.title);
+                                              setSubFormDesc(details.desc || '');
+                                              setSubFormPrice(details.price || '');
+                                              setSubFormTime(details.time || '');
+                                              setSubFormWarr(details.warr || '');
+                                              setShowSubForm(true);
+                                            }}
+                                            style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                          >
+                                            <i className="ri-pencil-line"></i>
+                                          </button>
+                                          <button
+                                            onClick={() => handleDeleteSubcategory(cat.id, sub.id)}
+                                            style={{ border: 'none', background: 'rgba(255,122,89,0.1)', color: '#ff7a59', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                          >
+                                            <i className="ri-delete-bin-line"></i>
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ));
+                              })()}
                           </tbody>
                         </table>
                       </div>
