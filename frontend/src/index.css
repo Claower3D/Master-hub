@@ -948,7 +948,7 @@ footer{
 .mega-nav {
   display: flex; align-items: center; gap: 10px; padding: 16px 6vw;
   background: var(--surface); border-bottom: 1px solid var(--line);
-  overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
+  overflow: visible; scrollbar-width: none; flex-shrink: 0;
 }
 .mega-nav::-webkit-scrollbar { display: none; }
 .mega-nav a {
