@@ -1231,6 +1231,9 @@ export default function App() {
     return saved ? JSON.parse(saved) : defaultMegaDetails;
   });
 
+  const [catFilterTab, setCatFilterTab] = useState('all');
+  const [subFilterTab, setSubFilterTab] = useState('all');
+
   const activeSubObj = Object.values(megaSubcategories).flat().find(s => s.id === activeMegaSub);
   const activeCatObj = megaCategories.find(c => c.id === activeMegaCat);
   const fallbackTitle = activeSubObj ? activeSubObj.title : (activeCatObj ? activeCatObj.title : 'Сервисный центр');
@@ -2156,20 +2159,64 @@ const pageDataMap = {
 
                   {/* SUB-TAB CONTENTS: CATEGORIES */}
                   {catalogSubTab === 'categories' && (
-                    <div className="admin-table-card">
-                      <div className="admin-table-wrapper">
-                        <table className="admin-table">
-                          <thead>
-                            <tr>
-                              <th>ID</th>
-                              <th>Иконка</th>
-                              <th>Название категории</th>
-                              <th>Раздел (Вкладка)</th>
-                              <th style={{ textAlign: 'right' }}>Действия</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {megaCategories.map(cat => (
+                    <div>
+                      {/* Section (Tab) Filter Navigation */}
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px', padding: '0 4px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setCatFilterTab('all')}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '999px',
+                            background: catFilterTab === 'all' ? 'var(--accent)' : 'var(--surface-2)',
+                            color: catFilterTab === 'all' ? '#0b1020' : 'var(--text)',
+                            border: '1px solid ' + (catFilterTab === 'all' ? 'transparent' : 'var(--line)'),
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          Все разделы
+                        </button>
+                        {megaTabs.map(t => (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => setCatFilterTab(t.id)}
+                            style={{
+                              padding: '8px 16px',
+                              borderRadius: '999px',
+                              background: catFilterTab === t.id ? 'var(--accent)' : 'var(--surface-2)',
+                              color: catFilterTab === t.id ? '#0b1020' : 'var(--text)',
+                              border: '1px solid ' + (catFilterTab === t.id ? 'transparent' : 'var(--line)'),
+                              cursor: 'pointer',
+                              fontSize: '13px',
+                              fontWeight: '600',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="admin-table-card">
+                        <div className="admin-table-wrapper">
+                          <table className="admin-table">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Иконка</th>
+                                <th>Название категории</th>
+                                <th>Раздел (Вкладка)</th>
+                                <th style={{ textAlign: 'right' }}>Действия</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {megaCategories
+                                .filter(cat => catFilterTab === 'all' || cat.tab === catFilterTab)
+                                .map(cat => (
                               <tr key={cat.id} className="admin-table-row">
                                 <td style={{ color: 'var(--muted)', fontSize: '12px', fontFamily: 'monospace' }}>{cat.id}</td>
                                 <td>
@@ -2211,26 +2258,71 @@ const pageDataMap = {
                         </table>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
 
                   {/* SUB-TAB CONTENTS: SUBCATEGORIES */}
                   {catalogSubTab === 'subcategories' && (
-                    <div className="admin-table-card">
-                      <div className="admin-table-wrapper">
-                        <table className="admin-table">
-                          <thead>
-                            <tr>
-                              <th>Родительская категория</th>
-                              <th>Подкатегория / Услуга</th>
-                              <th>Описание</th>
-                              <th>Стоимость</th>
-                              <th>Срок</th>
-                              <th>Гарантия</th>
-                              <th style={{ textAlign: 'right' }}>Действия</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {megaCategories.map(cat => {
+                    <div>
+                      {/* Section (Tab) Filter Navigation */}
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px', padding: '0 4px' }}>
+                        <button
+                          type="button"
+                          onClick={() => setSubFilterTab('all')}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '999px',
+                            background: subFilterTab === 'all' ? 'var(--accent)' : 'var(--surface-2)',
+                            color: subFilterTab === 'all' ? '#0b1020' : 'var(--text)',
+                            border: '1px solid ' + (subFilterTab === 'all' ? 'transparent' : 'var(--line)'),
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          Все разделы
+                        </button>
+                        {megaTabs.map(t => (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => setSubFilterTab(t.id)}
+                            style={{
+                              padding: '8px 16px',
+                              borderRadius: '999px',
+                              background: subFilterTab === t.id ? 'var(--accent)' : 'var(--surface-2)',
+                              color: subFilterTab === t.id ? '#0b1020' : 'var(--text)',
+                              border: '1px solid ' + (subFilterTab === t.id ? 'transparent' : 'var(--line)'),
+                              cursor: 'pointer',
+                              fontSize: '13px',
+                              fontWeight: '600',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="admin-table-card">
+                        <div className="admin-table-wrapper">
+                          <table className="admin-table">
+                            <thead>
+                              <tr>
+                                <th>Родительская категория</th>
+                                <th>Подкатегория / Услуга</th>
+                                <th>Описание</th>
+                                <th>Стоимость</th>
+                                <th>Срок</th>
+                                <th>Гарантия</th>
+                                <th style={{ textAlign: 'right' }}>Действия</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {megaCategories
+                                .filter(cat => subFilterTab === 'all' || cat.tab === subFilterTab)
+                                .map(cat => {
                               const subs = megaSubcategories[cat.id] || [];
                               return subs.map(sub => {
                                 const details = megaDetails[sub.id] || {};
@@ -2290,7 +2382,8 @@ const pageDataMap = {
                         </table>
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
 
                   {/* MODAL: SECTION / TAB FORM */}
                   {showTabForm && (
