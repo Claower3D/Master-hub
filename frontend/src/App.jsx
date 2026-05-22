@@ -120,7 +120,7 @@ export default function App() {
     if (nav) observer.observe(nav);
     measureNavOverflow();
     return () => observer.disconnect();
-  }, [megaTabs, measureNavOverflow]);
+  }, [measureNavOverflow]);
 
   // Re-measure when menu opens; also close "More" dropdown when menu closes
   useEffect(() => {
@@ -1362,6 +1362,11 @@ export default function App() {
     const saved = localStorage.getItem('megaTabs');
     return saved ? JSON.parse(saved) : defaultMegaTabs;
   });
+
+  // Re-measure nav overflow when tab list changes (must be after megaTabs useState)
+  useEffect(() => {
+    requestAnimationFrame(measureNavOverflow);
+  }, [megaTabs, measureNavOverflow]);
 
   const [megaCategories, setMegaCategories] = useState(() => {
     const saved = localStorage.getItem('megaCategories');
