@@ -3948,3 +3948,10 @@ body.light-theme .reviews-floating-btn:hover {
   }
 }
 
+@media (min-width: 961px) {
+  .mega-search-container {
+    display: none !important;
+  }
+}
+
+

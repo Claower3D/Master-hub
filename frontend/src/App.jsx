@@ -3303,6 +3303,8 @@ const pageDataMap = {
               onChange={(e) => {
                 const tabId = e.target.value;
                 setActiveMegaTab(tabId);
+                setMegaSearchQuery('');
+                setIsMegaSearchExpanded(false);
                 const firstCat = megaCategories.find(c => c.tab === tabId);
                 if (firstCat) {
                   setActiveMegaCat(firstCat.id);
@@ -3354,6 +3356,8 @@ const pageDataMap = {
                     e.preventDefault();
                     setActiveMegaTab(tab.id);
                     setMegaNavMoreOpen(false);
+                    setMegaSearchQuery('');
+                    setIsMegaSearchExpanded(false);
                     const firstCat = megaCategories.find(c => c.tab === tab.id);
                     if (firstCat) {
                       setActiveMegaCat(firstCat.id);
@@ -3373,6 +3377,8 @@ const pageDataMap = {
                       });
                       setActivePage('category');
                       setMegaMenuOpen(false);
+                      setMegaSearchQuery('');
+                      setIsMegaSearchExpanded(false);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }}
@@ -3426,6 +3432,8 @@ const pageDataMap = {
                             e.preventDefault();
                             setActiveMegaTab(tab.id);
                             setMegaNavMoreOpen(false);
+                            setMegaSearchQuery('');
+                            setIsMegaSearchExpanded(false);
                             const firstCat = megaCategories.find(c => c.tab === tab.id);
                             if (firstCat) {
                               setActiveMegaCat(firstCat.id);
@@ -3492,7 +3500,8 @@ const pageDataMap = {
                   />
                   {(megaSearchQuery || isMegaSearchExpanded) && (
                     <button
-                      onClick={() => {
+                      onMouseDown={(e) => {
+                        e.preventDefault();
                         setMegaSearchQuery('');
                         setIsMegaSearchExpanded(false);
                       }}
@@ -3615,6 +3624,8 @@ const pageDataMap = {
               onChange={(e) => {
                 const tabId = e.target.value;
                 setActiveMegaTab(tabId);
+                setMegaSearchQuery('');
+                setIsMegaSearchExpanded(false);
                 const firstCat = megaCategories.find(c => c.tab === tabId);
                 if (firstCat) {
                   setActiveMegaCat(firstCat.id);
