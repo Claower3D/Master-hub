@@ -1583,24 +1583,24 @@ export default function App() {
   // Service cards data
   const srvCards = [
     // Окна
-    { cat: 'okna', title: 'Москитные сетки', desc: 'Надежная защита от насекомых, тополиного пуха и пыли. Быстрое изготовление и установка.', price: 'от 2 500 ₸', img: './cat_moskit.png' },
-    { cat: 'okna', title: 'Детская защита и решетки', desc: 'Блокираторы с ключом, детские замки и прочные металлические решетки для безопасности детей.', price: 'от 2 000 ₸', img: './cat_child.png' },
-    { cat: 'okna', title: 'Ремонт окон (Регулировка, замена стеклопакетов, замена уплотнителей, замена ручек, навесов, сложное открывание, детский замок, замок курильщика)', desc: 'Устранение продуваний, замена уплотнителей, ручек, стеклопакетов и сложного открывания.', price: 'от 1 500 ₸', img: './cat_win_repair.png' },
-    { cat: 'okna', title: 'Изготовление окон', desc: 'Производство и профессиональный монтаж окон из немецких профилей Rehau, Veka, KBE.', price: 'от 35 000 ₸', img: './cat_win_make.png' },
-    { cat: 'okna', title: 'Ролл-шторы и жалюзи', desc: 'Огромный выбор тканей и текстур (блэкаут, день-ночь). Индивидуальный замер и установка.', price: 'от 5 000 ₸', img: './cat_blinds.png' },
+    { id: 'cat-okna-1', cat: 'okna', title: 'Москитные сетки', desc: 'Надежная защита от насекомых, тополиного пуха и пыли. Быстрое изготовление и установка.', price: 'от 2 500 ₸', img: './cat_moskit.png' },
+    { id: 'cat-okna-2', cat: 'okna', title: 'Детская защита и решетки', desc: 'Блокираторы с ключом, детские замки и прочные металлические решетки для безопасности детей.', price: 'от 2 000 ₸', img: './cat_child.png' },
+    { id: 'cat-okna-3', cat: 'okna', title: 'Ремонт окон (Регулировка, замена стеклопакетов, замена уплотнителей, замена ручек, навесов, сложное открывание, детский замок, замок курильщика)', desc: 'Устранение продуваний, замена уплотнителей, ручек, стеклопакетов и сложного открывания.', price: 'от 1 500 ₸', img: './cat_win_repair.png' },
+    { id: 'cat-okna-4', cat: 'okna', title: 'Изготовление окон', desc: 'Производство и профессиональный монтаж окон из немецких профилей Rehau, Veka, KBE.', price: 'от 35 000 ₸', img: './cat_win_make.png' },
+    { id: 'cat-okna-5', cat: 'okna', title: 'Ролл-шторы и жалюзи', desc: 'Огромный выбор тканей и текстур (блэкаут, день-ночь). Индивидуальный замер и установка.', price: 'от 5 000 ₸', img: './cat_blinds.png' },
 
     // Сервис
-    { cat: 'servis', title: 'Ремонт стиральных машин', desc: 'Замена ТЭНа, подшипников, сливных помп, ремонт модулей управления с гарантией.', price: 'от 3 000 ₸', img: './cat_washing.png' },
-    { cat: 'servis', title: 'Ремонт холодильников', desc: 'Заправка фреоном, замена компрессора, термостата, ремонт системы No Frost.', price: 'от 4 000 ₸', img: './cat_fridge.png' },
-    { cat: 'servis', title: 'Ремонт кондиционеров и посудомоечных машин', desc: 'Чистка, заправка сплит-систем, устранение засоров и замена насосов посудомоечных машин.', price: 'от 5 000 ₸', img: './cat_washing.png' },
-    { cat: 'servis', title: 'Установка/Ремонт вытяжек', desc: 'Монтаж кухонных вытяжек, подключение к вентиляции, замена фильтров и ремонт двигателей.', price: 'от 4 000 ₸', img: './slide_appliances.png' },
-    { cat: 'servis', title: 'Установка/Ремонт кондиционеров', desc: 'Профессиональный монтаж, демонтаж и сервисное обслуживание климатической техники.', price: 'от 15 000 ₸', img: './cat_washing.png' },
-    { cat: 'servis', title: 'Сварка', desc: 'Услуги квалифицированного сварщика с выездом. Сварка труб, петель, каркасов.', price: 'от 5 000 ₸', img: './cat_win_repair.png' },
-    { cat: 'servis', title: 'Металлоконструкции', desc: 'Изготовление навесов, козырьков, лестниц, заборов, ворот и стеллажей на заказ.', price: 'от 15 000 ₸/м²', img: './cat_win_make.png' },
-    { cat: 'servis', title: 'Электрика', desc: 'Монтаж проводки, установка розеток, выключателей, сборка щитов, устранение замыканий.', price: 'от 2 000 ₸', img: './cat_electric.png' },
+    { id: 'cat-srv-1', cat: 'servis', title: 'Ремонт стиральных машин', desc: 'Замена ТЭНа, подшипников, сливных помп, ремонт модулей управления с гарантией.', price: 'от 3 000 ₸', img: './cat_washing.png' },
+    { id: 'cat-srv-2', cat: 'servis', title: 'Ремонт холодильников', desc: 'Заправка фреоном, замена компрессора, термостата, ремонт системы No Frost.', price: 'от 4 000 ₸', img: './cat_fridge.png' },
+    { id: 'cat-srv-3', cat: 'servis', title: 'Ремонт кондиционеров и посудомоечных машин', desc: 'Чистка, заправка сплит-систем, устранение засоров и замена насосов посудомоечных машин.', price: 'от 5 000 ₸', img: './cat_washing.png' },
+    { id: 'cat-srv-4', cat: 'servis', title: 'Установка/Ремонт вытяжек', desc: 'Монтаж кухонных вытяжек, подключение к вентиляции, замена фильтров и ремонт двигателей.', price: 'от 4 000 ₸', img: './slide_appliances.png' },
+    { id: 'cat-srv-5', cat: 'servis', title: 'Установка/Ремонт кондиционеров', desc: 'Профессиональный монтаж, демонтаж и сервисное обслуживание климатической техники.', price: 'от 15 000 ₸', img: './cat_washing.png' },
+    { id: 'cat-srv-6', cat: 'servis', title: 'Сварка', desc: 'Услуги квалифицированного сварщика с выездом. Сварка труб, петель, каркасов.', price: 'от 5 000 ₸', img: './cat_win_repair.png' },
+    { id: 'cat-srv-7', cat: 'servis', title: 'Металлоконструкции', desc: 'Изготовление навесов, козырьков, лестниц, заборов, ворот и стеллажей на заказ.', price: 'от 15 000 ₸/м²', img: './cat_win_make.png' },
+    { id: 'cat-srv-8', cat: 'servis', title: 'Электрика', desc: 'Монтаж проводки, установка розеток, выключателей, сборка щитов, устранение замыканий.', price: 'от 2 000 ₸', img: './cat_electric.png' },
 
     // Мебель
-    { cat: 'mebel', title: 'Мебель на заказ (корпусная, мягкая)', desc: 'Индивидуальный дизайн и изготовление кухонь, шкафов-купе, гардеробных, диванов и кроватей.', price: 'от 45 000 ₸', img: './slide_furniture.png' }
+    { id: 'cat-meb-1', cat: 'mebel', title: 'Мебель на заказ (корпусная, мягкая)', desc: 'Индивидуальный дизайн и изготовление кухонь, шкафов-купе, гардеробных, диванов и кроватей.', price: 'от 45 000 ₸', img: './slide_furniture.png' }
   ];
 
   // Dynamic Category Page Data Generator
@@ -4920,7 +4920,14 @@ const pageDataMap = {
               {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
                 <div className="srv-card" key={idx} style={{ overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
                   {card.img && (
-                    <div className="srv-img-wrapper" style={{ width: '100%', height: '180px', overflow: 'hidden', position: 'relative' }}>
+                    <div 
+                      className="srv-img-wrapper" 
+                      style={{ width: '100%', height: '180px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
+                      onClick={() => {
+                        navigateTo(`/category/${card.id}`);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
                       <img 
                         src={card.img} 
                         alt={t(card.title)} 
@@ -4933,8 +4940,75 @@ const pageDataMap = {
                     </div>
                   )}
                   <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <h3 className="srv-title" style={{ marginTop: 0 }}>{t(card.title)}</h3>
+                    <h3 
+                      className="srv-title" 
+                      style={{ marginTop: 0, cursor: 'pointer', transition: 'color 0.2s ease' }}
+                      onClick={() => {
+                        navigateTo(`/category/${card.id}`);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'inherit'}
+                    >
+                      {t(card.title)}
+                    </h3>
                     <p className="srv-desc" style={{ flex: 1 }}>{t(card.desc)}</p>
+
+                    {/* Cyberpunk subcategory links */}
+                    {(() => {
+                      const subs = megaSubcategories[card.id] || [];
+                      if (subs.length === 0) return null;
+                      return (
+                        <div className="srv-cyber-subs" style={{ marginTop: '16px', marginBottom: '20px' }}>
+                          <div style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', letterSpacing: '1px', marginBottom: '8px', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 6px var(--accent)' }}></span>
+                            {lang === 'ru' ? 'Услуги и виды работ:' : (lang === 'kz' ? 'Қызметтер мен жұмыс түрлері:' : 'Services & Work Types:')}
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {subs.map(sub => (
+                              <button
+                                key={sub.id}
+                                className="cyber-sub-badge"
+                                style={{
+                                  background: 'rgba(91,140,255,0.06)',
+                                  border: '1px solid rgba(91,140,255,0.2)',
+                                  color: 'var(--text)',
+                                  fontSize: '11px',
+                                  padding: '4px 10px',
+                                  borderRadius: '4px',
+                                  cursor: 'pointer',
+                                  fontFamily: 'monospace',
+                                  transition: 'all 0.2s ease',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigateTo(`/service/${sub.id}`);
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = 'rgba(91,140,255,0.12)';
+                                  e.currentTarget.style.border = '1px solid var(--accent)';
+                                  e.currentTarget.style.boxShadow = '0 0 8px rgba(91,140,255,0.25)';
+                                  e.currentTarget.style.transform = 'translateY(-1px)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = 'rgba(91,140,255,0.06)';
+                                  e.currentTarget.style.border = '1px solid rgba(91,140,255,0.2)';
+                                  e.currentTarget.style.boxShadow = 'none';
+                                  e.currentTarget.style.transform = 'none';
+                                }}
+                              >
+                                <span style={{ color: 'var(--accent)' }}>&gt;</span> {t(sub.title)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
                     <div className="srv-foot">
                       <div className="srv-price">{t(card.price)}</div>
                       <button
