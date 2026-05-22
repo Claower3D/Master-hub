@@ -3918,3 +3918,29 @@ body.light-theme .reviews-floating-btn:hover {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 0 15px rgba(5, 150, 105, 0.15);
 }
 
+.mega-tab-selector-mobile {
+  display: none;
+}
+.mega-tab-links-desktop {
+  display: flex;
+  width: 100%;
+}
+@media (max-width: 960px) {
+  .mega-tab-selector-mobile {
+    display: block !important;
+  }
+  .mega-tab-links-desktop {
+    display: none !important;
+  }
+  .mega-filter-select-wrapper {
+    width: 100% !important;
+    min-width: 100% !important;
+    margin-top: 8px;
+  }
+  .mega-search-container {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+}
+

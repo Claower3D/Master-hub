@@ -3225,41 +3225,86 @@ const pageDataMap = {
       {/* MEGA MENU */}
       <div className={`mega-menu ${megaMenuOpen ? 'open' : ''}`}>
         <div className="mega-nav">
-          {megaTabs.map(tab => (
-            <a
-              key={tab.id}
-              href="#"
-              className={activeMegaTab === tab.id ? 'active' : ''}
-              onClick={(e) => {
-                e.preventDefault();
-                setActiveMegaTab(tab.id);
-                const firstCat = megaCategories.find(c => c.tab === tab.id);
+          <div className="mega-tab-selector-mobile" style={{ width: '100%' }}>
+            <select
+              value={activeMegaTab}
+              onChange={(e) => {
+                const tabId = e.target.value;
+                setActiveMegaTab(tabId);
+                const firstCat = megaCategories.find(c => c.tab === tabId);
                 if (firstCat) {
                   setActiveMegaCat(firstCat.id);
                   const firstSub = megaSubcategories[firstCat.id]?.[0];
                   setActiveMegaSub(firstSub ? firstSub.id : 'none');
                 }
               }}
-              onDoubleClick={(e) => {
-                e.preventDefault();
-                const firstCat = megaCategories.find(c => c.tab === tab.id);
-                if (firstCat) {
-                  setSelectedCategoryPageObj({
-                    id: firstCat.id,
-                    title: firstCat.title,
-                    parentCatId: firstCat.id,
-                    parentTabId: tab.id
-                  });
-                  setActivePage('category');
-                  setMegaMenuOpen(false);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+              style={{
+                width: '100%',
+                padding: '10px 16px',
+                background: 'var(--surface-2)',
+                border: '1px solid var(--line)',
+                borderRadius: '999px',
+                color: 'var(--text)',
+                fontSize: '14px',
+                fontWeight: '600',
+                outline: 'none',
+                cursor: 'pointer'
               }}
-              title="Дважды нажмите, чтобы открыть раздел целиком"
+              aria-label="Выбор раздела"
             >
-              {t(tab.label)}
-            </a>
-          ))}
+              {megaTabs.map(tab => (
+                <option key={tab.id} value={tab.id} style={{ background: 'var(--surface)', color: 'var(--text)' }}>
+                  {t(tab.label)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mega-tab-links-desktop" style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
+            {megaTabs.map(tab => (
+              <a
+                key={tab.id}
+                href="#"
+                className={activeMegaTab === tab.id ? 'active' : ''}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveMegaTab(tab.id);
+                  const firstCat = megaCategories.find(c => c.tab === tab.id);
+                  if (firstCat) {
+                    setActiveMegaCat(firstCat.id);
+                    const firstSub = megaSubcategories[firstCat.id]?.[0];
+                    setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                  }
+                }}
+                onDoubleClick={(e) => {
+                  e.preventDefault();
+                  const firstCat = megaCategories.find(c => c.tab === tab.id);
+                  if (firstCat) {
+                    setSelectedCategoryPageObj({
+                      id: firstCat.id,
+                      title: firstCat.title,
+                      parentCatId: firstCat.id,
+                      parentTabId: tab.id
+                    });
+                    setActivePage('category');
+                    setMegaMenuOpen(false);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+                title="Дважды нажмите, чтобы открыть раздел целиком"
+              >
+                {t(tab.label)}
+              </a>
+            ))}
+            <button 
+              onClick={() => setMegaMenuOpen(false)} 
+              className="mega-nav-close" 
+              style={{ display: 'grid' }}
+              title="Закрыть каталог"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Search Bar Row */}
@@ -3315,6 +3360,40 @@ const pageDataMap = {
                 <i className="ri-close-circle-fill"></i>
               </button>
             )}
+          </div>
+          <div className="mega-filter-select-wrapper" style={{ minWidth: '180px' }}>
+            <select
+              value={activeMegaTab}
+              onChange={(e) => {
+                const tabId = e.target.value;
+                setActiveMegaTab(tabId);
+                const firstCat = megaCategories.find(c => c.tab === tabId);
+                if (firstCat) {
+                  setActiveMegaCat(firstCat.id);
+                  const firstSub = megaSubcategories[firstCat.id]?.[0];
+                  setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                }
+              }}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
+                border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                color: theme === 'light' ? 'var(--text)' : '#fff',
+                fontSize: '14px',
+                fontWeight: '600',
+                outline: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+            >
+              {megaTabs.map(tab => (
+                <option key={tab.id} value={tab.id} style={{ background: 'var(--surface)', color: 'var(--text)' }}>
+                  {t(tab.label)}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
