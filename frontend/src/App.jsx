@@ -3379,17 +3379,17 @@ const pageDataMap = {
                   style={{
                     display: 'flex', alignItems: 'center', gap: '5px',
                     padding: '6px 12px', borderRadius: '999px',
-                    background: megaTabs.slice(megaNavHiddenFrom).some(t => t.id === activeMegaTab)
+                    background: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
                       ? 'var(--accent)' : (theme === 'light' ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'),
-                    color: megaTabs.slice(megaNavHiddenFrom).some(t => t.id === activeMegaTab)
+                    color: megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
                       ? '#0b1020' : 'var(--text)',
                     border: '1.5px solid var(--line)',
                     fontSize: '13px', fontWeight: '700', cursor: 'pointer',
                     transition: 'all 0.2s', whiteSpace: 'nowrap'
                   }}
                 >
-                  {megaTabs.slice(megaNavHiddenFrom).some(t => t.id === activeMegaTab)
-                    ? t(megaTabs.find(t => t.id === activeMegaTab)?.label || '')
+                  {megaTabs.slice(megaNavHiddenFrom).some(tb => tb.id === activeMegaTab)
+                    ? t(megaTabs.find(tb => tb.id === activeMegaTab)?.label || '')
                     : (lang === 'ru' ? 'Ещё' : lang === 'kz' ? 'Көбірек' : 'More')}
                   <span style={{ fontSize: '10px' }}>{megaNavMoreOpen ? '▲' : '▼'}</span>
                 </button>
