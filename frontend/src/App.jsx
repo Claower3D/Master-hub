@@ -3493,48 +3493,16 @@ const pageDataMap = {
 
       {/* MEGA MENU */}
       <div className={`mega-menu ${megaMenuOpen ? 'open' : ''}`}>
-        <div className="mega-nav">
-          <div className="mega-tab-selector-mobile" style={{ width: '100%' }}>
-            <select
-              value={activeMegaTab}
-              onChange={(e) => {
-                const tabId = e.target.value;
-                setActiveMegaTab(tabId);
-                setMegaSearchQuery('');
-                setIsMegaSearchExpanded(false);
-                const firstCat = megaCategories.find(c => c.tab === tabId);
-                if (firstCat) {
-                  setActiveMegaCat(firstCat.id);
-                  const firstSub = megaSubcategories[firstCat.id]?.[0];
-                  setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                }
-              }}
-              style={{
-                width: '100%',
-                padding: '10px 16px',
-                background: 'var(--surface-2)',
-                border: '1px solid var(--line)',
-                borderRadius: '999px',
-                color: 'var(--text)',
-                fontSize: '14px',
-                fontWeight: '600',
-                outline: 'none',
-                cursor: 'pointer'
-              }}
-              aria-label="Выбор раздела"
-            >
-              {megaTabs.map(tab => (
-                <option key={tab.id} value={tab.id} style={{ background: 'var(--surface)', color: 'var(--text)' }}>
-                  {t(tab.label)}
-                </option>
-              ))}
-            </select>
+        <div className="mega-nav" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          {/* Mobile title */}
+          <div className="mega-nav-mobile-title" style={{ fontSize: '18px', fontWeight: '800', fontFamily: 'Montserrat, sans-serif', color: 'var(--text)' }}>
+            {lang === 'ru' ? 'Каталог услуг' : (lang === 'kz' ? 'Қызметтер каталогы' : 'Services Catalog')}
           </div>
 
           {/* Desktop tab row with overflow → "More" dropdown */}
           <div
             className="mega-tab-links-desktop"
-            style={{ display: 'flex', gap: '16px', alignItems: 'center', width: '100%', minWidth: 0 }}
+            style={{ display: 'flex', gap: '16px', alignItems: 'center', flex: 1, minWidth: 0 }}
           >
             {/* 1. Tabs Wrapper (Overflow calculated here) */}
             <div
@@ -3580,7 +3548,7 @@ const pageDataMap = {
               ))}
             </div>
 
-            {/* "Ещё" dropdown for overflow tabs (Outside the overflow wrapper!) */}
+            {/* "Ещё" dropdown for overflow tabs */}
             {megaNavHiddenFrom < megaTabs.length && (
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <button
@@ -3654,9 +3622,8 @@ const pageDataMap = {
               </div>
             )}
 
-
-            {/* 2. Interactive Search/Filter Button or Input (Always visible, expands smoothly) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            {/* 2. Interactive Search Button */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, marginLeft: 'auto' }}>
               {isMegaSearchExpanded || megaSearchQuery ? (
                 <div style={{ position: 'relative', width: '260px', display: 'flex', alignItems: 'center' }}>
                   <i className="ri-search-line" style={{
@@ -3728,32 +3695,23 @@ const pageDataMap = {
                     transition: 'all 0.2s',
                     whiteSpace: 'nowrap'
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--accent)';
-                    e.currentTarget.style.color = 'var(--accent)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--line)';
-                    e.currentTarget.style.color = 'var(--text)';
-                  }}
-                  title={lang === 'ru' ? 'Поиск и фильтрация услуг' : 'Search and filter services'}
                 >
                   <i className="ri-search-line" style={{ fontSize: '15px' }}></i>
                   <span>{lang === 'ru' ? 'Фильтр' : lang === 'kz' ? 'Сүзгі' : 'Filter'}</span>
                 </button>
               )}
             </div>
-
-            {/* 3. Close Button (Always visible) */}
-            <button
-              onClick={() => setMegaMenuOpen(false)}
-              className="mega-nav-close"
-              style={{ display: 'grid', flexShrink: 0 }}
-              title="Закрыть каталог"
-            >
-              ✕
-            </button>
           </div>
+
+          {/* Close Button (Shared, always visible in topbar header, positioned at right) */}
+          <button
+            onClick={() => setMegaMenuOpen(false)}
+            className="mega-nav-close"
+            style={{ display: 'grid', flexShrink: 0, marginLeft: '16px' }}
+            title="Закрыть каталог"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Search Bar Row */}
@@ -3994,120 +3952,207 @@ const pageDataMap = {
             </div>
           ) : (
             <>
-              {/* Col 1: Categories */}
-              <div className="mega-col1">
-                {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => (
-                  <div
-                    key={cat.id}
-                    className={`mega-cat ${activeMegaCat === cat.id ? 'active' : ''}`}
-                    onMouseEnter={() => {
-                      setActiveMegaCat(cat.id);
-                      const firstSub = megaSubcategories[cat.id]?.[0];
-                      setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                    }}
-                    onClick={() => {
-                      setActiveMegaCat(cat.id);
-                      const firstSub = megaSubcategories[cat.id]?.[0];
-                      setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                    }}
-                  >
-                    <i className={`mega-cat-icon ${cat.icon}`}></i>
-                    <span className="mega-cat-link">{t(cat.title)}</span>
-                    <button
-                      className="btn-ghost"
-                      style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setMegaMenuOpen(false);
-                        navigateTo(`/category/${cat.id}`);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+              {/* Desktop columns - hidden on mobile */}
+              <div className="mega-desktop-columns">
+                {/* Col 1: Categories */}
+                <div className="mega-col1">
+                  {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => (
+                    <div
+                      key={cat.id}
+                      className={`mega-cat ${activeMegaCat === cat.id ? 'active' : ''}`}
+                      onMouseEnter={() => {
+                        setActiveMegaCat(cat.id);
+                        const firstSub = megaSubcategories[cat.id]?.[0];
+                        setActiveMegaSub(firstSub ? firstSub.id : 'none');
                       }}
-                      title="Открыть страницу категории"
+                      onClick={() => {
+                        setActiveMegaCat(cat.id);
+                        const firstSub = megaSubcategories[cat.id]?.[0];
+                        setActiveMegaSub(firstSub ? firstSub.id : 'none');
+                      }}
                     >
-                      Открыть ↗
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Col 2: Subcategories */}
-              <div className="mega-col2">
-                {megaCategories.find(c => c.id === activeMegaCat) && (
-                  <div
-                    className="mega-sub all-cat-link"
-                    style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700' }}
-                    onClick={() => {
-                      const currCat = megaCategories.find(c => c.id === activeMegaCat);
-                      setMegaMenuOpen(false);
-                      navigateTo(`/category/${currCat.id}`);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                  >
-                    <span className="mega-sub-link">⚡ Все услуги: {t(megaCategories.find(c => c.id === activeMegaCat)?.title)}</span>
-                    <i className="ri-arrow-right-line mega-sub-arrow" style={{ color: 'var(--accent)' }}></i>
-                  </div>
-                )}
-                {(megaSubcategories[activeMegaCat] || []).map(sub => (
-                  <div
-                    key={sub.id}
-                    className={`mega-sub ${activeMegaSub === sub.id ? 'active' : ''}`}
-                    onMouseEnter={() => setActiveMegaSub(sub.id)}
-                    onClick={() => {
-                      setActiveMegaSub(sub.id);
-                      setMegaMenuOpen(false);
-                      navigateTo(`/service/${sub.id}`);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                  >
-                    <span className="mega-sub-link">{t(sub.title)}</span>
-                    <i className="ri-arrow-right-s-line mega-sub-arrow"></i>
-                  </div>
-                ))}
-              </div>
-
-              {/* Col 3: Details & Preview */}
-              <div className="mega-col3">
-                <div className="mega-service-preview" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <h4 className="mega-preview-price" style={{ fontSize: '24px', marginBottom: '16px' }}>{t(currentDetail.title)}</h4>
-                    <p className="mega-preview-desc">{t(currentDetail.desc)}</p>
-                    <div className="mega-preview-price">{t(currentDetail.price)}</div>
-                    <div className="mega-preview-meta">
-                      <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
-                      <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
-                      <a
-                        href="#contact"
-                        className="btn-primary"
-                        onClick={() => {
-                          setFormService(t(currentDetail.title));
-                          setMegaMenuOpen(false);
-                        }}
-                      >
-                        {t('srv_btn')}
-                      </a>
+                      <i className={`mega-cat-icon ${cat.icon}`}></i>
+                      <span className="mega-cat-link">{t(cat.title)}</span>
                       <button
                         className="btn-ghost"
-                        style={{ padding: '10px 20px', fontSize: '13px' }}
-                        onClick={() => {
+                        style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setMegaMenuOpen(false);
-                          navigateTo(`/service/${activeMegaSub}`);
+                          navigateTo(`/category/${cat.id}`);
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
+                        title="Открыть страницу категории"
                       >
-                        {t('srv_more_btn')}
+                        Открыть ↗
                       </button>
                     </div>
+                  ))}
+                </div>
+
+                {/* Col 2: Subcategories */}
+                <div className="mega-col2">
+                  {megaCategories.find(c => c.id === activeMegaCat) && (
+                    <div
+                      className="mega-sub all-cat-link"
+                      style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700' }}
+                      onClick={() => {
+                        const currCat = megaCategories.find(c => c.id === activeMegaCat);
+                        setMegaMenuOpen(false);
+                        navigateTo(`/category/${currCat.id}`);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      <span className="mega-sub-link">⚡ Все услуги: {t(megaCategories.find(c => c.id === activeMegaCat)?.title)}</span>
+                      <i className="ri-arrow-right-line mega-sub-arrow" style={{ color: 'var(--accent)' }}></i>
+                    </div>
+                  )}
+                  {(megaSubcategories[activeMegaCat] || []).map(sub => (
+                    <div
+                      key={sub.id}
+                      className={`mega-sub ${activeMegaSub === sub.id ? 'active' : ''}`}
+                      onMouseEnter={() => setActiveMegaSub(sub.id)}
+                      onClick={() => {
+                        setActiveMegaSub(sub.id);
+                        setMegaMenuOpen(false);
+                        navigateTo(`/service/${sub.id}`);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      <span className="mega-sub-link">{t(sub.title)}</span>
+                      <i className="ri-arrow-right-s-line mega-sub-arrow"></i>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Col 3: Details & Preview */}
+                <div className="mega-col3">
+                  <div className="mega-service-preview" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <h4 className="mega-preview-price" style={{ fontSize: '24px', marginBottom: '16px' }}>{t(currentDetail.title)}</h4>
+                      <p className="mega-preview-desc">{t(currentDetail.desc)}</p>
+                      <div className="mega-preview-price">{t(currentDetail.price)}</div>
+                      <div className="mega-preview-meta">
+                        <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
+                        <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                        <a
+                          href="#contact"
+                          className="btn-primary"
+                          onClick={() => {
+                            setFormService(t(currentDetail.title));
+                            setMegaMenuOpen(false);
+                          }}
+                        >
+                          {t('srv_btn')}
+                        </a>
+                        <button
+                          className="btn-ghost"
+                          style={{ padding: '10px 20px', fontSize: '13px' }}
+                          onClick={() => {
+                            setMegaMenuOpen(false);
+                            navigateTo(`/service/${activeMegaSub}`);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                        >
+                          {t('srv_more_btn')}
+                        </button>
+                      </div>
+                    </div>
+                    {/* 3D Character image */}
+                    <div className="mega-preview-character-container">
+                      <img 
+                        src={getCategoryCharacter(activeMegaCat)} 
+                        alt="Category character" 
+                        className="mega-preview-character"
+                      />
+                    </div>
                   </div>
-                  {/* 3D Character image */}
-                  <div className="mega-preview-character-container">
-                    <img 
-                      src={getCategoryCharacter(activeMegaCat)} 
-                      alt="Category character" 
-                      className="mega-preview-character"
-                    />
-                  </div>
+                </div>
+              </div>
+
+              {/* Mobile Accordion layout - visible only on mobile */}
+              <div className="mega-mobile-body">
+                {/* Swipeable Tabs Scroll row */}
+                <div className="mega-mobile-tabs-scroll">
+                  {megaTabs.map(tab => (
+                    <button
+                      key={tab.id}
+                      className={`mega-mobile-tab-pill ${activeMegaTab === tab.id ? 'active' : ''}`}
+                      onClick={() => {
+                        setActiveMegaTab(tab.id);
+                        const firstCat = megaCategories.find(c => c.tab === tab.id);
+                        if (firstCat) {
+                          setActiveMegaCat(firstCat.id);
+                        }
+                      }}
+                    >
+                      {t(tab.label)}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Categories Accordions list */}
+                <div className="mega-mobile-accordion">
+                  {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => {
+                    const isOpen = activeMegaCat === cat.id;
+                    const subs = megaSubcategories[cat.id] || [];
+                    return (
+                      <div key={cat.id} className={`mega-mobile-acc-item ${isOpen ? 'open' : ''}`}>
+                        <div
+                          className="mega-mobile-acc-header"
+                          onClick={() => setActiveMegaCat(isOpen ? 'none' : cat.id)}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                            <i className={`mega-mobile-acc-icon ${cat.icon}`}></i>
+                            <span className="mega-mobile-acc-title">{t(cat.title)}</span>
+                          </div>
+                          <span className="mega-mobile-acc-chevron">
+                            {isOpen ? <i className="ri-arrow-up-s-line"></i> : <i className="ri-arrow-down-s-line"></i>}
+                          </span>
+                        </div>
+                        {isOpen && (
+                          <div className="mega-mobile-acc-content">
+                            {/* "⚡ Открыть всю категорию" button */}
+                            <div
+                              className="mega-mobile-sub-link-all"
+                              onClick={() => {
+                                setMegaMenuOpen(false);
+                                navigateTo(`/category/${cat.id}`);
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                              }}
+                            >
+                              <span>⚡ {lang === 'ru' ? 'Открыть всю категорию' : (lang === 'kz' ? 'Санатты толық ашу' : 'Open entire category')}</span>
+                              <i className="ri-arrow-right-line"></i>
+                            </div>
+
+                            {/* Subcategories list */}
+                            {subs.length === 0 ? (
+                              <div className="mega-mobile-no-subs" style={{ padding: '12px 14px', fontSize: '13px', color: 'var(--muted)', textAlign: 'center', fontFamily: 'monospace' }}>
+                                {lang === 'ru' ? 'Нет подразделов' : (lang === 'kz' ? 'Бөлімдер жоқ' : 'No subcategories')}
+                              </div>
+                            ) : (
+                              subs.map(sub => (
+                                <div
+                                  key={sub.id}
+                                  className="mega-mobile-sub-item"
+                                  onClick={() => {
+                                    setMegaMenuOpen(false);
+                                    navigateTo(`/service/${sub.id}`);
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                  }}
+                                >
+                                  <span className="sub-title-text">{t(sub.title)}</span>
+                                  <i className="ri-arrow-right-s-line" style={{ color: 'var(--accent)', fontSize: '16px' }}></i>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </>

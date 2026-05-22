@@ -3929,22 +3929,162 @@ body.light-theme .reviews-floating-btn:hover {
   display: flex;
   width: 100%;
 }
+.mega-nav-mobile-title {
+  display: none;
+}
+
 @media (max-width: 960px) {
-  .mega-tab-selector-mobile {
+  .mega-nav-mobile-title {
     display: block !important;
+  }
+  .mega-tab-selector-mobile {
+    display: none !important;
+  }
+  .mega-filter-select-wrapper {
+    display: none !important;
   }
   .mega-tab-links-desktop {
     display: none !important;
   }
-  .mega-filter-select-wrapper {
-    width: 100% !important;
-    min-width: 100% !important;
-    margin-top: 8px;
-  }
   .mega-search-container {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 8px !important;
+    padding: 12px 16px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  .mega-desktop-columns {
+    display: none !important;
+  }
+  .mega-mobile-body {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .mega-mobile-tabs-scroll {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    scrollbar-width: none;
+    flex-shrink: 0;
+  }
+  .mega-mobile-tabs-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .mega-mobile-tab-pill {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1.5px solid var(--line);
+    background: var(--surface-2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .mega-mobile-tab-pill.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #0b1020 !important;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(124, 242, 199, 0.25);
+  }
+  .mega-mobile-accordion {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .mega-mobile-acc-item {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mega-mobile-acc-item.open {
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(124, 242, 199, 0.08);
+  }
+  .mega-mobile-acc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .mega-mobile-acc-icon {
+    font-size: 20px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .mega-mobile-acc-title {
+    font-weight: 750;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .mega-mobile-acc-chevron {
+    font-size: 18px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+  }
+  .mega-mobile-acc-content {
+    padding: 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid var(--line);
+    background: var(--surface-2);
+    animation: fadeIn 0.2s ease;
+  }
+  .mega-mobile-sub-link-all {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    background: rgba(124, 242, 199, 0.08);
+    border: 1px solid rgba(124, 242, 199, 0.2);
+    border-radius: 10px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: all 0.15s ease;
+  }
+  .mega-mobile-sub-link-all:active {
+    background: rgba(124, 242, 199, 0.15);
+  }
+  .mega-mobile-sub-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .mega-mobile-sub-item:active {
+    background: rgba(124, 242, 199, 0.05);
+    border-color: var(--accent);
+  }
+  .sub-title-text {
+    flex: 1;
+    margin-right: 12px;
+    line-height: 1.3;
   }
 }
 
@@ -3952,6 +4092,18 @@ body.light-theme .reviews-floating-btn:hover {
   .mega-search-container {
     display: none !important;
   }
+}
+
+.mega-desktop-columns {
+  display: grid;
+  grid-template-columns: 340px 380px 1fr;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.mega-mobile-body {
+  display: none;
 }
 
 
