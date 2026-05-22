@@ -168,6 +168,7 @@ export default function App() {
   const [subFormPrice, setSubFormPrice] = useState('');
   const [subFormTime, setSubFormTime] = useState('');
   const [subFormWarr, setSubFormWarr] = useState('');
+  const [subFormSectionFilter, setSubFormSectionFilter] = useState('all');
 
   // Hash routing: detect #/admin
   useEffect(() => {
@@ -2118,6 +2119,7 @@ const pageDataMap = {
                         <button 
                           onClick={() => {
                             setEditingSub(null);
+                            setSubFormSectionFilter('all');
                             setSubFormCatId(megaCategories[0]?.id || '');
                             setSubFormTitle('');
                             setSubFormDesc('');
@@ -2572,6 +2574,7 @@ const pageDataMap = {
                                           <button
                                             onClick={() => {
                                               setEditingSub(sub);
+                                              setSubFormSectionFilter(cat.tab);
                                               setSubFormCatId(cat.id);
                                               setSubFormTitle(sub.title);
                                               setSubFormDesc(details.desc || '');
@@ -2714,13 +2717,42 @@ const pageDataMap = {
                         </h3>
                         <form onSubmit={handleSaveSubcategory} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                           <div className="cb-form-group">
+                            <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Фильтр по разделу</label>
+                            <select 
+                              value={subFormSectionFilter} 
+                              onChange={e => {
+                                const selectedSection = e.target.value;
+                                setSubFormSectionFilter(selectedSection);
+                                const filtered = selectedSection === 'all'
+                                  ? megaCategories
+                                  : megaCategories.filter(cat => cat.tab === selectedSection);
+                                if (filtered.length > 0) {
+                                  if (!filtered.some(c => c.id === subFormCatId)) {
+                                    setSubFormCatId(filtered[0].id);
+                                  }
+                                } else {
+                                  setSubFormCatId('');
+                                }
+                              }}
+                              style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                            >
+                              <option value="all">Все разделы</option>
+                              {megaTabs.map(t => (
+                                <option key={t.id} value={t.id}>{t.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Родительская категория</label>
                             <select 
                               value={subFormCatId} 
                               onChange={e => setSubFormCatId(e.target.value)}
                               style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                             >
-                              {megaCategories.map(cat => (
+                              {(subFormSectionFilter === 'all'
+                                ? megaCategories
+                                : megaCategories.filter(cat => cat.tab === subFormSectionFilter)
+                              ).map(cat => (
                                 <option key={cat.id} value={cat.id}>{cat.title} ({megaTabs.find(t=>t.id===cat.tab)?.label})</option>
                               ))}
                             </select>
