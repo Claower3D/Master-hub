@@ -4036,6 +4036,74 @@ const pageDataMap = {
 
               {/* Mobile Accordion layout - visible only on mobile */}
               <div className="mega-mobile-body">
+                {/* Mobile controls header - moved to the top */}
+                <div className="mega-mobile-top-controls" style={{
+                  padding: '4px 0 16px 0',
+                  borderBottom: '1px solid var(--line)',
+                  marginBottom: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  flexShrink: 0
+                }}>
+                  {/* City selector */}
+                  <div className="city-switch" style={{ width: '100%' }}>
+                    <i className="ri-map-pin-line" style={{ color: 'var(--accent)' }}></i>
+                    <select className="city-select" value={city} onChange={(e) => setCity(e.target.value)} aria-label="Выбор города" style={{ width: '100%', flex: 1 }}>
+                      <option value="almaty">{t('city_almaty')}</option>
+                      <option value="astana">{t('city_astana')}</option>
+                      <option value="shymkent">{t('city_shymkent')}</option>
+                      <option value="karaganda">{t('city_karaganda')}</option>
+                      <option value="aktobe">{t('city_aktobe')}</option>
+                      <option value="taraz">{t('city_taraz')}</option>
+                      <option value="pavlodar">{t('city_pavlodar')}</option>
+                      <option value="oskemen">{t('city_oskemen')}</option>
+                      <option value="semey">{t('city_semey')}</option>
+                      <option value="atyrau">{t('city_atyrau')}</option>
+                      <option value="aktau">{t('city_aktau')}</option>
+                      <option value="kostanay">{t('city_kostanay')}</option>
+                      <option value="kyzylorda">{t('city_kyzylorda')}</option>
+                      <option value="oral">{t('city_oral')}</option>
+                      <option value="petropavl">{t('city_petropavl')}</option>
+                      <option value="taldykorgan">{t('city_taldykorgan')}</option>
+                      <option value="kokshetau">{t('city_kokshetau')}</option>
+                      <option value="turkistan">{t('city_turkistan')}</option>
+                      <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
+                      <option value="konaev">{t('city_konaev')}</option>
+                    </select>
+                  </div>
+                  
+                  {/* Language and Theme controls row */}
+                  <div style={{ display: 'flex', gap: '8px', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="lang-switch" style={{ display: 'flex', gap: '4px' }}>
+                      <button className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} onClick={() => setLang('ru')}>RU</button>
+                      <button className={`lang-btn ${lang === 'kz' ? 'active' : ''}`} onClick={() => setLang('kz')}>KZ</button>
+                      <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>EN</button>
+                    </div>
+                    <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему" style={{
+                      padding: '10px 14px',
+                      borderRadius: '12px',
+                      border: '1px solid var(--line)',
+                      background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.05)',
+                      color: 'var(--text)',
+                      cursor: 'pointer'
+                    }}>
+                      <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
+                    </button>
+                  </div>
+                  
+                  {/* Login/Cabinet button */}
+                  {user ? (
+                    <button className="auth-trigger-btn mobile-only" onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }} style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--accent)', color: '#0b1020', fontWeight: '750', border: 'none', cursor: 'pointer' }}>
+                      <i className="ri-user-line"></i> <span style={{ marginLeft: '6px' }}>{t('nav_cabinet')}</span>
+                    </button>
+                  ) : (
+                    <button className="auth-trigger-btn mobile-only" onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }} style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--accent)', color: '#0b1020', fontWeight: '750', border: 'none', cursor: 'pointer' }}>
+                      <i className="ri-login-box-line"></i> <span style={{ marginLeft: '6px' }}>{t('nav_login')}</span>
+                    </button>
+                  )}
+                </div>
+
                 {mobileMenuStep === 'sections' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
@@ -4201,70 +4269,6 @@ const pageDataMap = {
                     )}
                   </div>
                 )}
-
-                {/* Mobile footer controls */}
-                <div className="mega-mobile-footer" style={{
-                  padding: '16px',
-                  borderTop: '1px solid var(--line)',
-                  background: theme === 'light' ? 'rgba(0,0,0,0.015)' : 'rgba(255,255,255,0.015)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                  marginTop: 'auto',
-                  flexShrink: 0
-                }}>
-                  <div className="city-switch" style={{ width: '100%' }}>
-                    <i className="ri-map-pin-line" style={{ color: 'var(--accent)' }}></i>
-                    <select className="city-select" value={city} onChange={(e) => setCity(e.target.value)} aria-label="Выбор города" style={{ width: '100%', flex: 1 }}>
-                      <option value="almaty">{t('city_almaty')}</option>
-                      <option value="astana">{t('city_astana')}</option>
-                      <option value="shymkent">{t('city_shymkent')}</option>
-                      <option value="karaganda">{t('city_karaganda')}</option>
-                      <option value="aktobe">{t('city_aktobe')}</option>
-                      <option value="taraz">{t('city_taraz')}</option>
-                      <option value="pavlodar">{t('city_pavlodar')}</option>
-                      <option value="oskemen">{t('city_oskemen')}</option>
-                      <option value="semey">{t('city_semey')}</option>
-                      <option value="atyrau">{t('city_atyrau')}</option>
-                      <option value="aktau">{t('city_aktau')}</option>
-                      <option value="kostanay">{t('city_kostanay')}</option>
-                      <option value="kyzylorda">{t('city_kyzylorda')}</option>
-                      <option value="oral">{t('city_oral')}</option>
-                      <option value="petropavl">{t('city_petropavl')}</option>
-                      <option value="taldykorgan">{t('city_taldykorgan')}</option>
-                      <option value="kokshetau">{t('city_kokshetau')}</option>
-                      <option value="turkistan">{t('city_turkistan')}</option>
-                      <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
-                      <option value="konaev">{t('city_konaev')}</option>
-                    </select>
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div className="lang-switch" style={{ display: 'flex', gap: '4px' }}>
-                      <button className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} onClick={() => setLang('ru')}>RU</button>
-                      <button className={`lang-btn ${lang === 'kz' ? 'active' : ''}`} onClick={() => setLang('kz')}>KZ</button>
-                      <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>EN</button>
-                    </div>
-                    <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему" style={{
-                      padding: '10px 14px',
-                      borderRadius: '12px',
-                      border: '1px solid var(--line)',
-                      background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.05)',
-                      color: 'var(--text)',
-                      cursor: 'pointer'
-                    }}>
-                      <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
-                    </button>
-                  </div>
-                  {user ? (
-                    <button className="auth-trigger-btn mobile-only" onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }} style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--accent)', color: '#0b1020', fontWeight: '750', border: 'none', cursor: 'pointer' }}>
-                      <i className="ri-user-line"></i> <span style={{ marginLeft: '6px' }}>{t('nav_cabinet')}</span>
-                    </button>
-                  ) : (
-                    <button className="auth-trigger-btn mobile-only" onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }} style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--accent)', color: '#0b1020', fontWeight: '750', border: 'none', cursor: 'pointer' }}>
-                      <i className="ri-login-box-line"></i> <span style={{ marginLeft: '6px' }}>{t('nav_login')}</span>
-                    </button>
-                  )}
-                </div>
               </div>
             </>
           )}
