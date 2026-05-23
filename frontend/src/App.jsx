@@ -43,6 +43,49 @@ export default function App() {
   const [city, setCity] = useState(() => localStorage.getItem('city') || 'almaty');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+
+  // Page Editor States
+  const [selectedPageToEdit, setSelectedPageToEdit] = useState('landing');
+  const [previewLang, setPreviewLang] = useState('ru');
+
+  const handleCategoryTitleChange = (newVal) => {
+    const newCats = megaCategories.map(c => c.id === selectedPageToEdit ? { ...c, title: newVal } : c);
+    setMegaCategories(newCats);
+    localStorage.setItem('megaCategories', JSON.stringify(newCats));
+  };
+
+  const handleCategoryDetailChange = (field, newVal) => {
+    const newDetails = { ...megaDetails };
+    if (!newDetails[selectedPageToEdit]) {
+      newDetails[selectedPageToEdit] = {};
+    }
+    newDetails[selectedPageToEdit] = {
+      ...newDetails[selectedPageToEdit],
+      [field]: newVal
+    };
+    setMegaDetails(newDetails);
+    localStorage.setItem('megaDetails', JSON.stringify(newDetails));
+  };
+
+  const handleSubcategoryChange = (subId, field, newVal) => {
+    if (field === 'title') {
+      const newSubs = { ...megaSubcategories };
+      newSubs[selectedPageToEdit] = newSubs[selectedPageToEdit].map(s => s.id === subId ? { ...s, title: newVal } : s);
+      setMegaSubcategories(newSubs);
+      localStorage.setItem('megaSubcategories', JSON.stringify(newSubs));
+    } else {
+      const newDetails = { ...megaDetails };
+      if (!newDetails[subId]) {
+        newDetails[subId] = {};
+      }
+      newDetails[subId] = {
+        ...newDetails[subId],
+        [field]: newVal
+      };
+      setMegaDetails(newDetails);
+      localStorage.setItem('megaDetails', JSON.stringify(newDetails));
+    }
+  };
   
   // Mega Menu states
   const [activeMegaTab, setActiveMegaTab] = useState('okna');
@@ -3538,259 +3581,766 @@ const pageDataMap = {
               )}
 
               {adminActiveTab === 'pages' && (
-                <div className="pages-manager">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                <div className="pages-manager" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '16px' }}>
                     <div>
                       <h2 style={{ fontSize: '20px', fontWeight: '850', margin: 0 }}>Редактирование страниц и блоков</h2>
                       <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '4px 0 0 0' }}>
-                        Изменение заголовков главного баннера, показателей компании и контактных данных.
+                        Выберите страницу для изменения текстовой информации в блоках и подблоках с интерактивным просмотром.
                       </p>
                     </div>
                   </div>
 
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    saveCatalog({ blocks: landingBlocks });
-                    alert('Контент страниц успешно сохранен и синхронизирован с сервером!');
-                  }} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {/* Page Selector and Preview Opener */}
+                  <div style={{ marginBottom: '12px', padding: '16px 20px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '16px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <label style={{ fontSize: '14px', fontWeight: '750', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <i className="ri-layout-grid-line" style={{ color: 'var(--accent)' }}></i>
+                      Выберите страницу для редактирования:
+                    </label>
+                    <select
+                      value={selectedPageToEdit}
+                      onChange={(e) => setSelectedPageToEdit(e.target.value)}
+                      style={{
+                        padding: '10px 16px',
+                        borderRadius: '10px',
+                        background: 'var(--bg)',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text)',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        outline: 'none',
+                        cursor: 'pointer',
+                        minWidth: '280px'
+                      }}
+                    >
+                      <option value="landing">🏠 Главная страница сайта</option>
+                      <optgroup label="📂 Страницы категорий услуг">
+                        {megaCategories.map(cat => (
+                          <option key={cat.id} value={cat.id}>
+                            📂 {cat.title} ({cat.id})
+                          </option>
+                        ))}
+                      </optgroup>
+                    </select>
 
-                    {/* HERO BANNER SECTION */}
-                    <div className="admin-table-card" style={{ padding: '24px' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <i className="ri-slideshow-3-line" style={{ color: 'var(--accent)' }}></i>
-                        Главный баннер (Слайды Hero)
-                      </h3>
+                    <button
+                      type="button"
+                      className="btn-ghost"
+                      onClick={() => {
+                        if (selectedPageToEdit === 'landing') {
+                          navigateTo('/');
+                        } else {
+                          navigateTo(`/category/${selectedPageToEdit}`);
+                        }
+                        setIsCabinetOpen(false);
+                      }}
+                      style={{
+                        padding: '10px 16px',
+                        borderRadius: '10px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        marginLeft: 'auto'
+                      }}
+                    >
+                      <i className="ri-external-link-line"></i> Открыть страницу на сайте
+                    </button>
+                  </div>
 
-                      {[0, 1, 2].map((idx) => {
-                        const slideName = idx === 0 ? 'Слайд 1 (Окна)' : idx === 1 ? 'Слайд 2 (Бытовая техника)' : 'Слайд 3 (Мебель)';
+                  {/* Grid Builder Layout */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }} className="pages-admin-grid">
+                    
+                    {/* Left: Input Form Fields */}
+                    <form onSubmit={(e) => {
+                      e.preventDefault();
+                      saveCatalog({
+                        blocks: landingBlocks,
+                        categories: megaCategories,
+                        subcategories: megaSubcategories,
+                        details: megaDetails
+                      });
+                      alert('Контент страниц успешно сохранен и синхронизирован с сервером!');
+                    }} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+                      {selectedPageToEdit === 'landing' && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                          {/* HERO BANNER SECTION */}
+                          <div className="admin-table-card" style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <i className="ri-slideshow-3-line" style={{ color: 'var(--accent)' }}></i>
+                              Главный баннер (Слайды Hero)
+                            </h3>
+
+                            {[0, 1, 2].map((idx) => {
+                              const slideName = idx === 0 ? 'Слайд 1 (Окна)' : idx === 1 ? 'Слайд 2 (Бытовая техника)' : 'Слайд 3 (Мебель)';
+                              return (
+                                <div key={idx} style={{ marginBottom: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                                  <h4 style={{ fontSize: '14px', fontWeight: '750', margin: '0 0 16px 0', color: 'var(--accent)' }}>{slideName}</h4>
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Заголовок (RU)</label>
+                                      <input
+                                        type="text"
+                                        value={landingBlocks?.hero?.[idx]?.titleRu || ''}
+                                        onChange={(e) => {
+                                          const newHero = [...(landingBlocks.hero || [])];
+                                          newHero[idx] = { ...newHero[idx], titleRu: e.target.value };
+                                          setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                        }}
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Заголовок (KZ)</label>
+                                      <input
+                                        type="text"
+                                        value={landingBlocks?.hero?.[idx]?.titleKz || ''}
+                                        onChange={(e) => {
+                                          const newHero = [...(landingBlocks.hero || [])];
+                                          newHero[idx] = { ...newHero[idx], titleKz: e.target.value };
+                                          setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                        }}
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание / Подзаголовок (RU)</label>
+                                      <textarea
+                                        rows={2}
+                                        value={landingBlocks?.hero?.[idx]?.leadRu || ''}
+                                        onChange={(e) => {
+                                          const newHero = [...(landingBlocks.hero || [])];
+                                          newHero[idx] = { ...newHero[idx], leadRu: e.target.value };
+                                          setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                        }}
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание / Подзаголовок (KZ)</label>
+                                      <textarea
+                                        rows={2}
+                                        value={landingBlocks?.hero?.[idx]?.leadKz || ''}
+                                        onChange={(e) => {
+                                          const newHero = [...(landingBlocks.hero || [])];
+                                          newHero[idx] = { ...newHero[idx], leadKz: e.target.value };
+                                          setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                        }}
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Текст кнопки (RU)</label>
+                                      <input
+                                        type="text"
+                                        value={landingBlocks?.hero?.[idx]?.btnTextRu || ''}
+                                        onChange={(e) => {
+                                          const newHero = [...(landingBlocks.hero || [])];
+                                          newHero[idx] = { ...newHero[idx], btnTextRu: e.target.value };
+                                          setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                        }}
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                      />
+                                    </div>
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Текст кнопки (KZ)</label>
+                                      <input
+                                        type="text"
+                                        value={landingBlocks?.hero?.[idx]?.btnTextKz || ''}
+                                        onChange={(e) => {
+                                          const newHero = [...(landingBlocks.hero || [])];
+                                          newHero[idx] = { ...newHero[idx], btnTextKz: e.target.value };
+                                          setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                        }}
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* COMPANY STATS SECTION */}
+                          <div className="admin-table-card" style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <i className="ri-bar-chart-box-line" style={{ color: 'var(--accent)' }}></i>
+                              Показатели компании (Статистика)
+                            </h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                              {[0, 1, 2, 3].map((idx) => (
+                                <div key={idx} style={{ padding: '16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                                  <h4 style={{ fontSize: '13px', fontWeight: '750', margin: '0 0 12px 0', color: 'var(--accent)' }}>Карточка {idx + 1}</h4>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    <div>
+                                      <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Число / Значение (например: 50 000+)</label>
+                                      <input
+                                        type="text"
+                                        value={landingBlocks?.stats?.[idx]?.num || ''}
+                                        onChange={(e) => {
+                                          const newStats = [...(landingBlocks.stats || [])];
+                                          newStats[idx] = { ...newStats[idx], num: e.target.value };
+                                          setLandingBlocks({ ...landingBlocks, stats: newStats });
+                                        }}
+                                        style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                      />
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                      <div>
+                                        <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание (RU)</label>
+                                        <input
+                                          type="text"
+                                          value={landingBlocks?.stats?.[idx]?.labelRu || ''}
+                                          onChange={(e) => {
+                                            const newStats = [...(landingBlocks.stats || [])];
+                                            newStats[idx] = { ...newStats[idx], labelRu: e.target.value };
+                                            setLandingBlocks({ ...landingBlocks, stats: newStats });
+                                          }}
+                                          style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                        />
+                                      </div>
+                                      <div>
+                                        <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание (KZ)</label>
+                                        <input
+                                          type="text"
+                                          value={landingBlocks?.stats?.[idx]?.labelKz || ''}
+                                          onChange={(e) => {
+                                            const newStats = [...(landingBlocks.stats || [])];
+                                            newStats[idx] = { ...newStats[idx], labelKz: e.target.value };
+                                            setLandingBlocks({ ...landingBlocks, stats: newStats });
+                                          }}
+                                          style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* CONTACTS & LINKS SECTION */}
+                          <div className="admin-table-card" style={{ padding: '24px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <i className="ri-contacts-book-line" style={{ color: 'var(--accent)' }}></i>
+                              Контакты и ссылки
+                            </h3>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Номер телефона для звонков</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.contacts?.phone || ''}
+                                  onChange={(e) => {
+                                    setLandingBlocks({
+                                      ...landingBlocks,
+                                      contacts: { ...(landingBlocks.contacts || {}), phone: e.target.value }
+                                    });
+                                  }}
+                                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Номер телефона для WhatsApp</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.contacts?.whatsapp || ''}
+                                  onChange={(e) => {
+                                    setLandingBlocks({
+                                      ...landingBlocks,
+                                      contacts: { ...(landingBlocks.contacts || {}), whatsapp: e.target.value }
+                                    });
+                                  }}
+                                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Адрес офиса (RU)</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.contacts?.addressRu || ''}
+                                  onChange={(e) => {
+                                    setLandingBlocks({
+                                      ...landingBlocks,
+                                      contacts: { ...(landingBlocks.contacts || {}), addressRu: e.target.value }
+                                    });
+                                  }}
+                                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Адрес офиса (KZ)</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.contacts?.addressKz || ''}
+                                  onChange={(e) => {
+                                    setLandingBlocks({
+                                      ...landingBlocks,
+                                      contacts: { ...(landingBlocks.contacts || {}), addressKz: e.target.value }
+                                    });
+                                  }}
+                                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedPageToEdit !== 'landing' && (() => {
+                        const cat = megaCategories.find(c => c.id === selectedPageToEdit);
+                        if (!cat) return null;
+
+                        const dbMeta = megaDetails[cat.id] || {};
+                        const featuresVal = (dbMeta.features || []).join('\n');
+                        const specsVal = (dbMeta.specs || []).map(s => `${s.label}: ${s.value}`).join('\n');
+
                         return (
-                          <div key={idx} style={{ marginBottom: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                            <h4 style={{ fontSize: '14px', fontWeight: '750', margin: '0 0 16px 0', color: 'var(--accent)' }}>{slideName}</h4>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
-                              <div>
-                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Заголовок (RU)</label>
-                                <input
-                                  type="text"
-                                  value={landingBlocks?.hero?.[idx]?.titleRu || ''}
-                                  onChange={(e) => {
-                                    const newHero = [...(landingBlocks.hero || [])];
-                                    newHero[idx] = { ...newHero[idx], titleRu: e.target.value };
-                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
-                                  }}
-                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                                />
-                              </div>
-                              <div>
-                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Заголовок (KZ)</label>
-                                <input
-                                  type="text"
-                                  value={landingBlocks?.hero?.[idx]?.titleKz || ''}
-                                  onChange={(e) => {
-                                    const newHero = [...(landingBlocks.hero || [])];
-                                    newHero[idx] = { ...newHero[idx], titleKz: e.target.value };
-                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
-                                  }}
-                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                                />
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            {/* Category General Info */}
+                            <div className="admin-table-card" style={{ padding: '24px' }}>
+                              <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <i className="ri-folder-open-line" style={{ color: 'var(--accent)' }}></i>
+                                Общая информация страницы
+                              </h3>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                <div>
+                                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Название страницы (RU)</label>
+                                  <input
+                                    type="text"
+                                    value={cat.title}
+                                    onChange={(e) => handleCategoryTitleChange(e.target.value)}
+                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Ссылка на фоновое изображение / обложку</label>
+                                  <input
+                                    type="text"
+                                    value={dbMeta.img || ''}
+                                    onChange={(e) => handleCategoryDetailChange('img', e.target.value)}
+                                    placeholder="./slide_windows.png"
+                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Главный текст описания страницы</label>
+                                  <textarea
+                                    rows={4}
+                                    value={dbMeta.desc || ''}
+                                    onChange={(e) => handleCategoryDetailChange('desc', e.target.value)}
+                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                  />
+                                </div>
                               </div>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
-                              <div>
-                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание / Подзаголовок (RU)</label>
-                                <textarea
-                                  rows={2}
-                                  value={landingBlocks?.hero?.[idx]?.leadRu || ''}
-                                  onChange={(e) => {
-                                    const newHero = [...(landingBlocks.hero || [])];
-                                    newHero[idx] = { ...newHero[idx], leadRu: e.target.value };
-                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
-                                  }}
-                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
-                                />
-                              </div>
-                              <div>
-                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание / Подзаголовок (KZ)</label>
-                                <textarea
-                                  rows={2}
-                                  value={landingBlocks?.hero?.[idx]?.leadKz || ''}
-                                  onChange={(e) => {
-                                    const newHero = [...(landingBlocks.hero || [])];
-                                    newHero[idx] = { ...newHero[idx], leadKz: e.target.value };
-                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
-                                  }}
-                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
-                                />
+                            {/* Category Features & Specs */}
+                            <div className="admin-table-card" style={{ padding: '24px' }}>
+                              <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <i className="ri-task-line" style={{ color: 'var(--accent)' }}></i>
+                                Преимущества и характеристики страницы
+                              </h3>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div>
+                                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>
+                                    Преимущества (по одному на строку)
+                                  </label>
+                                  <textarea
+                                    rows={4}
+                                    value={featuresVal}
+                                    onChange={(e) => handleCategoryDetailChange('features', e.target.value.split('\n'))}
+                                    placeholder="Пример:&#10;Гарантия до 12 месяцев&#10;Выезд мастера за 45 минут"
+                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                  />
+                                </div>
+
+                                <div>
+                                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>
+                                    Характеристики (В формате: «Название: Значение», по одной на строку)
+                                  </label>
+                                  <textarea
+                                    rows={4}
+                                    value={specsVal}
+                                    onChange={(e) => {
+                                      const lines = e.target.value.split('\n');
+                                      const parsed = lines.map(l => {
+                                        const colonIdx = l.indexOf(':');
+                                        if (colonIdx === -1) return { label: l.trim(), value: '' };
+                                        return {
+                                          label: l.substring(0, colonIdx).trim(),
+                                          value: l.substring(colonIdx + 1).trim()
+                                        };
+                                      }).filter(s => s.label);
+                                      handleCategoryDetailChange('specs', parsed);
+                                    }}
+                                    placeholder="Пример:&#10;Материал полотна: Нейлон&#10;Изготовление: за 24 часа"
+                                    style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                  />
+                                </div>
                               </div>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                              <div>
-                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Текст кнопки (RU)</label>
-                                <input
-                                  type="text"
-                                  value={landingBlocks?.hero?.[idx]?.btnTextRu || ''}
-                                  onChange={(e) => {
-                                    const newHero = [...(landingBlocks.hero || [])];
-                                    newHero[idx] = { ...newHero[idx], btnTextRu: e.target.value };
-                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
-                                  }}
-                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                                />
-                              </div>
-                              <div>
-                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Текст кнопки (KZ)</label>
-                                <input
-                                  type="text"
-                                  value={landingBlocks?.hero?.[idx]?.btnTextKz || ''}
-                                  onChange={(e) => {
-                                    const newHero = [...(landingBlocks.hero || [])];
-                                    newHero[idx] = { ...newHero[idx], btnTextKz: e.target.value };
-                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
-                                  }}
-                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                                />
+                            {/* Sub-blocks (Services under category) */}
+                            <div className="admin-table-card" style={{ padding: '24px' }}>
+                              <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <i className="ri-list-settings-line" style={{ color: 'var(--accent)' }}></i>
+                                Услуги и подблоки (Блоки на странице)
+                              </h3>
+                              <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '16px' }}>
+                                Редактируйте заголовки, цены, гарантии и описания отдельных карточек услуг.
+                              </p>
+
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                {(megaSubcategories[cat.id] || []).map((sub) => {
+                                  const subDetails = megaDetails[sub.id] || {};
+                                  return (
+                                    <div key={sub.id} style={{ padding: '16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                                      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                                        <div>
+                                          <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Название услуги</label>
+                                          <input
+                                            type="text"
+                                            value={sub.title}
+                                            onChange={(e) => handleSubcategoryChange(sub.id, 'title', e.target.value)}
+                                            style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '12px' }}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Стоимость</label>
+                                          <input
+                                            type="text"
+                                            value={subDetails.price || ''}
+                                            onChange={(e) => handleSubcategoryChange(sub.id, 'price', e.target.value)}
+                                            placeholder="от 2 500 ₸"
+                                            style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '12px' }}
+                                          />
+                                        </div>
+                                        <div>
+                                          <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Сроки / Гарантия</label>
+                                          <input
+                                            type="text"
+                                            value={subDetails.warr || ''}
+                                            onChange={(e) => handleSubcategoryChange(sub.id, 'warr', e.target.value)}
+                                            placeholder="Гарантия: 1 год"
+                                            style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '12px' }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание услуги</label>
+                                        <textarea
+                                          rows={2}
+                                          value={subDetails.desc || ''}
+                                          onChange={(e) => handleSubcategoryChange(sub.id, 'desc', e.target.value)}
+                                          placeholder="Подробное описание работы..."
+                                          style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '12px', resize: 'vertical', fontFamily: 'inherit' }}
+                                        />
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           </div>
                         );
-                      })}
-                    </div>
+                      })()}
 
-                    {/* COMPANY STATS SECTION */}
-                    <div className="admin-table-card" style={{ padding: '24px' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <i className="ri-bar-chart-box-line" style={{ color: 'var(--accent)' }}></i>
-                        Показатели компании (Статистика)
-                      </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        {[0, 1, 2, 3].map((idx) => (
-                          <div key={idx} style={{ padding: '16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                            <h4 style={{ fontSize: '13px', fontWeight: '750', margin: '0 0 12px 0', color: 'var(--accent)' }}>Карточка {idx + 1}</h4>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                              <div>
-                                <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Число / Значение (например: 50 000+)</label>
-                                <input
-                                  type="text"
-                                  value={landingBlocks?.stats?.[idx]?.num || ''}
-                                  onChange={(e) => {
-                                    const newStats = [...(landingBlocks.stats || [])];
-                                    newStats[idx] = { ...newStats[idx], num: e.target.value };
-                                    setLandingBlocks({ ...landingBlocks, stats: newStats });
-                                  }}
-                                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                                />
+                      {/* SAVE BUTTON ROW */}
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
+                        <button type="submit" className="btn-primary" style={{ padding: '14px 28px', borderRadius: '12px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700' }}>
+                          <i className="ri-save-3-line"></i> Сохранить изменения страниц
+                        </button>
+                      </div>
+                    </form>
+
+                    {/* Right: Mock Browser Live Preview */}
+                    <div style={{
+                      background: 'var(--surface)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      boxShadow: '0 12px 32px rgba(0,0,0,0.25)',
+                      position: 'sticky',
+                      top: '24px'
+                    }}>
+                      {/* Mock Browser Header Bar */}
+                      <div style={{
+                        background: 'rgba(255,255,255,0.03)',
+                        borderBottom: '1px solid var(--border)',
+                        padding: '12px 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                      }}>
+                        {/* Colored Window Dots */}
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f56', display: 'inline-block' }}></span>
+                          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ffbd2e', display: 'inline-block' }}></span>
+                          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#27c93f', display: 'inline-block' }}></span>
+                        </div>
+
+                        {/* URL bar */}
+                        <div style={{
+                          flex: 1,
+                          background: 'var(--bg)',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border)',
+                          padding: '4px 12px',
+                          fontSize: '11px',
+                          fontFamily: 'monospace',
+                          color: 'var(--muted)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}>
+                          <i className="ri-lock-line" style={{ color: 'var(--accent)', fontSize: '12px' }}></i>
+                          <span>https://masterhub.kz{selectedPageToEdit === 'landing' ? '/' : `/category/${selectedPageToEdit}`}</span>
+                        </div>
+
+                        {/* Language switcher */}
+                        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg)', padding: '2px', borderRadius: '6px', border: '1px solid var(--border)' }}>
+                          <button
+                            type="button"
+                            onClick={() => setPreviewLang('ru')}
+                            style={{
+                              padding: '2px 8px',
+                              fontSize: '10px',
+                              fontWeight: '800',
+                              borderRadius: '4px',
+                              border: 'none',
+                              background: previewLang === 'ru' ? 'var(--accent)' : 'transparent',
+                              color: previewLang === 'ru' ? '#0b1020' : 'var(--text)',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            RU
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setPreviewLang('kz')}
+                            style={{
+                              padding: '2px 8px',
+                              fontSize: '10px',
+                              fontWeight: '800',
+                              borderRadius: '4px',
+                              border: 'none',
+                              background: previewLang === 'kz' ? 'var(--accent)' : 'transparent',
+                              color: previewLang === 'kz' ? '#0b1020' : 'var(--text)',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            KZ
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Mock Browser Screen Container */}
+                      <div style={{
+                        padding: '24px',
+                        maxHeight: '680px',
+                        overflowY: 'auto',
+                        background: 'var(--bg)',
+                        position: 'relative'
+                      }} className="mock-browser-body">
+
+                        {/* Landing Preview */}
+                        {selectedPageToEdit === 'landing' && (
+                          <div>
+                            <div style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '800', letterSpacing: '0.5px' }}>Демонстрация страницы (Главная)</span>
+                              <span style={{ fontSize: '10px', color: 'var(--accent)', fontWeight: '700' }}>Живой макет</span>
+                            </div>
+
+                            {/* Hero Slider Mock */}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px', marginBottom: '16px', position: 'relative' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                <span style={{ fontSize: '10px', background: 'rgba(124, 242, 199, 0.1)', color: 'var(--accent)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
+                                  🔧 СЛАЙДЕР HERO
+                                </span>
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                  {[0, 1, 2].map(i => (
+                                    <button
+                                      key={i}
+                                      type="button"
+                                      onClick={() => setCurrentHeroSlide(i)}
+                                      style={{
+                                        width: '6px',
+                                        height: '6px',
+                                        borderRadius: '50%',
+                                        background: currentHeroSlide === i ? 'var(--accent)' : 'var(--muted)',
+                                        border: 'none',
+                                        padding: 0,
+                                        cursor: 'pointer'
+                                      }}
+                                    />
+                                  ))}
+                                </div>
                               </div>
-                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                <div>
-                                  <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание (RU)</label>
-                                  <input
-                                    type="text"
-                                    value={landingBlocks?.stats?.[idx]?.labelRu || ''}
-                                    onChange={(e) => {
-                                      const newStats = [...(landingBlocks.stats || [])];
-                                      newStats[idx] = { ...newStats[idx], labelRu: e.target.value };
-                                      setLandingBlocks({ ...landingBlocks, stats: newStats });
-                                    }}
-                                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                                  />
-                                </div>
-                                <div>
-                                  <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание (KZ)</label>
-                                  <input
-                                    type="text"
-                                    value={landingBlocks?.stats?.[idx]?.labelKz || ''}
-                                    onChange={(e) => {
-                                      const newStats = [...(landingBlocks.stats || [])];
-                                      newStats[idx] = { ...newStats[idx], labelKz: e.target.value };
-                                      setLandingBlocks({ ...landingBlocks, stats: newStats });
-                                    }}
-                                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                                  />
-                                </div>
+
+                              {(() => {
+                                const h = landingBlocks?.hero?.[currentHeroSlide] || {};
+                                return (
+                                  <div>
+                                    <h3 
+                                      style={{ fontSize: '16px', fontWeight: '850', color: 'var(--text)', marginBottom: '8px' }}
+                                      dangerouslySetInnerHTML={{ __html: previewLang === 'ru' ? (h.titleRu || 'Заголовок') : (h.titleKz || 'Тақырып') }}
+                                    />
+                                    <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '12px', lineHeight: '1.4' }}>
+                                      {previewLang === 'ru' ? h.leadRu : h.leadKz}
+                                    </p>
+                                    <button type="button" className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '6px' }}>
+                                      {previewLang === 'ru' ? h.btnTextRu : h.btnTextKz}
+                                    </button>
+                                  </div>
+                                );
+                              })()}
+                            </div>
+
+                            {/* Stats Mock */}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+                              <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', display: 'block', marginBottom: '10px' }}>
+                                📊 СТАТИСТИКА КОМПАНИИ
+                              </span>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                                {[0, 1, 2, 3].map(i => {
+                                  const st = landingBlocks?.stats?.[i] || {};
+                                  return (
+                                    <div key={i} style={{ textAlign: 'center', background: 'var(--surface)', padding: '8px 4px', borderRadius: '6px', border: '1px solid var(--line)' }}>
+                                      <strong style={{ fontSize: '12px', color: 'var(--accent)', display: 'block' }}>{st.num || '0'}</strong>
+                                      <span style={{ fontSize: '8px', color: 'var(--muted)', display: 'block', lineHeight: '1.1' }}>{previewLang === 'ru' ? st.labelRu : st.labelKz}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Contacts Mock */}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px' }}>
+                              <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', display: 'block', marginBottom: '8px' }}>
+                                📞 КОНТАКТНЫЕ ДАННЫЕ
+                              </span>
+                              <div style={{ fontSize: '11px', color: 'var(--text)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                <div><strong>Звонки:</strong> {landingBlocks?.contacts?.phone}</div>
+                                <div><strong>WhatsApp:</strong> {landingBlocks?.contacts?.whatsapp}</div>
+                                <div><strong>Адрес:</strong> {previewLang === 'ru' ? landingBlocks?.contacts?.addressRu : landingBlocks?.contacts?.addressKz}</div>
                               </div>
                             </div>
                           </div>
-                        ))}
+                        )}
+
+                        {/* Category Page Preview */}
+                        {selectedPageToEdit !== 'landing' && (() => {
+                          const cat = megaCategories.find(c => c.id === selectedPageToEdit);
+                          if (!cat) return null;
+
+                          const dbMeta = megaDetails[cat.id] || {};
+                          const catMeta = {
+                            img: dbMeta.img || './slide_windows.png',
+                            desc: dbMeta.desc || 'Описание категории...',
+                            features: dbMeta.features || [],
+                            specs: dbMeta.specs || []
+                          };
+
+                          const subs = megaSubcategories[cat.id] || [];
+
+                          return (
+                            <div>
+                              <div style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '800', letterSpacing: '0.5px' }}>
+                                  Демонстрация страницы категории
+                                </span>
+                                <span style={{ fontSize: '10px', color: 'var(--accent)', fontWeight: '700' }}>Живой макет</span>
+                              </div>
+
+                              {/* Breadcrumbs Mock */}
+                              <div style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '12px', display: 'flex', gap: '4px' }}>
+                                <span>Главная</span> / <span>Услуги</span> / <span style={{ color: 'var(--accent)', fontWeight: '700' }}>{cat.title}</span>
+                              </div>
+
+                              {/* Banner block mockup */}
+                              <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '16px', padding: '16px', marginBottom: '20px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '16px', alignItems: 'center' }}>
+                                  <div>
+                                    <span style={{ fontSize: '9px', background: 'rgba(124, 242, 199, 0.1)', color: 'var(--accent)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700', textTransform: 'uppercase' }}>
+                                      Услуги категории
+                                    </span>
+                                    <h3 style={{ fontSize: '16px', fontWeight: '850', margin: '6px 0 8px 0' }}>{cat.title}</h3>
+                                    <p style={{ fontSize: '11px', color: 'var(--muted)', lineHeight: '1.4', marginBottom: '12px' }}>
+                                      {catMeta.desc}
+                                    </p>
+
+                                    {/* Features mock */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+                                      {catMeta.features.map((feat, fIdx) => (
+                                        <div key={fIdx} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                                          <i className="ri-checkbox-circle-fill" style={{ color: 'var(--accent)' }}></i>
+                                          <span>{feat}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Cover image and spec badge */}
+                                  <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', height: '160px', border: '1px solid var(--line)' }}>
+                                    <img src={catMeta.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <div style={{ position: 'absolute', bottom: '8px', left: '8px', right: '8px', background: 'rgba(20,27,52,0.9)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(124,242,199,0.3)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                                      {catMeta.specs.map((spec, sIdx) => (
+                                        <div key={sIdx} style={{ textAlign: 'center', fontSize: '8px' }}>
+                                          <div style={{ color: 'var(--muted)', fontSize: '6px', textTransform: 'uppercase' }}>{spec.label}</div>
+                                          <div style={{ color: 'var(--accent)', fontWeight: '700' }}>{spec.value}</div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Sub-blocks Services List */}
+                              <div>
+                                <h4 style={{ fontSize: '12px', fontWeight: '800', marginBottom: '10px' }}>
+                                  🛠️ Блоки услуг (подкарточки):
+                                </h4>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                  {subs.map((sub) => {
+                                    const subDetails = megaDetails[sub.id] || {};
+                                    return (
+                                      <div key={sub.id} style={{ background: 'var(--surface)', padding: '12px', borderRadius: '10px', border: '1px solid var(--line)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                        <div>
+                                          <strong style={{ fontSize: '11px', display: 'block', marginBottom: '4px' }}>{sub.title}</strong>
+                                          <p style={{ fontSize: '9px', color: 'var(--muted)', lineHeight: '1.3' }}>
+                                            {subDetails.desc || 'Описание отсутствует...'}
+                                          </p>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', borderTop: '1px solid var(--line)', paddingTop: '6px', fontSize: '9px' }}>
+                                          <span style={{ color: 'var(--accent)', fontWeight: '750' }}>{subDetails.price || 'от 2 500 ₸'}</span>
+                                          <span style={{ color: 'var(--muted)' }}>{subDetails.warr || 'Гарантия 1 год'}</span>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
 
-                    {/* CONTACTS & LINKS SECTION */}
-                    <div className="admin-table-card" style={{ padding: '24px' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <i className="ri-contacts-book-line" style={{ color: 'var(--accent)' }}></i>
-                        Контакты и ссылки
-                      </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                        <div>
-                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Номер телефона для звонков</label>
-                          <input
-                            type="text"
-                            value={landingBlocks?.contacts?.phone || ''}
-                            onChange={(e) => {
-                              setLandingBlocks({
-                                ...landingBlocks,
-                                contacts: { ...(landingBlocks.contacts || {}), phone: e.target.value }
-                              });
-                            }}
-                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                          />
-                        </div>
-                        <div>
-                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Номер телефона для WhatsApp</label>
-                          <input
-                            type="text"
-                            value={landingBlocks?.contacts?.whatsapp || ''}
-                            onChange={(e) => {
-                              setLandingBlocks({
-                                ...landingBlocks,
-                                contacts: { ...(landingBlocks.contacts || {}), whatsapp: e.target.value }
-                              });
-                            }}
-                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                          />
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        <div>
-                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Адрес офиса (RU)</label>
-                          <input
-                            type="text"
-                            value={landingBlocks?.contacts?.addressRu || ''}
-                            onChange={(e) => {
-                              setLandingBlocks({
-                                ...landingBlocks,
-                                contacts: { ...(landingBlocks.contacts || {}), addressRu: e.target.value }
-                              });
-                            }}
-                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                          />
-                        </div>
-                        <div>
-                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Адрес офиса (KZ)</label>
-                          <input
-                            type="text"
-                            value={landingBlocks?.contacts?.addressKz || ''}
-                            onChange={(e) => {
-                              setLandingBlocks({
-                                ...landingBlocks,
-                                contacts: { ...(landingBlocks.contacts || {}), addressKz: e.target.value }
-                              });
-                            }}
-                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* SAVE BUTTON ROW */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
-                      <button type="submit" className="btn-primary" style={{ padding: '14px 28px', borderRadius: '12px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700' }}>
-                        <i className="ri-save-3-line"></i> Сохранить изменения блоков
-                      </button>
-                    </div>
-                  </form>
+                  </div>
                 </div>
               )}
             </div>
