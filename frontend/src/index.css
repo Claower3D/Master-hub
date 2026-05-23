@@ -1000,7 +1000,7 @@ footer{
 .mega-cat {
   display: flex; align-items: center; gap: 14px; padding: 10px 14px;
   border-radius: var(--radius-sm); color: var(--muted); font-weight: 600; font-size: 15px;
-  cursor: pointer; transition: all 0.2s; border: 1px solid transparent; background: transparent;
+  cursor: pointer; transition: all 0.2s; border: 1px solid transparent; border-left: 3px solid transparent; background: transparent;
   text-decoration: none;
 }
 .mega-cat-icon { font-size: 20px; color: var(--accent); transition: transform 0.2s; flex-shrink: 0; }
@@ -1026,7 +1026,7 @@ footer{
 .mega-sub {
   display: flex; align-items: center; justify-content: space-between; padding: 8px 12px;
   border-radius: var(--radius-sm); color: var(--muted); font-weight: 500; font-size: 14px;
-  cursor: pointer; transition: all 0.2s; border: 1px solid transparent; text-decoration: none;
+  cursor: pointer; transition: all 0.2s; border: 1px solid transparent; border-left: 3px solid transparent; text-decoration: none;
 }
 .mega-sub-link { color: inherit; flex: 1; text-decoration: none; }
 .mega-sub-arrow { font-size: 18px; opacity: 0.5; transition: all 0.2s; flex-shrink: 0; }
