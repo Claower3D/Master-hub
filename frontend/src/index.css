@@ -4439,8 +4439,8 @@ body.light-theme .reviews-floating-btn:hover {
 /* Floating WhatsApp Widget */
 .whatsapp-float {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 104px;
+  right: 28px;
   width: 60px;
   height: 60px;
   background-color: #25d366;
@@ -4480,8 +4480,8 @@ body.light-theme .reviews-floating-btn:hover {
 
 @media (max-width: 768px) {
   .whatsapp-float {
-    bottom: 20px;
-    right: 20px;
+    bottom: 100px;
+    right: 28px;
     width: 52px;
     height: 52px;
     font-size: 28px;
