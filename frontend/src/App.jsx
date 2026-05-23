@@ -541,6 +541,13 @@ export default function App() {
       details: updatedDetails
     });
 
+    if (selectedCategoryPageObj && selectedCategoryPageObj.id === catId) {
+      setSelectedCategoryPageObj(prev => ({
+        ...prev,
+        title: catFormTitle
+      }));
+    }
+
     setEditingCat(null);
     setCatFormTitle('');
     setCatFormIcon('ri-tools-line');
@@ -619,6 +626,13 @@ export default function App() {
       subcategories: updatedSubs,
       details: updatedDetails
     });
+
+    if (selectedModalItem && selectedModalItem.id === subId) {
+      setSelectedModalItem(prev => ({
+        ...prev,
+        title: subFormTitle
+      }));
+    }
 
     // Clean form
     setEditingSub(null);
@@ -5801,45 +5815,117 @@ const pageDataMap = {
                 }
               </div>
               
-              <h3 className="cyber-title">{selectedModalItem.title}</h3>
-              
-              <p className="cyber-desc">
-                {lang === 'ru' ? (
-                  `Вы выбрали «${selectedModalItem.title}» в категории «${selectedModalItem.parentTitle}». Мы обеспечиваем профессиональный ремонт, настройку и замену деталей с официальной письменной гарантией до 12 месяцев.`
-                ) : (lang === 'kz' ? (
-                  `Сіз «${selectedModalItem.parentTitle}» санатындағы «${selectedModalItem.title}» таңдадыңыз. Біз 12 айға дейінгі ресми жазбаша кепілдікпен кәсіби жөндеуді, баптауды және бөлшектерді ауыстыруды қамтамасыз етеміз.`
-                ) : (
-                  `You selected "${selectedModalItem.title}" under "${selectedModalItem.parentTitle}". We provide expert repair, tuning, and parts replacement with a formal written guarantee of up to 12 months.`
-                ))}
-              </p>
-
-              {/* Unique Interactive Feature Checklist */}
-              <div className="cyber-features-grid">
-                <div className="cyber-feature-check">
-                  <i className="ri-checkbox-circle-fill"></i>
-                  <span>{lang === 'ru' ? 'Выезд опытного мастера' : (lang === 'kz' ? 'Тәжірибелі шебердің келуі' : 'Experienced master arrival')}</span>
-                </div>
-                <div className="cyber-feature-check">
-                  <i className="ri-checkbox-circle-fill"></i>
-                  <span>{lang === 'ru' ? 'Диагностика на спец. оборудовании' : (lang === 'kz' ? 'Арнайы жабдықта диагностикалау' : 'Diagnostics on specialized equipment')}</span>
-                </div>
-                <div className="cyber-feature-check">
-                  <i className="ri-checkbox-circle-fill"></i>
-                  <span>{lang === 'ru' ? 'Премиум комплектующие' : (lang === 'kz' ? 'Премиум қосалқы бөлшектер' : 'Premium spare parts')}</span>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                <h3 className="cyber-title" style={{ margin: 0 }}>{selectedModalItem.title}</h3>
+                {user?.role === 'admin' && selectedModalItem.type === 'service' && selectedModalItem.id && (
+                  <button
+                    onClick={() => {
+                      const subId = selectedModalItem.id;
+                      let foundSub = null;
+                      let foundCatId = null;
+                      Object.entries(megaSubcategories).forEach(([catId, subs]) => {
+                        const sub = subs.find(s => s.id === subId);
+                        if (sub) {
+                          foundSub = sub;
+                          foundCatId = catId;
+                        }
+                      });
+                      if (foundSub && foundCatId) {
+                        const cat = megaCategories.find(c => c.id === foundCatId);
+                        setEditingSub(foundSub);
+                        setSubFormSectionFilter(cat ? cat.tab : 'all');
+                        setSubFormCatId(foundCatId);
+                        setSubFormTitle(foundSub.title);
+                        const details = megaDetails[subId] || {};
+                        setSubFormDesc(details.desc || '');
+                        setSubFormPrice(details.price || '');
+                        setSubFormTime(details.time || '');
+                        setSubFormWarr(details.warr || '');
+                        setShowSubForm(true);
+                      }
+                    }}
+                    className="btn-ghost"
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      borderColor: 'var(--accent)',
+                      color: 'var(--accent)',
+                      background: 'rgba(124, 242, 199, 0.05)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <i className="ri-pencil-line"></i> Редактировать
+                  </button>
+                )}
               </div>
 
-              {/* Data Row Card */}
-              <div className="cyber-data-card">
-                <div className="cyber-data-col">
-                  <span className="cyber-data-label">{lang === 'ru' ? 'Стоимость' : (lang === 'kz' ? 'Құны' : 'Cost')}</span>
-                  <span className="cyber-data-value">{lang === 'ru' ? 'от 2 500 ₸' : (lang === 'kz' ? '2 500 ₸ бастап' : 'from 2,500 ₸')}</span>
-                </div>
-                <div className="cyber-data-col" style={{ borderLeft: '1px solid var(--line)', paddingLeft: '20px' }}>
-                  <span className="cyber-data-label">{lang === 'ru' ? 'Быстрый выезд' : (lang === 'kz' ? 'Жылдам келу' : 'Quick Arrival')}</span>
-                  <span className="cyber-data-sub">~ {lang === 'ru' ? '45 минут' : (lang === 'kz' ? '45 минут' : '45 minutes')}</span>
-                </div>
-              </div>
+              {(() => {
+                const subId = selectedModalItem.id;
+                const dbSubMeta = subId ? (megaDetails[subId] || {}) : {};
+                
+                const descText = dbSubMeta.desc || (
+                  lang === 'ru' 
+                    ? `Вы выбрали «${selectedModalItem.title}» в категории «${selectedModalItem.parentTitle}». Мы обеспечиваем профессиональный ремонт, настройку и замену деталей с официальной письменной гарантией до 12 месяцев.`
+                    : (lang === 'kz' 
+                      ? `Сіз «${selectedModalItem.parentTitle}» санатындағы «${selectedModalItem.title}» таңдадыңыз. Біз 12 айға дейінгі ресми жазбаша кепілдікпен кәсіби жөндеуді, баптауды және бөлшектерді ауыстыруды қамтамасыз етеміз.`
+                      : `You selected "${selectedModalItem.title}" under "${selectedModalItem.parentTitle}". We provide expert repair, tuning, and parts replacement with a formal written guarantee of up to 12 months.`
+                    )
+                );
+
+                const priceText = dbSubMeta.price || (
+                  lang === 'ru' ? 'от 2 500 ₸' : (lang === 'kz' ? '2 500 ₸ бастап' : 'from 2,500 ₸')
+                );
+
+                const timeText = dbSubMeta.time || (
+                  lang === 'ru' ? '45 минут' : (lang === 'kz' ? '45 минут' : '45 minutes')
+                );
+
+                const warrText = dbSubMeta.warr || (
+                  lang === 'ru' ? 'до 12 месяцев' : (lang === 'kz' ? '12 айға дейін' : 'up to 12 months')
+                );
+
+                return (
+                  <>
+                    <p className="cyber-desc">{descText}</p>
+                    
+                    {/* Unique Interactive Feature Checklist */}
+                    <div className="cyber-features-grid">
+                      <div className="cyber-feature-check">
+                        <i className="ri-checkbox-circle-fill"></i>
+                        <span>{lang === 'ru' ? 'Выезд опытного мастера' : (lang === 'kz' ? 'Тәжірибелі шебердің келуі' : 'Experienced master arrival')}</span>
+                      </div>
+                      <div className="cyber-feature-check">
+                        <i className="ri-checkbox-circle-fill"></i>
+                        <span>{lang === 'ru' ? 'Диагностика на спец. оборудовании' : (lang === 'kz' ? 'Арнайы жабдықта диагностикалау' : 'Diagnostics on specialized equipment')}</span>
+                      </div>
+                      <div className="cyber-feature-check">
+                        <i className="ri-checkbox-circle-fill"></i>
+                        <span>{lang === 'ru' ? 'Премиум комплектующие' : (lang === 'kz' ? 'Премиум қосалқы бөлшектер' : 'Premium spare parts')}</span>
+                      </div>
+                    </div>
+
+                    {/* Data Row Card */}
+                    <div className="cyber-data-card">
+                      <div className="cyber-data-col">
+                        <span className="cyber-data-label">{lang === 'ru' ? 'Стоимость' : (lang === 'kz' ? 'Құны' : 'Cost')}</span>
+                        <span className="cyber-data-value">{priceText}</span>
+                      </div>
+                      <div className="cyber-data-col" style={{ borderLeft: '1px solid var(--line)', paddingLeft: '20px' }}>
+                        <span className="cyber-data-label">{lang === 'ru' ? 'Быстрый выезд' : (lang === 'kz' ? 'Жылдам келу' : 'Quick Arrival')}</span>
+                        <span className="cyber-data-sub">~ {timeText}</span>
+                      </div>
+                      <div className="cyber-data-col" style={{ borderLeft: '1px solid var(--line)', paddingLeft: '20px' }}>
+                        <span className="cyber-data-label">{lang === 'ru' ? 'Гарантия' : (lang === 'kz' ? 'Кепілдік' : 'Warranty')}</span>
+                        <span className="cyber-data-sub">{warrText}</span>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
 
               {/* Actions */}
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -6738,6 +6824,216 @@ const pageDataMap = {
           {lang === 'ru' ? 'Сбросить цвета' : 'Reset Colors'}
         </button>
       </div>
+      {/* GLOBAL MODALS FOR ADMIN QUICK EDITING */}
+      {showCatForm && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
+           <div className="cb-form-card" style={{ maxWidth: '540px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+            <button onClick={() => setShowCatForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+            <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="ri-grid-line" style={{ color: 'var(--accent)' }}></i>
+              {editingCat ? 'Редактировать категорию' : 'Добавить категорию'}
+            </h3>
+            <form onSubmit={handleSaveCategory} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px', paddingRight: '8px' }}>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Раздел</label>
+                  <select 
+                    value={catFormTab} 
+                    onChange={e => setCatFormTab(e.target.value)}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                  >
+                    {megaTabs.map(t => (
+                      <option key={t.id} value={t.id}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название категории</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={catFormTitle} 
+                    onChange={e => setCatFormTitle(e.target.value)}
+                    placeholder="Например: Москитные сетки"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                  />
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Иконка RemixIcon</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={catFormIcon} 
+                    onChange={e => setCatFormIcon(e.target.value)}
+                    placeholder="Например: ri-window-line"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                  />
+                  <span style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '4px', display: 'block' }}>
+                    Используйте класс из RemixIcon (например, ri-tools-line, ri-sofa-line)
+                  </span>
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Описание страницы категории</label>
+                  <textarea 
+                    value={catFormDesc} 
+                    onChange={e => setCatFormDesc(e.target.value)}
+                    placeholder="Подробное описание услуг категории для отображения на ее странице..."
+                    rows={3}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'inherit', resize: 'vertical' }}
+                  />
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ссылка на фоновое изображение</label>
+                  <input 
+                    type="text" 
+                    value={catFormImg} 
+                    onChange={e => setCatFormImg(e.target.value)}
+                    placeholder="Например: ./cat_moskit.png"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                  />
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Преимущества (по одному в строке)</label>
+                  <textarea 
+                    value={catFormFeatures} 
+                    onChange={e => setCatFormFeatures(e.target.value)}
+                    placeholder="Защита питомцев от падения&#10;Усиленный алюминиевый профиль"
+                    rows={3}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'inherit', resize: 'vertical' }}
+                  />
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Характеристики (Формат: Название: Значение, по одной в строке)</label>
+                  <textarea 
+                    value={catFormSpecs} 
+                    onChange={e => setCatFormSpecs(e.target.value)}
+                    placeholder="Время установки: от 20 минут&#10;Прочность: Усиленная"
+                    rows={3}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'inherit', resize: 'vertical' }}
+                  />
+                </div>
+              </div>
+              <button 
+                type="submit" 
+                className="btn-primary"
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}
+              >
+                <i className="ri-save-line"></i> Сохранить изменения
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showSubForm && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
+          <div className="cb-form-card" style={{ maxWidth: '540px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+            <button onClick={() => setShowSubForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+            <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="ri-tools-line" style={{ color: 'var(--accent)' }}></i>
+              {editingSub ? 'Редактировать услугу' : 'Добавить услугу'}
+            </h3>
+            <form onSubmit={handleSaveSubcategory} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', paddingRight: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="cb-form-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Фильтр разделов</label>
+                    <select 
+                      value={subFormSectionFilter} 
+                      onChange={e => {
+                        setSubFormSectionFilter(e.target.value);
+                        const firstCat = megaCategories.find(c => e.target.value === 'all' || c.tab === e.target.value);
+                        if (firstCat) setSubFormCatId(firstCat.id);
+                      }}
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                    >
+                      <option value="all">Все разделы</option>
+                      {megaTabs.map(t => (
+                        <option key={t.id} value={t.id}>{t.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="cb-form-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Родительская категория</label>
+                    <select 
+                      value={subFormCatId} 
+                      onChange={e => setSubFormCatId(e.target.value)}
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                    >
+                      {megaCategories
+                        .filter(c => subFormSectionFilter === 'all' || c.tab === subFormSectionFilter)
+                        .map(c => (
+                          <option key={c.id} value={c.id}>{c.title}</option>
+                        ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название услуги</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={subFormTitle} 
+                    onChange={e => setSubFormTitle(e.target.value)}
+                    placeholder="Например: Замена уплотнителя"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                  />
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Описание услуги</label>
+                  <textarea 
+                    value={subFormDesc} 
+                    onChange={e => setSubFormDesc(e.target.value)}
+                    placeholder="Подробное описание работы, материалов, этапов..."
+                    rows={3}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'inherit', resize: 'vertical' }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div className="cb-form-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Стоимость</label>
+                    <input 
+                      type="text" 
+                      value={subFormPrice} 
+                      onChange={e => setSubFormPrice(e.target.value)}
+                      placeholder="Например: от 1 500 ₸"
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                    />
+                  </div>
+                  <div className="cb-form-group">
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Время выполнения</label>
+                    <input 
+                      type="text" 
+                      value={subFormTime} 
+                      onChange={e => setSubFormTime(e.target.value)}
+                      placeholder="Например: от 30 мин"
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                    />
+                  </div>
+                </div>
+                <div className="cb-form-group">
+                  <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Срок гарантии</label>
+                  <input 
+                    type="text" 
+                    value={subFormWarr} 
+                    onChange={e => setSubFormWarr(e.target.value)}
+                    placeholder="Например: 12 месяцев"
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
+                  />
+                </div>
+              </div>
+              <button 
+                type="submit" 
+                className="btn-primary"
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}
+              >
+                <i className="ri-save-line"></i> Сохранить изменения
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Floating WhatsApp Button */}
       <a
         href="https://wa.me/77058462749"
