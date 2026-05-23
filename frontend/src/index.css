@@ -1008,7 +1008,7 @@ footer{
 .mega-cat span { flex: 1; }
 .mega-cat-arrow { margin-left: auto; font-size: 18px; opacity: 0.5; transition: all 0.2s; flex-shrink: 0; }
 .mega-cat:hover {
-  color: var(--text); background: rgba(255,255,255,0.03); border-color: var(--line); transform: translateX(4px);
+  color: var(--text); background: rgba(255,255,255,0.03); border-color: var(--line);
 }
 .mega-cat:hover .mega-cat-icon { transform: scale(1.1); }
 .mega-cat.active {
@@ -1030,7 +1030,7 @@ footer{
 }
 .mega-sub-link { color: inherit; flex: 1; text-decoration: none; }
 .mega-sub-arrow { font-size: 18px; opacity: 0.5; transition: all 0.2s; flex-shrink: 0; }
-.mega-sub:hover { color: var(--text); background: rgba(255, 255, 255, 0.03); transform: translateX(4px); }
+.mega-sub:hover { color: var(--text); background: rgba(255, 255, 255, 0.03); }
 .mega-sub.active {
   color: var(--accent-2) !important;
   background: var(--surface) !important;
