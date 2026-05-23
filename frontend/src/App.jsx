@@ -5,6 +5,13 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
   ? 'http://localhost:8080'
   : '';
 
+const countryPhoneLengths = {
+  '+7': 10,     // Kazakhstan, Russia
+  '+996': 9,    // Kyrgyzstan
+  '+998': 9,    // Uzbekistan
+  '+375': 9     // Belarus
+};
+
 const defaultAssistantRules = [
   {
     id: 'rule-price',
@@ -5360,7 +5367,12 @@ const pageDataMap = {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <select
                     value={formCountryCode}
-                    onChange={(e) => setFormCountryCode(e.target.value)}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      setFormCountryCode(code);
+                      const maxLen = countryPhoneLengths[code] || 10;
+                      setFormPhone(prev => prev.replace(/\D/g, '').slice(0, maxLen));
+                    }}
                     style={{
                       width: '100px',
                       flexShrink: 0,
@@ -5377,9 +5389,15 @@ const pageDataMap = {
                   <input
                     type="tel"
                     required
-                    placeholder="701 123 4567"
+                    pattern={`\\d{${countryPhoneLengths[formCountryCode] || 10}}`}
+                    title={lang === 'ru' ? `Номер телефона должен состоять ровно из ${countryPhoneLengths[formCountryCode] || 10} цифр` : (lang === 'kz' ? `Телефон нөмірі дәл ${countryPhoneLengths[formCountryCode] || 10} саннан тұруы керек` : `Phone number must be exactly ${countryPhoneLengths[formCountryCode] || 10} digits`)}
+                    placeholder={formCountryCode === '+7' ? '701 123 4567' : '--------'}
                     value={formPhone}
-                    onChange={(e) => setFormPhone(e.target.value)}
+                    onChange={(e) => {
+                      const maxLen = countryPhoneLengths[formCountryCode] || 10;
+                      const digits = e.target.value.replace(/\D/g, '');
+                      setFormPhone(digits.slice(0, maxLen));
+                    }}
                     style={{ flex: 1 }}
                   />
                 </div>
@@ -5856,9 +5874,13 @@ const pageDataMap = {
                     type="tel" 
                     className="auth-input" 
                     required 
-                    placeholder="+7 (707) 123-45-67" 
+                    placeholder="+77071234567" 
                     value={authPhone}
-                    onChange={(e) => setAuthPhone(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const cleaned = (val.startsWith('+') ? '+' : '') + val.replace(/\D/g, '');
+                      setAuthPhone(cleaned.slice(0, 16));
+                    }}
                   />
                 </div>
                 <div className="auth-form-group">
@@ -6228,8 +6250,13 @@ const pageDataMap = {
                         type="tel" 
                         className="profile-input" 
                         required
+                        placeholder="+77071234567"
                         value={editPhone}
-                        onChange={(e) => setEditPhone(e.target.value)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const cleaned = (val.startsWith('+') ? '+' : '') + val.replace(/\D/g, '');
+                          setEditPhone(cleaned.slice(0, 16));
+                        }}
                       />
                     </div>
                     <div className="profile-form-group">
