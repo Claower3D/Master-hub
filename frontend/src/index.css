@@ -982,7 +982,7 @@ footer{
 }
 
 .mega-body {
-  display: grid; grid-template-columns: 280px 280px 320px 1fr; flex: 1;
+  display: grid; grid-template-columns: 285px 285px 320px 1fr; flex: 1;
   overflow: hidden; background: var(--bg-2);
 }
 .mega-col0, .mega-col1, .mega-col2, .mega-col3 {
