@@ -4449,7 +4449,7 @@ body.light-theme .reviews-floating-btn:hover {
   text-align: center;
   font-size: 34px;
   box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
-  z-index: 9999;
+  z-index: 42;
   display: flex;
   align-items: center;
   justify-content: center;
