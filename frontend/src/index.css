@@ -992,13 +992,13 @@ footer{
 .mega-col0::-webkit-scrollbar, .mega-col1::-webkit-scrollbar, .mega-col2::-webkit-scrollbar, .mega-col3::-webkit-scrollbar { width: 6px; }
 .mega-col0::-webkit-scrollbar-thumb, .mega-col1::-webkit-scrollbar-thumb, .mega-col2::-webkit-scrollbar-thumb, .mega-col3::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 3px; }
 
-.mega-col0 { background: var(--bg); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
-.mega-col1 { background: var(--surface); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
-.mega-col2 { background: var(--surface-2); border-right: 1px solid var(--line); }
+.mega-col0 { background: var(--bg); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.mega-col1 { background: var(--surface); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.mega-col2 { background: var(--surface-2); border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
 .mega-col3 { background: var(--bg-2); padding: 36px 48px; }
 
 .mega-cat {
-  display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+  display: flex; align-items: center; gap: 14px; padding: 10px 14px;
   border-radius: var(--radius-sm); color: var(--muted); font-weight: 600; font-size: 15px;
   cursor: pointer; transition: all 0.2s; border: 1px solid transparent; background: transparent;
   text-decoration: none;
@@ -1024,7 +1024,7 @@ footer{
 .mega-sub-group { display: none; flex-direction: column; gap: 6px; animation: fadeIn 0.25s ease; }
 .mega-sub-group.active { display: flex; }
 .mega-sub {
-  display: flex; align-items: center; justify-content: space-between; padding: 12px 18px;
+  display: flex; align-items: center; justify-content: space-between; padding: 8px 12px;
   border-radius: var(--radius-sm); color: var(--muted); font-weight: 500; font-size: 14px;
   cursor: pointer; transition: all 0.2s; border: 1px solid transparent; text-decoration: none;
 }
