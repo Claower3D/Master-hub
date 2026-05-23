@@ -134,6 +134,19 @@ export default function App() {
     return () => observer.disconnect();
   }, [measureNavOverflow]);
 
+  // Handle ESC key to close mega menu
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMegaMenuOpen(false);
+      }
+    };
+    if (megaMenuOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [megaMenuOpen]);
+
   // Re-measure when menu opens; also close "More" dropdown when menu closes
   useEffect(() => {
     if (megaMenuOpen) {
@@ -3828,6 +3841,9 @@ const pageDataMap = {
                         'ri-tools-line'
                       }`}></i>
                       <span className="mega-cat-link">{t(tab.label)}</span>
+                      {activeMegaTab === tab.id && (
+                        <i className="ri-arrow-right-s-line mega-cat-arrow" style={{ opacity: 0.8, color: 'var(--accent)', marginLeft: 'auto' }}></i>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -3851,6 +3867,9 @@ const pageDataMap = {
                     >
                       <i className={`mega-cat-icon ${cat.icon}`}></i>
                       <span className="mega-cat-link">{t(cat.title)}</span>
+                      {activeMegaCat === cat.id && (
+                        <i className="ri-arrow-right-s-line mega-cat-arrow" style={{ opacity: 0.8, color: 'var(--accent)', marginRight: '8px' }}></i>
+                      )}
                       <button
                         className="btn-ghost"
                         style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
@@ -3898,7 +3917,10 @@ const pageDataMap = {
                       }}
                     >
                       <span className="mega-sub-link">{t(sub.title)}</span>
-                      <i className="ri-arrow-right-s-line mega-sub-arrow"></i>
+                      <i 
+                        className="ri-arrow-right-s-line mega-sub-arrow"
+                        style={activeMegaSub === sub.id ? { color: 'var(--accent)', opacity: 1 } : {}}
+                      ></i>
                     </div>
                   ))}
                 </div>
