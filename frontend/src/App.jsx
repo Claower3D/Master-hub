@@ -3596,7 +3596,7 @@ const pageDataMap = {
                   }}
                 >
                   <i className="ri-search-line" style={{ fontSize: '15px' }}></i>
-                  <span>{lang === 'ru' ? 'Фильтр' : lang === 'kz' ? 'Сүзгі' : 'Filter'}</span>
+                  <span>{lang === 'ru' ? 'Поиск' : lang === 'kz' ? 'Іздеу' : 'Search'}</span>
                 </button>
               )}
             </div>
@@ -3864,25 +3864,18 @@ const pageDataMap = {
                         const firstSub = megaSubcategories[cat.id]?.[0];
                         setActiveMegaSub(firstSub ? firstSub.id : 'none');
                       }}
+                      onDoubleClick={() => {
+                        setMegaMenuOpen(false);
+                        navigateTo(`/category/${cat.id}`);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      title={lang === 'ru' ? 'Дважды нажмите, чтобы открыть страницу категории' : 'Double click to open category page'}
                     >
                       <i className={`mega-cat-icon ${cat.icon}`}></i>
                       <span className="mega-cat-link">{t(cat.title)}</span>
                       {activeMegaCat === cat.id && (
-                        <i className="ri-arrow-right-s-line mega-cat-arrow" style={{ opacity: 0.8, color: 'var(--accent)', marginRight: '8px' }}></i>
+                        <i className="ri-arrow-right-s-line mega-cat-arrow" style={{ opacity: 0.8, color: 'var(--accent)', marginLeft: 'auto' }}></i>
                       )}
-                      <button
-                        className="btn-ghost"
-                        style={{ padding: '4px 8px', fontSize: '11px', marginLeft: 'auto', zIndex: 2 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMegaMenuOpen(false);
-                          navigateTo(`/category/${cat.id}`);
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        title="Открыть страницу категории"
-                      >
-                        Открыть ↗
-                      </button>
                     </div>
                   ))}
                 </div>
