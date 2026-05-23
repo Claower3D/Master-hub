@@ -4160,7 +4160,7 @@ body.light-theme .reviews-floating-btn:hover {
     flex-direction: column;
     flex: 1;
     min-height: 0;
-    overflow: hidden;
+    overflow-y: auto;
   }
   .mega-mobile-tabs-scroll {
     display: flex;

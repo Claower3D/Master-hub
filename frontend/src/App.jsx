@@ -4035,91 +4035,160 @@ const pageDataMap = {
 
               {/* Mobile Accordion layout - visible only on mobile */}
               <div className="mega-mobile-body">
-                {/* Mobile Section Tabs List */}
-                <div className="mega-mobile-tabs-scroll">
-                  {megaTabs.map(tab => (
-                    <button
-                      key={tab.id}
-                      className={`mega-mobile-tab-pill ${activeMegaTab === tab.id ? 'active' : ''}`}
-                      onClick={() => {
-                        setActiveMegaTab(tab.id);
-                        const firstCat = megaCategories.find(c => c.tab === tab.id);
-                        if (firstCat) {
-                          setActiveMegaCat(firstCat.id);
-                        }
-                      }}
-                    >
-                      <span>{t(tab.label)}</span>
-                      {activeMegaTab === tab.id ? (
-                        <i className="ri-checkbox-circle-fill" style={{ fontSize: '16px', color: 'var(--accent)' }}></i>
-                      ) : (
-                        <i className="ri-arrow-right-s-line" style={{ opacity: 0.5 }}></i>
-                      )}
-                    </button>
-                  ))}
-                </div>
+                {megaTabs.map(tab => {
+                  const isTabOpen = activeMegaTab === tab.id;
+                  const cats = megaCategories.filter(c => c.tab === tab.id);
 
-                {/* Categories Accordions list */}
-                <div className="mega-mobile-accordion">
-                  {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => {
-                    const isOpen = activeMegaCat === cat.id;
-                    const subs = megaSubcategories[cat.id] || [];
-                    return (
-                      <div key={cat.id} className={`mega-mobile-acc-item ${isOpen ? 'open' : ''}`}>
-                        <div
-                          className="mega-mobile-acc-header"
-                          onClick={() => setActiveMegaCat(isOpen ? 'none' : cat.id)}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                            <i className={`mega-mobile-acc-icon ${cat.icon}`}></i>
-                            <span className="mega-mobile-acc-title">{t(cat.title)}</span>
-                          </div>
-                          <span className="mega-mobile-acc-chevron">
-                            <i className="ri-arrow-down-s-line"></i>
-                          </span>
+                  return (
+                    <div key={tab.id} className={`mega-mobile-tab-section ${isTabOpen ? 'open' : ''}`} style={{
+                      border: '1px solid var(--line)',
+                      borderRadius: '14px',
+                      background: 'var(--surface)',
+                      overflow: 'hidden',
+                      marginBottom: '8px',
+                      transition: 'all 0.3s ease'
+                    }}>
+                      {/* Section Header */}
+                      <div
+                        onClick={() => {
+                          setActiveMegaTab(isTabOpen ? 'none' : tab.id);
+                          setActiveMegaCat('none');
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '14px 18px',
+                          cursor: 'pointer',
+                          background: isTabOpen ? 'var(--surface-2)' : 'transparent',
+                          transition: 'background 0.2s'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <i className={`mega-cat-icon ${tab.icon || 'ri-apps-2-line'}`} style={{ fontSize: '20px', color: 'var(--accent)' }}></i>
+                          <span style={{ fontWeight: '850', fontSize: '15px', color: 'var(--text)' }}>{t(tab.label)}</span>
                         </div>
-                        {isOpen && (
-                          <div className="mega-mobile-acc-content">
-                            {/* "⚡ Открыть всю категорию" button */}
-                            <div
-                              className="mega-mobile-sub-link-all"
-                              onClick={() => {
-                                setMegaMenuOpen(false);
-                                navigateTo(`/category/${cat.id}`);
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                              }}
-                            >
-                              <span>⚡ {lang === 'ru' ? 'Открыть всю категорию' : (lang === 'kz' ? 'Санатты толық ашу' : 'Open entire category')}</span>
-                              <i className="ri-arrow-right-line"></i>
-                            </div>
+                        <i className={isTabOpen ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"} style={{ color: 'var(--muted)', fontSize: '18px' }}></i>
+                      </div>
 
-                            {/* Subcategories list */}
-                            {subs.length === 0 ? (
-                              <div className="mega-mobile-no-subs" style={{ padding: '12px 14px', fontSize: '13px', color: 'var(--muted)', textAlign: 'center', fontFamily: 'monospace' }}>
-                                {lang === 'ru' ? 'Нет подразделов' : (lang === 'kz' ? 'Бөлімдер жоқ' : 'No subcategories')}
-                              </div>
-                            ) : (
-                              subs.map(sub => (
+                      {/* Section Content (Categories) */}
+                      {isTabOpen && (
+                        <div className="mega-mobile-categories-list" style={{
+                          padding: '10px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          borderTop: '1px solid var(--line)',
+                          background: 'var(--surface-2)'
+                        }}>
+                          {cats.map(cat => {
+                            const isCatOpen = activeMegaCat === cat.id;
+                            const subs = megaSubcategories[cat.id] || [];
+
+                            return (
+                              <div key={cat.id} className={`mega-mobile-acc-item ${isCatOpen ? 'open' : ''}`} style={{
+                                border: '1px solid var(--line)',
+                                borderRadius: '10px',
+                                background: 'var(--bg)',
+                                overflow: 'hidden'
+                              }}>
+                                {/* Category Header */}
                                 <div
-                                  key={sub.id}
-                                  className="mega-mobile-sub-item"
-                                  onClick={() => {
-                                    setMegaMenuOpen(false);
-                                    navigateTo(`/service/${sub.id}`);
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                  className="mega-mobile-acc-header"
+                                  onClick={() => setActiveMegaCat(isCatOpen ? 'none' : cat.id)}
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: '12px 14px',
+                                    cursor: 'pointer',
+                                    background: isCatOpen ? 'var(--surface-2)' : 'transparent'
                                   }}
                                 >
-                                  <span className="sub-title-text">{t(sub.title)}</span>
-                                  <i className="ri-arrow-right-s-line" style={{ color: 'var(--accent)', fontSize: '16px' }}></i>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
+                                    <i className={`mega-mobile-acc-icon ${cat.icon}`} style={{ fontSize: '16px', color: 'var(--accent)' }}></i>
+                                    <span className="mega-mobile-acc-title" style={{ fontSize: '13.5px', fontWeight: '700', color: 'var(--text)' }}>{t(cat.title)}</span>
+                                  </div>
+                                  <i className={isCatOpen ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"} style={{ color: 'var(--muted)', fontSize: '16px' }}></i>
                                 </div>
-                              ))
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+
+                                {/* Category Content (Subcategories) */}
+                                {isCatOpen && (
+                                  <div className="mega-mobile-acc-content" style={{
+                                    padding: '8px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '6px',
+                                    background: 'var(--surface)',
+                                    borderTop: '1px solid var(--line)'
+                                  }}>
+                                    {/* Link to full category */}
+                                    <div
+                                      className="mega-mobile-sub-link-all"
+                                      onClick={() => {
+                                        setMegaMenuOpen(false);
+                                        navigateTo(`/category/${cat.id}`);
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                      }}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        padding: '10px 12px',
+                                        borderRadius: '8px',
+                                        background: 'rgba(124, 242, 199, 0.08)',
+                                        color: 'var(--accent)',
+                                        fontSize: '13px',
+                                        fontWeight: '750',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      <span>⚡ {lang === 'ru' ? 'Открыть всю категорию' : (lang === 'kz' ? 'Санатты толық ашу' : 'Open entire category')}</span>
+                                      <i className="ri-arrow-right-line"></i>
+                                    </div>
+
+                                    {/* Subcategories list */}
+                                    {subs.length === 0 ? (
+                                      <div style={{ padding: '8px', fontSize: '12px', color: 'var(--muted)', textAlign: 'center' }}>
+                                        {lang === 'ru' ? 'Нет подразделов' : (lang === 'kz' ? 'Бөлімдер жоқ' : 'No subcategories')}
+                                      </div>
+                                    ) : (
+                                      subs.map(sub => (
+                                        <div
+                                          key={sub.id}
+                                          className="mega-mobile-sub-item"
+                                          onClick={() => {
+                                            setMegaMenuOpen(false);
+                                            navigateTo(`/service/${sub.id}`);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                          }}
+                                          style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            padding: '10px 12px',
+                                            borderRadius: '8px',
+                                            fontSize: '13px',
+                                            color: 'var(--muted)',
+                                            cursor: 'pointer',
+                                            transition: 'background 0.2s'
+                                          }}
+                                        >
+                                          <span>{t(sub.title)}</span>
+                                          <i className="ri-arrow-right-s-line" style={{ color: 'var(--accent-2)', fontSize: '14px' }}></i>
+                                        </div>
+                                      ))
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
 
                 {/* Mobile footer controls */}
                 <div className="mega-mobile-footer" style={{
