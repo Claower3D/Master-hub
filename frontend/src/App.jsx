@@ -3926,47 +3926,70 @@ const pageDataMap = {
                 </div>
 
                 {/* Col 3: Details & Preview */}
-                <div className="mega-col3">
-                  <div className="mega-service-preview" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 className="mega-preview-price" style={{ fontSize: '24px', marginBottom: '16px' }}>{t(currentDetail.title)}</h4>
-                      <p className="mega-preview-desc">{t(currentDetail.desc)}</p>
-                      <div className="mega-preview-price">{t(currentDetail.price)}</div>
-                      <div className="mega-preview-meta">
-                        <span><i className="ri-time-line"></i> {t(currentDetail.time)}</span>
-                        <span><i className="ri-shield-check-line"></i> {t(currentDetail.warr)}</span>
+                <div className="mega-col3" style={{ padding: '24px' }}>
+                  <div className="mega-service-preview-vertical">
+                    {/* Top: Photo/Hologram container */}
+                    <div className="mega-preview-banner">
+                      <div className="mega-preview-grid-overlay"></div>
+                      <img 
+                        src={getCategoryCharacter(activeMegaCat)} 
+                        alt="Category character" 
+                        className="mega-preview-banner-char"
+                      />
+                      <div className="mega-preview-status-badge">
+                        <span className="live-pulse"></span> SYSTEM OK
                       </div>
-                      <div style={{ display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' }}>
+                    </div>
+
+                    {/* Bottom: Info, Price, Actions */}
+                    <div className="mega-preview-info">
+                      <h4 className="mega-preview-title-styled">{t(currentDetail.title)}</h4>
+                      <p className="mega-preview-desc-styled">{t(currentDetail.desc)}</p>
+                      
+                      <div className="mega-preview-stats-row">
+                        <div className="mega-stat-card">
+                          <i className="ri-time-line"></i>
+                          <div>
+                            <span className="stat-lbl">{lang === 'ru' ? 'Время работы' : lang === 'kz' ? 'Жұмыс уақыты' : 'Duration'}</span>
+                            <span className="stat-val">{t(currentDetail.time)}</span>
+                          </div>
+                        </div>
+                        <div className="mega-stat-card">
+                          <i className="ri-shield-check-line"></i>
+                          <div>
+                            <span className="stat-lbl">{lang === 'ru' ? 'Гарантия' : lang === 'kz' ? 'Кепілдік' : 'Warranty'}</span>
+                            <span className="stat-val">{t(currentDetail.warr)}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mega-preview-price-box">
+                        <span className="price-label">{lang === 'ru' ? 'Стоимость работы' : lang === 'kz' ? 'Жұмыс құны' : 'Price'}</span>
+                        <span className="price-value">{t(currentDetail.price)}</span>
+                      </div>
+
+                      <div className="mega-preview-actions-vertical">
                         <a
                           href="#contact"
-                          className="btn-primary"
+                          className="btn-primary-glow"
                           onClick={() => {
                             setFormService(t(currentDetail.title));
                             setMegaMenuOpen(false);
                           }}
                         >
-                          {t('srv_btn')}
+                          <i className="ri-chat-check-line"></i> {t('srv_btn')}
                         </a>
                         <button
-                          className="btn-ghost"
-                          style={{ padding: '10px 20px', fontSize: '13px' }}
+                          className="btn-ghost-cyan"
                           onClick={() => {
                             setMegaMenuOpen(false);
                             navigateTo(`/service/${activeMegaSub}`);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
                         >
-                          {t('srv_more_btn')}
+                          {t('srv_more_btn')} <i className="ri-arrow-right-up-line"></i>
                         </button>
                       </div>
-                    </div>
-                    {/* 3D Character image */}
-                    <div className="mega-preview-character-container">
-                      <img 
-                        src={getCategoryCharacter(activeMegaCat)} 
-                        alt="Category character" 
-                        className="mega-preview-character"
-                      />
                     </div>
                   </div>
                 </div>
