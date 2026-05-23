@@ -3860,16 +3860,11 @@ const pageDataMap = {
                         setActiveMegaSub(firstSub ? firstSub.id : 'none');
                       }}
                       onClick={() => {
-                        setActiveMegaCat(cat.id);
-                        const firstSub = megaSubcategories[cat.id]?.[0];
-                        setActiveMegaSub(firstSub ? firstSub.id : 'none');
-                      }}
-                      onDoubleClick={() => {
                         setMegaMenuOpen(false);
                         navigateTo(`/category/${cat.id}`);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
-                      title={lang === 'ru' ? 'Дважды нажмите, чтобы открыть страницу категории' : 'Double click to open category page'}
+                      title={lang === 'ru' ? 'Нажмите, чтобы открыть страницу категории' : 'Click to open category page'}
                     >
                       <i className={`mega-cat-icon ${cat.icon}`}></i>
                       <span className="mega-cat-link">{t(cat.title)}</span>
