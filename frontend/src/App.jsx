@@ -4036,20 +4036,48 @@ const pageDataMap = {
 
               {/* Mobile Accordion layout - visible only on mobile */}
               <div className="mega-mobile-body">
-                {/* Mobile controls header - moved to the top */}
+                {/* Mobile controls header - all in one single line */}
                 <div className="mega-mobile-top-controls" style={{
                   padding: '4px 0 16px 0',
                   borderBottom: '1px solid var(--line)',
                   marginBottom: '16px',
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '8px',
                   flexShrink: 0
                 }}>
-                  {/* City selector */}
-                  <div className="city-switch" style={{ width: '100%' }}>
-                    <i className="ri-map-pin-line" style={{ color: 'var(--accent)' }}></i>
-                    <select className="city-select" value={city} onChange={(e) => setCity(e.target.value)} aria-label="Выбор города" style={{ width: '100%', flex: 1 }}>
+                  {/* City selector - styled very compactly */}
+                  <div className="city-switch" style={{ 
+                    flex: 1, 
+                    minWidth: '90px', 
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '0 8px',
+                    background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
+                    border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '10px'
+                  }}>
+                    <i className="ri-map-pin-line" style={{ color: 'var(--accent)', fontSize: '14px' }}></i>
+                    <select 
+                      className="city-select" 
+                      value={city} 
+                      onChange={(e) => setCity(e.target.value)} 
+                      aria-label="Выбор города" 
+                      style={{ 
+                        width: '100%', 
+                        background: 'transparent', 
+                        border: 'none', 
+                        outline: 'none', 
+                        color: 'var(--text)', 
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        padding: 0,
+                        cursor: 'pointer'
+                      }}
+                    >
                       <option value="almaty">{t('city_almaty')}</option>
                       <option value="astana">{t('city_astana')}</option>
                       <option value="shymkent">{t('city_shymkent')}</option>
@@ -4073,33 +4101,103 @@ const pageDataMap = {
                     </select>
                   </div>
                   
-                  {/* Language and Theme controls row */}
-                  <div style={{ display: 'flex', gap: '8px', width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div className="lang-switch" style={{ display: 'flex', gap: '4px' }}>
-                      <button className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} onClick={() => setLang('ru')}>RU</button>
-                      <button className={`lang-btn ${lang === 'kz' ? 'active' : ''}`} onClick={() => setLang('kz')}>KZ</button>
-                      <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>EN</button>
-                    </div>
-                    <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему" style={{
-                      padding: '10px 14px',
-                      borderRadius: '12px',
-                      border: '1px solid var(--line)',
-                      background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.05)',
-                      color: 'var(--text)',
-                      cursor: 'pointer'
-                    }}>
-                      <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
+                  {/* Language Selector */}
+                  <div className="lang-switch" style={{ 
+                    display: 'flex', 
+                    gap: '2px', 
+                    background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
+                    border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '10px',
+                    padding: '2px'
+                  }}>
+                    <button 
+                      className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} 
+                      onClick={() => setLang('ru')}
+                      style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                    >
+                      RU
+                    </button>
+                    <button 
+                      className={`lang-btn ${lang === 'kz' ? 'active' : ''}`} 
+                      onClick={() => setLang('kz')}
+                      style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                    >
+                      KZ
+                    </button>
+                    <button 
+                      className={`lang-btn ${lang === 'en' ? 'active' : ''}`} 
+                      onClick={() => setLang('en')}
+                      style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                    >
+                      EN
                     </button>
                   </div>
+
+                  {/* Theme Toggle - circular/square compact icon */}
+                  <button 
+                    className="theme-toggle" 
+                    onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} 
+                    aria-label="Переключить тему" 
+                    style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '10px',
+                      border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
+                      background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.05)',
+                      color: 'var(--text)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '15px',
+                      flexShrink: 0
+                    }}
+                  >
+                    <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
+                  </button>
                   
-                  {/* Login/Cabinet button */}
+                  {/* Login/Cabinet icon-only button */}
                   {user ? (
-                    <button className="auth-trigger-btn mobile-only" onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }} style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--accent)', color: '#0b1020', fontWeight: '750', border: 'none', cursor: 'pointer' }}>
-                      <i className="ri-user-line"></i> <span style={{ marginLeft: '6px' }}>{t('nav_cabinet')}</span>
+                    <button 
+                      onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }} 
+                      title={t('nav_cabinet')}
+                      style={{ 
+                        width: '38px', 
+                        height: '38px', 
+                        borderRadius: '10px', 
+                        background: 'var(--accent)', 
+                        color: '#0b1020', 
+                        border: 'none', 
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '16px',
+                        flexShrink: 0
+                      }}
+                    >
+                      <i className="ri-user-line"></i>
                     </button>
                   ) : (
-                    <button className="auth-trigger-btn mobile-only" onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }} style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--accent)', color: '#0b1020', fontWeight: '750', border: 'none', cursor: 'pointer' }}>
-                      <i className="ri-login-box-line"></i> <span style={{ marginLeft: '6px' }}>{t('nav_login')}</span>
+                    <button 
+                      onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }} 
+                      title={t('nav_login')}
+                      style={{ 
+                        width: '38px', 
+                        height: '38px', 
+                        borderRadius: '10px', 
+                        background: 'var(--accent)', 
+                        color: '#0b1020', 
+                        border: 'none', 
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '16px',
+                        flexShrink: 0
+                      }}
+                    >
+                      <i className="ri-login-box-line"></i>
                     </button>
                   )}
                 </div>
