@@ -2041,60 +2041,37 @@ const pageDataMap = {
       }
     };
 
+    const dbMeta = megaDetails[pageObj.id] || {};
+    const dynamicBrands = dbMeta.brands;
+    const dynamicServices = dbMeta.services;
+
     const specificData = pageDataMap[pageObj.id] || pageDataMap[pageObj.parentCatId];
-    if (specificData) {
-      return {
-        parentTabLabel: parentTab.label,
-        parentCatTitle: parentCat.title,
-        brands: specificData.brands,
-        services: specificData.services
-      };
-    }
 
-    const subcats = megaSubcategories[pageObj.id] || megaSubcategories[pageObj.parentCatId] || [];
-    if (subcats.length > 0) {
-      const dbMeta = megaDetails[pageObj.id] || {};
+    let brands = [];
+    if (dynamicBrands && dynamicBrands.length > 0) {
+      brands = dynamicBrands;
+    } else if (specificData && specificData.brands) {
+      brands = specificData.brands;
+    } else {
       const customBrands = (dbMeta.specs || []).map(s => s.label + ': ' + s.value);
-      return {
-        parentTabLabel: parentTab.label,
-        parentCatTitle: parentCat.title,
-        brands: customBrands.length > 0 ? customBrands : ['Гарантия качества', 'Проверенные мастера', 'Качественные материалы'],
-        services: subcats.map(sub => sub.title)
-      };
+      brands = customBrands.length > 0 ? customBrands : ['Гарантия качества', 'Проверенные мастера', 'Качественные материалы'];
     }
 
-    if (parentTab.id === 'okna') {
-      return {
-        parentTabLabel: parentTab.label,
-        parentCatTitle: parentCat.title,
-        brands: ['Rehau', 'Veka', 'KBE', 'Salamander', 'Gealan', 'Trocal', 'Maco', 'Roto'],
-        services: ['Бесплатный замер и консультация', 'Экспресс-ремонт за 45 минут', 'Замена фурнитуры и уплотнителей', 'Изготовление москитных сеток', 'Монтаж по ГОСТу с гарантией']
-      };
-    }
-
-    if (parentTab.id === 'servis') {
-      return {
-        parentTabLabel: parentTab.label,
-        parentCatTitle: parentCat.title,
-        brands: ['LG', 'Samsung', 'Bosch', 'Indesit', 'Beko', 'Electrolux', 'Gorenje', 'Ariston'],
-        services: ['Срочная диагностика с выездом', 'Замена оригинальных запчастей', 'Ремонт электронных плат управления', 'Пайка и устранение утечек', 'Гарантийное и постгарантийное обслуживание']
-      };
-    }
-
-    if (parentTab.id === 'mebel') {
-      return {
-        parentTabLabel: parentTab.label,
-        parentCatTitle: parentCat.title,
-        brands: ['Blum', 'Hettich', 'Boyard', 'Egger', 'Kronospan', 'Hafele'],
-        services: ['Разработка 3D-дизайн проекта', 'Распил и кромление плитных материалов', 'Сборка и монтаж корпусной мебели', 'Замена фасадов и столешниц', 'Перетяжка и реставрация мягкой мебели']
-      };
+    let services = [];
+    if (dynamicServices && dynamicServices.length > 0) {
+      services = dynamicServices;
+    } else if (specificData && specificData.services) {
+      services = specificData.services;
+    } else {
+      const subcats = megaSubcategories[pageObj.id] || megaSubcategories[pageObj.parentCatId] || [];
+      services = subcats.map(sub => sub.title);
     }
 
     return {
       parentTabLabel: parentTab.label,
       parentCatTitle: parentCat.title,
-      brands: ['Премиум качество', 'Проверенные партнеры', 'Официальная гарантия'],
-      services: ['Базовая услуга: ' + baseTitle, 'Экспресс-обслуживание']
+      brands: brands,
+      services: services
     };
   };
 
@@ -4055,6 +4032,57 @@ const pageDataMap = {
                                 })}
                               </div>
                             </div>
+
+                            {/* Brands and Category Services (Details) */}
+                            <div className="admin-table-card" style={{ padding: '24px' }}>
+                              <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <i className="ri-award-line" style={{ color: 'var(--accent)' }}></i>
+                                Список брендов и услуг внизу страницы
+                              </h3>
+                              <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '16px' }}>
+                                Бренды и услуги, отображаемые в соответствующих секциях в нижней части страницы категории.
+                              </p>
+                              
+                              {(() => {
+                                const catPageDataObj = getCategoryPageData({ id: cat.id, title: cat.title, parentCatId: cat.id, parentTabId: cat.tab }, lang);
+                                return (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>
+                                        Список брендов (по одному на строку)
+                                      </label>
+                                      <textarea
+                                        rows={5}
+                                        value={(catPageDataObj.brands || []).join('\n')}
+                                        onChange={(e) => {
+                                          const val = e.target.value.split('\n').filter(line => line.trim() !== '');
+                                          handleCategoryDetailChange('brands', val);
+                                        }}
+                                        placeholder="Пример:&#10;LG&#10;Samsung&#10;Bosch"
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>
+                                        Список дополнительных услуг и деталей (по одной на строку)
+                                      </label>
+                                      <textarea
+                                        rows={5}
+                                        value={(catPageDataObj.services || []).join('\n')}
+                                        onChange={(e) => {
+                                          const val = e.target.value.split('\n').filter(line => line.trim() !== '');
+                                          handleCategoryDetailChange('services', val);
+                                        }}
+                                        placeholder="Пример:&#10;Срочная диагностика&#10;Замена запчастей"
+                                        style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                            </div>
+
                           </div>
                         );
                       })()}
@@ -4334,6 +4362,44 @@ const pageDataMap = {
                                   })}
                                 </div>
                               </div>
+
+                              {/* Brands & Services / Details preview */}
+                              {(() => {
+                                const catPageDataObj = getCategoryPageData({ id: cat.id, title: cat.title, parentCatId: cat.id, parentTabId: cat.tab }, lang);
+                                return (
+                                  <div style={{ marginTop: '20px', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '16px' }}>
+                                    {/* Brands preview box */}
+                                    <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '12px' }}>
+                                      <h5 style={{ fontSize: '10px', fontWeight: '850', color: 'var(--accent)', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        🏷️ Бренды
+                                      </h5>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        {(catPageDataObj.brands || []).map((brand, bIdx) => (
+                                          <div key={bIdx} style={{ fontSize: '9px', background: 'var(--surface)', padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--line)', fontWeight: '600' }}>
+                                            {brand}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* Services preview box */}
+                                    <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '12px' }}>
+                                      <h5 style={{ fontSize: '10px', fontWeight: '850', color: 'var(--accent)', margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                        🛠️ Услуги и детали
+                                      </h5>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        {(catPageDataObj.services || []).map((srv, sIdx) => (
+                                          <div key={sIdx} style={{ fontSize: '9px', color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <span style={{ color: 'var(--accent)' }}>▪</span>
+                                            <span>{srv}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+
                             </div>
                           );
                         })()}
