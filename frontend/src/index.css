@@ -4436,4 +4436,56 @@ body.light-theme .reviews-floating-btn:hover {
   display: none;
 }
 
+/* Floating WhatsApp Widget */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 34px;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: whatsapp-glow 2s infinite;
+}
+.whatsapp-float:hover {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 8px 28px rgba(37, 211, 102, 0.6);
+  background-color: #20ba5a;
+}
+.whatsapp-float:active {
+  transform: scale(0.95);
+}
+
+@keyframes whatsapp-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float {
+    bottom: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    font-size: 28px;
+  }
+}
+
 

@@ -3491,6 +3491,24 @@ const pageDataMap = {
           <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему">
             <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
           </button>
+          <a href="https://wa.me/77058462749" target="_blank" rel="noopener noreferrer" className="header-whatsapp-btn" title="Написать в WhatsApp" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            background: 'rgba(37, 211, 102, 0.12)',
+            border: '1px solid rgba(37, 211, 102, 0.35)',
+            color: '#25d366',
+            fontSize: '20px',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            textDecoration: 'none',
+            marginRight: '12px'
+          }}>
+            <i className="ri-whatsapp-line"></i>
+          </a>
           <a href="tel:+77058462749" className="phone" aria-label="Позвонить">
             <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>+7 (705) 846-27-49</span>
           </a>
@@ -3966,6 +3984,38 @@ const pageDataMap = {
                           }}
                         >
                           <i className="ri-chat-check-line"></i> {t('srv_btn')}
+                        </a>
+                        <a
+                          href={`https://wa.me/77058462749?text=${encodeURIComponent(
+                            lang === 'ru'
+                              ? `Здравствуйте! Хочу заказать услугу: "${t(currentDetail.title)}"`
+                              : lang === 'kz'
+                              ? `Сәлеметсіз бе! Мен мына қызметке тапсырыс бергім келеді: "${t(currentDetail.title)}"`
+                              : `Hello! I would like to order: "${t(currentDetail.title)}"`
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-whatsapp-glow"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            background: '#25d366',
+                            color: '#fff',
+                            fontWeight: '750',
+                            fontSize: '14px',
+                            padding: '12px',
+                            borderRadius: '10px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                            boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)',
+                            transition: 'all 0.25s ease'
+                          }}
+                          onClick={() => setMegaMenuOpen(false)}
+                        >
+                          <i className="ri-whatsapp-line" style={{ fontSize: '18px' }}></i> {lang === 'ru' ? 'Заказать по WhatsApp' : lang === 'kz' ? 'WhatsApp арқылы тапсырыс' : 'Order via WhatsApp'}
                         </a>
                         <button
                           className="btn-ghost-cyan"
@@ -5408,6 +5458,44 @@ const pageDataMap = {
               <button type="submit" className="btn-primary big" style={{ width: '100%', marginTop: '14px' }}>
                 {t('call_btn')}
               </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', margin: '16px 0 10px', color: 'var(--muted)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div style={{ flex: 1, height: '1px', background: 'var(--line)' }}></div>
+                <span style={{ padding: '0 10px' }}>{lang === 'ru' ? 'или' : lang === 'kz' ? 'немесе' : 'or'}</span>
+                <div style={{ flex: 1, height: '1px', background: 'var(--line)' }}></div>
+              </div>
+
+              <a
+                href={`https://wa.me/77058462749?text=${encodeURIComponent(
+                  lang === 'ru'
+                    ? `Здравствуйте! Хочу заказать услугу: "${t(formService)}"`
+                    : lang === 'kz'
+                    ? `Сәлеметсіз бе! Мен мына қызметке тапсырыс бергім келеді: "${t(formService)}"`
+                    : `Hello! I would like to order: "${t(formService)}"`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  background: '#25d366',
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  fontSize: '15px',
+                  padding: '14px',
+                  borderRadius: 'var(--radius)',
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                  boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)',
+                  transition: 'all 0.25s ease',
+                  width: '100%',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <i className="ri-whatsapp-line" style={{ fontSize: '20px' }}></i> {lang === 'ru' ? 'Связаться по WhatsApp' : lang === 'kz' ? 'WhatsApp-пен хабарласу' : 'Contact via WhatsApp'}
+              </a>
             </form>
           </div>
         </div>
@@ -6467,6 +6555,16 @@ const pageDataMap = {
           {lang === 'ru' ? 'Сбросить цвета' : 'Reset Colors'}
         </button>
       </div>
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/77058462749"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="whatsapp-float"
+        title={lang === 'ru' ? 'Написать в WhatsApp' : 'Write on WhatsApp'}
+      >
+        <i className="ri-whatsapp-line"></i>
+      </a>
     </>
   );
 }
