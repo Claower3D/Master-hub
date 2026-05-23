@@ -104,6 +104,10 @@ export default function App() {
           setMegaDetails(data.details);
           localStorage.setItem('megaDetails', JSON.stringify(data.details));
         }
+        if (data.landingBlocks) {
+          setLandingBlocks(data.landingBlocks);
+          localStorage.setItem('landingBlocks', JSON.stringify(data.landingBlocks));
+        }
         parseUrlToState(data.tabs || [], data.categories || [], data.subcategories || {});
       })
       .catch(err => console.error('Error loading catalog from backend:', err));
@@ -235,8 +239,73 @@ export default function App() {
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminFilterDate, setAdminFilterDate] = useState('');
   const [adminFilterStatus, setAdminFilterStatus] = useState('all');
-  const [adminActiveTab, setAdminActiveTab] = useState('orders'); // 'orders' or 'catalog'
+  const [adminActiveTab, setAdminActiveTab] = useState('orders'); // 'orders', 'catalog', 'assistant', 'pages'
   const [catalogSubTab, setCatalogSubTab] = useState('tabs'); // 'tabs', 'categories', or 'subcategories'
+  const [landingBlocks, setLandingBlocks] = useState(() => {
+    try {
+      const saved = localStorage.getItem('landingBlocks');
+      return saved ? JSON.parse(saved) : {
+        hero: [
+          {
+            titleRu: 'Профессиональный ремонт и<br/>регулировка <span class="accent">окон под ключ</span>',
+            titleKz: 'Терезелерді кәсіби жөндеу және<br/><span class="accent">реттеу</span>',
+            leadRu: 'Устраним продувание, заменим уплотнитель, отрегулируем фурнитуру с гарантией до 12 месяцев. Быстрый выезд мастера.',
+            leadKz: 'Соғуды жоямыз, тығыздауышты ауыстырамыз, 12 айға дейінгі кепілдікпен фурнитураны реттейміз. Шебердің жылдам келуі.',
+            btnTextRu: 'Вызвать оконщика',
+            btnTextKz: 'Шеберді шақыру'
+          },
+          {
+            titleRu: 'Срочный и надежный ремонт<br/><span class="accent">бытовой техники</span> на дому',
+            titleKz: 'Тұрмыстық техниканы үйге<br/>барып <span class="accent">шұғыл жөндеу</span>',
+            leadRu: 'Ремонт холодильников, стиральных и посудомоечных машин. Оригинальные запчасти в наличии, выезд мастера за 45 минут.',
+            leadKz: 'Тоңазытқыштарды, кір жуғыш және ыдыс жуғыш машиналарды жөндеу. Түпнұсқа бөлшектер бар, шебер 45 минутта келеді.',
+            btnTextRu: 'Вызвать мастера',
+            btnTextKz: 'Шеберді шақыру'
+          },
+          {
+            titleRu: 'Качественная сборка и<br/>реставрация <span class="accent">вашей мебели</span>',
+            titleKz: 'Жиһаздарды сапалы құрастыру<br/>және <span class="accent">қалпына келтіру</span>',
+            leadRu: 'Сборка кухонь, шкафов-купе, ремонт каркасов и перетяжка мягкой мебели с премиальной фурнитурой и гарантией качества.',
+            leadKz: 'Асүй жиһазын, шкафтарды құрастыру, қаңқаларды жөндеу және сапалы фурнитурамен жұмсақ жиһазды қаптау.',
+            btnTextRu: 'Вызвать мебельщика',
+            btnTextKz: 'Шеберді шақыру'
+          }
+        ],
+        stats: [
+          { num: '50 000+', labelRu: 'выполненных заказов', labelKz: 'орындалған тапсырыстар' },
+          { num: '100+', labelRu: 'видов услуг', labelKz: 'қызмет түрлері' },
+          { num: '4.9★', labelRu: 'средняя оценка', labelKz: 'орташа баға' },
+          { num: '12 мес', labelRu: 'гарантия', labelKz: 'кепілдік' }
+        ],
+        contacts: {
+          phone: '+7 705 846 2749',
+          whatsapp: '+7 705 846 2749',
+          addressRu: 'г. Алматы, пр. Аль-Фараби 77/7',
+          addressKz: 'Алматы қ., Әл-Фараби даңғылы 77/7'
+        }
+      };
+    } catch (e) {
+      return {};
+    }
+  });
+
+  const getPhoneRaw = () => {
+    const ph = landingBlocks?.contacts?.phone || '+7 705 846 2749';
+    return ph.replace(/[^0-9+]/g, '');
+  };
+  const getPhoneFormatted = () => {
+    return landingBlocks?.contacts?.phone || '+7 (705) 846-27-49';
+  };
+  const getWhatsappRaw = () => {
+    const wa = landingBlocks?.contacts?.whatsapp || '+7 705 846 2749';
+    return wa.replace(/[^0-9]/g, '');
+  };
+  const getAddress = () => {
+    if (lang === 'kz') {
+      return landingBlocks?.contacts?.addressKz || 'Алматы қ., Әл-Фараби даңғылы 77/7';
+    }
+    return landingBlocks?.contacts?.addressRu || 'г. Алматы, пр. Аль-Фараби 77/7';
+  };
 
   // Section (Tab) Form State
   const [showTabForm, setShowTabForm] = useState(false);
@@ -340,7 +409,7 @@ export default function App() {
       .catch(err => alert(err.message));
   };
 
-  const syncCatalogWithBackend = (tabs = megaTabs, categories = megaCategories, subcategories = megaSubcategories, details = megaDetails) => {
+  const syncCatalogWithBackend = (tabs = megaTabs, categories = megaCategories, subcategories = megaSubcategories, details = megaDetails, blocks = landingBlocks) => {
     const t = localStorage.getItem('token') || token;
     if (!t) return;
 
@@ -354,7 +423,8 @@ export default function App() {
         tabs,
         categories,
         subcategories,
-        details
+        details,
+        landingBlocks: blocks
       })
     })
       .then(res => {
@@ -370,7 +440,7 @@ export default function App() {
       });
   };
 
-  const saveCatalog = ({ tabs, categories, subcategories, details }) => {
+  const saveCatalog = ({ tabs, categories, subcategories, details, blocks }) => {
     if (tabs !== undefined) {
       setMegaTabs(tabs);
       localStorage.setItem('megaTabs', JSON.stringify(tabs));
@@ -387,13 +457,18 @@ export default function App() {
       setMegaDetails(details);
       localStorage.setItem('megaDetails', JSON.stringify(details));
     }
+    if (blocks !== undefined) {
+      setLandingBlocks(blocks);
+      localStorage.setItem('landingBlocks', JSON.stringify(blocks));
+    }
 
     const finalTabs = tabs !== undefined ? tabs : megaTabs;
     const finalCats = categories !== undefined ? categories : megaCategories;
     const finalSubs = subcategories !== undefined ? subcategories : megaSubcategories;
     const finalDetails = details !== undefined ? details : megaDetails;
+    const finalBlocks = blocks !== undefined ? blocks : landingBlocks;
 
-    syncCatalogWithBackend(finalTabs, finalCats, finalSubs, finalDetails);
+    syncCatalogWithBackend(finalTabs, finalCats, finalSubs, finalDetails, finalBlocks);
   };
 
   // Save functions
@@ -2162,6 +2237,26 @@ const pageDataMap = {
                 >
                   <i className="ri-robot-line"></i> Настройка ассистента Иришка
                 </button>
+                <button 
+                  onClick={() => setAdminActiveTab('pages')}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: adminActiveTab === 'pages' ? 'var(--accent)' : 'var(--muted)',
+                    fontSize: '16px',
+                    fontWeight: '750',
+                    cursor: 'pointer',
+                    padding: '8px 12px',
+                    borderBottom: adminActiveTab === 'pages' ? '3px solid var(--accent)' : '3px solid transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <i className="ri-layout-line"></i> Редактирование страниц
+                </button>
               </div>
 
               {adminActiveTab === 'orders' && (
@@ -3441,6 +3536,263 @@ const pageDataMap = {
                   )}
                 </div>
               )}
+
+              {adminActiveTab === 'pages' && (
+                <div className="pages-manager">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+                    <div>
+                      <h2 style={{ fontSize: '20px', fontWeight: '850', margin: 0 }}>Редактирование страниц и блоков</h2>
+                      <p style={{ fontSize: '13px', color: 'var(--muted)', margin: '4px 0 0 0' }}>
+                        Изменение заголовков главного баннера, показателей компании и контактных данных.
+                      </p>
+                    </div>
+                  </div>
+
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    saveCatalog({ blocks: landingBlocks });
+                    alert('Контент страниц успешно сохранен и синхронизирован с сервером!');
+                  }} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+                    {/* HERO BANNER SECTION */}
+                    <div className="admin-table-card" style={{ padding: '24px' }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <i className="ri-slideshow-3-line" style={{ color: 'var(--accent)' }}></i>
+                        Главный баннер (Слайды Hero)
+                      </h3>
+
+                      {[0, 1, 2].map((idx) => {
+                        const slideName = idx === 0 ? 'Слайд 1 (Окна)' : idx === 1 ? 'Слайд 2 (Бытовая техника)' : 'Слайд 3 (Мебель)';
+                        return (
+                          <div key={idx} style={{ marginBottom: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                            <h4 style={{ fontSize: '14px', fontWeight: '750', margin: '0 0 16px 0', color: 'var(--accent)' }}>{slideName}</h4>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Заголовок (RU)</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.hero?.[idx]?.titleRu || ''}
+                                  onChange={(e) => {
+                                    const newHero = [...(landingBlocks.hero || [])];
+                                    newHero[idx] = { ...newHero[idx], titleRu: e.target.value };
+                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                  }}
+                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Заголовок (KZ)</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.hero?.[idx]?.titleKz || ''}
+                                  onChange={(e) => {
+                                    const newHero = [...(landingBlocks.hero || [])];
+                                    newHero[idx] = { ...newHero[idx], titleKz: e.target.value };
+                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                  }}
+                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание / Подзаголовок (RU)</label>
+                                <textarea
+                                  rows={2}
+                                  value={landingBlocks?.hero?.[idx]?.leadRu || ''}
+                                  onChange={(e) => {
+                                    const newHero = [...(landingBlocks.hero || [])];
+                                    newHero[idx] = { ...newHero[idx], leadRu: e.target.value };
+                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                  }}
+                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание / Подзаголовок (KZ)</label>
+                                <textarea
+                                  rows={2}
+                                  value={landingBlocks?.hero?.[idx]?.leadKz || ''}
+                                  onChange={(e) => {
+                                    const newHero = [...(landingBlocks.hero || [])];
+                                    newHero[idx] = { ...newHero[idx], leadKz: e.target.value };
+                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                  }}
+                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px', resize: 'vertical', fontFamily: 'inherit' }}
+                                />
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Текст кнопки (RU)</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.hero?.[idx]?.btnTextRu || ''}
+                                  onChange={(e) => {
+                                    const newHero = [...(landingBlocks.hero || [])];
+                                    newHero[idx] = { ...newHero[idx], btnTextRu: e.target.value };
+                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                  }}
+                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Текст кнопки (KZ)</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.hero?.[idx]?.btnTextKz || ''}
+                                  onChange={(e) => {
+                                    const newHero = [...(landingBlocks.hero || [])];
+                                    newHero[idx] = { ...newHero[idx], btnTextKz: e.target.value };
+                                    setLandingBlocks({ ...landingBlocks, hero: newHero });
+                                  }}
+                                  style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* COMPANY STATS SECTION */}
+                    <div className="admin-table-card" style={{ padding: '24px' }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <i className="ri-bar-chart-box-line" style={{ color: 'var(--accent)' }}></i>
+                        Показатели компании (Статистика)
+                      </h3>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        {[0, 1, 2, 3].map((idx) => (
+                          <div key={idx} style={{ padding: '16px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                            <h4 style={{ fontSize: '13px', fontWeight: '750', margin: '0 0 12px 0', color: 'var(--accent)' }}>Карточка {idx + 1}</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              <div>
+                                <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Число / Значение (например: 50 000+)</label>
+                                <input
+                                  type="text"
+                                  value={landingBlocks?.stats?.[idx]?.num || ''}
+                                  onChange={(e) => {
+                                    const newStats = [...(landingBlocks.stats || [])];
+                                    newStats[idx] = { ...newStats[idx], num: e.target.value };
+                                    setLandingBlocks({ ...landingBlocks, stats: newStats });
+                                  }}
+                                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                />
+                              </div>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                <div>
+                                  <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание (RU)</label>
+                                  <input
+                                    type="text"
+                                    value={landingBlocks?.stats?.[idx]?.labelRu || ''}
+                                    onChange={(e) => {
+                                      const newStats = [...(landingBlocks.stats || [])];
+                                      newStats[idx] = { ...newStats[idx], labelRu: e.target.value };
+                                      setLandingBlocks({ ...landingBlocks, stats: newStats });
+                                    }}
+                                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                  />
+                                </div>
+                                <div>
+                                  <label style={{ fontSize: '11px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание (KZ)</label>
+                                  <input
+                                    type="text"
+                                    value={landingBlocks?.stats?.[idx]?.labelKz || ''}
+                                    onChange={(e) => {
+                                      const newStats = [...(landingBlocks.stats || [])];
+                                      newStats[idx] = { ...newStats[idx], labelKz: e.target.value };
+                                      setLandingBlocks({ ...landingBlocks, stats: newStats });
+                                    }}
+                                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* CONTACTS & LINKS SECTION */}
+                    <div className="admin-table-card" style={{ padding: '24px' }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 20px 0', borderBottom: '1px solid var(--border)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <i className="ri-contacts-book-line" style={{ color: 'var(--accent)' }}></i>
+                        Контакты и ссылки
+                      </h3>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+                        <div>
+                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Номер телефона для звонков</label>
+                          <input
+                            type="text"
+                            value={landingBlocks?.contacts?.phone || ''}
+                            onChange={(e) => {
+                              setLandingBlocks({
+                                ...landingBlocks,
+                                contacts: { ...(landingBlocks.contacts || {}), phone: e.target.value }
+                              });
+                            }}
+                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Номер телефона для WhatsApp</label>
+                          <input
+                            type="text"
+                            value={landingBlocks?.contacts?.whatsapp || ''}
+                            onChange={(e) => {
+                              setLandingBlocks({
+                                ...landingBlocks,
+                                contacts: { ...(landingBlocks.contacts || {}), whatsapp: e.target.value }
+                              });
+                            }}
+                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div>
+                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Адрес офиса (RU)</label>
+                          <input
+                            type="text"
+                            value={landingBlocks?.contacts?.addressRu || ''}
+                            onChange={(e) => {
+                              setLandingBlocks({
+                                ...landingBlocks,
+                                contacts: { ...(landingBlocks.contacts || {}), addressRu: e.target.value }
+                              });
+                            }}
+                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Адрес офиса (KZ)</label>
+                          <input
+                            type="text"
+                            value={landingBlocks?.contacts?.addressKz || ''}
+                            onChange={(e) => {
+                              setLandingBlocks({
+                                ...landingBlocks,
+                                contacts: { ...(landingBlocks.contacts || {}), addressKz: e.target.value }
+                              });
+                            }}
+                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '13px' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* SAVE BUTTON ROW */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
+                      <button type="submit" className="btn-primary" style={{ padding: '14px 28px', borderRadius: '12px', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700' }}>
+                        <i className="ri-save-3-line"></i> Сохранить изменения блоков
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -3506,7 +3858,7 @@ const pageDataMap = {
           <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему">
             <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
           </button>
-          <a href="https://wa.me/77058462749" target="_blank" rel="noopener noreferrer" className="header-whatsapp-btn" title="Написать в WhatsApp" style={{
+          <a href={`https://wa.me/${getWhatsappRaw()}`} target="_blank" rel="noopener noreferrer" className="header-whatsapp-btn" title="Написать в WhatsApp" style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -3524,8 +3876,8 @@ const pageDataMap = {
           }}>
             <i className="ri-whatsapp-line"></i>
           </a>
-          <a href="tel:+77058462749" className="phone" aria-label="Позвонить">
-            <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>+7 (705) 846-27-49</span>
+          <a href={`tel:${getPhoneRaw()}`} className="phone" aria-label="Позвонить">
+            <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>{getPhoneFormatted()}</span>
           </a>
           
           {user ? (
@@ -4001,7 +4353,7 @@ const pageDataMap = {
                           <i className="ri-chat-check-line"></i> {t('srv_btn')}
                         </a>
                         <a
-                          href={`https://wa.me/77058462749?text=${encodeURIComponent(
+                          href={`https://wa.me/${getWhatsappRaw()}?text=${encodeURIComponent(
                             lang === 'ru'
                               ? `Здравствуйте! Хочу заказать услугу: "${t(currentDetail.title)}"`
                               : lang === 'kz'
@@ -4840,9 +5192,21 @@ const pageDataMap = {
               const heroSlides = [
                 {
                   pill: lang === 'ru' ? '🔧 Направление: Окна и оконные системы' : (lang === 'kz' ? '🔧 Бағыт: Терезе және окон жүйелері' : '🔧 Category: Windows and window systems'),
-                  title: lang === 'ru' ? 'Профессиональный ремонт и<br/>регулировка <span class="accent">окон под ключ</span>' : (lang === 'kz' ? 'Терезелерді кәсіби жөндеу және<br/><span class="accent">реттеу</span>' : 'Professional repair and<br/>adjustment of <span class="accent">windows</span>'),
-                  lead: lang === 'ru' ? 'Устраним продувание, заменим уплотнитель, отрегулируем фурнитуру с гарантией до 12 месяцев. Быстрый выезд мастера.' : (lang === 'kz' ? 'Соғуды жоямыз, тығыздауышты ауыстырамыз, 12 айға дейінгі кепілдікпен фурнитураны реттейміз. Шебердің жылдам келуі.' : 'We eliminate drafts, replace seals, and adjust hardware under a 12-month warranty. Fast master arrival.'),
-                  btnText: lang === 'ru' ? 'Вызвать оконщика' : (lang === 'kz' ? 'Шеберді шақыру' : 'Call a window master'),
+                  title: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[0]?.titleRu || 'Профессиональный ремонт и<br/>регулировка <span class="accent">окон под ключ</span>') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[0]?.titleKz || 'Терезелерді кәсіби жөндеу және<br/><span class="accent">реттеу</span>') 
+                      : 'Professional repair and<br/>adjustment of <span class="accent">windows</span>'),
+                  lead: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[0]?.leadRu || 'Устраним продувание, заменим уплотнитель, отрегулируем фурнитуру с гарантией до 12 месяцев. Быстрый выезд мастера.') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[0]?.leadKz || 'Соғуды жоямыз, тығыздауышты ауыстырамыз, 12 айға дейінгі кепілдікпен фурнитураны реттейміз. Шебердің жылдам келуі.') 
+                      : 'We eliminate drafts, replace seals, and adjust hardware under a 12-month warranty. Fast master arrival.'),
+                  btnText: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[0]?.btnTextRu || 'Вызвать оконщика') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[0]?.btnTextKz || 'Шеберді шақыру') 
+                      : 'Call a window master'),
                   img: './slide_windows.png',
                   cat: 'okna',
                   widget1: { icon: 'ri-window-line', label: lang === 'ru' ? 'Регулировка' : (lang === 'kz' ? 'Реттеу' : 'Adjustment'), value: lang === 'ru' ? 'от 2 500 ₸' : (lang === 'kz' ? '2 500 ₸ бастап' : 'from 2,500 ₸') },
@@ -4852,9 +5216,21 @@ const pageDataMap = {
                 },
                 {
                   pill: lang === 'ru' ? '⚡ Направление: Бытовая техника' : (lang === 'kz' ? '⚡ Бағыт: Тұрмыстық техника' : '⚡ Category: Home Appliances'),
-                  title: lang === 'ru' ? 'Срочный и надежный ремонт<br/><span class="accent">бытовой техники</span> на дому' : (lang === 'kz' ? 'Тұрмыстық техниканы үйге<br/>барып <span class="accent">шұғыл жөндеу</span>' : 'Urgent and reliable repair of<br/><span class="accent">home appliances</span> at home'),
-                  lead: lang === 'ru' ? 'Ремонт холодильников, стиральных и посудомоечных машин. Оригинальные запчасти в наличии, выезд мастера за 45 минут.' : (lang === 'kz' ? 'Тоңазытқыштарды, кір жуғыш және ыдыс жуғыш машиналарды жөндеу. Түпнұсқа бөлшектер бар, шебер 45 минутта келеді.' : 'Repair of refrigerators, washing machines, and dishwashewers. Original parts in stock, master arrival in 45 minutes.'),
-                  btnText: lang === 'ru' ? 'Вызвать мастера' : (lang === 'kz' ? 'Шеберді шақыру' : 'Call a master'),
+                  title: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[1]?.titleRu || 'Срочный и надежный ремонт<br/><span class="accent">бытовой техники</span> на дому') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[1]?.titleKz || 'Тұрмыстық техниканы үйге<br/>барып <span class="accent">шұғыл жөндеу</span>') 
+                      : 'Urgent and reliable repair of<br/><span class="accent">home appliances</span> at home'),
+                  lead: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[1]?.leadRu || 'Ремонт холодильников, стиральных и посудомоечных машин. Оригинальные запчасти в наличии, выезд мастера за 45 минут.') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[1]?.leadKz || 'Тоңазытқыштарды, кір жуғыш және ыдыс жуғыш машиналарды жөндеу. Түпнұсқа бөлшектер бар, шебер 45 минутта келеді.') 
+                      : 'Repair of refrigerators, washing machines, and dishwashewers. Original parts in stock, master arrival in 45 minutes.'),
+                  btnText: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[1]?.btnTextRu || 'Вызвать мастера') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[1]?.btnTextKz || 'Шеберді шақыру') 
+                      : 'Call a master'),
                   img: './slide_appliances.png',
                   cat: 'servis',
                   widget1: { icon: 'ri-tools-line', label: lang === 'ru' ? 'Диагностика' : (lang === 'kz' ? 'Диагностика' : 'Diagnostics'), value: lang === 'ru' ? 'Бесплатно' : (lang === 'kz' ? 'Тегін' : 'Free') },
@@ -4864,9 +5240,21 @@ const pageDataMap = {
                 },
                 {
                   pill: lang === 'ru' ? '🛋️ Направление: Ремонт и сборка мебели' : (lang === 'kz' ? '🛋️ Бағыт: Жиһаз құрастыру және жөндеу' : '🛋️ Category: Furniture Assembly & Repair'),
-                  title: lang === 'ru' ? 'Качественная сборка и<br/>реставрация <span class="accent">вашей мебели</span>' : (lang === 'kz' ? 'Жиһаздарды сапалы құрастыру<br/>және <span class="accent">қалпына келтіру</span>' : 'High-quality assembly and<br/>restoration of <span class="accent">your furniture</span>'),
-                  lead: lang === 'ru' ? 'Сборка кухонь, шкафов-купе, ремонт каркасов и перетяжка мягкой мебели с премиальной фурнитурой и гарантией качества.' : (lang === 'kz' ? 'Асүй жиһазын, шкафтарды құрастыру, қаңқаларды жөндеу және сапалы фурнитурамен жұмсақ жиһазды қаптау.' : 'Assembly of kitchens, sliding wardrobes, frame repairs, and reupholstering of upholstered furniture with premium hardware.'),
-                  btnText: lang === 'ru' ? 'Вызвать мебельщика' : (lang === 'kz' ? 'Шеберді шақыру' : 'Call a furniture master'),
+                  title: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[2]?.titleRu || 'Качественная сборка и<br/>реставрация <span class="accent">вашей мебели</span>') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[2]?.titleKz || 'Жиһаздарды сапалы құрастыру<br/>және <span class="accent">қалпына келтіру</span>') 
+                      : 'High-quality assembly and<br/>restoration of <span class="accent">your furniture</span>'),
+                  lead: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[2]?.leadRu || 'Сборка кухонь, шкафов-купе, ремонт каркасов и перетяжка мягкой мебели с премиальной фурнитурой и гарантией качества.') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[2]?.leadKz || 'Асүй жиһазын, шкафтарды құрастыру, қаңқаларды жөндеу және сапалы фурнитурамен жұмсақ жиһазды қаптау.') 
+                      : 'Assembly of kitchens, sliding wardrobes, frame repairs, and reupholstering of upholstered furniture with premium hardware.'),
+                  btnText: lang === 'ru' 
+                    ? (landingBlocks?.hero?.[2]?.btnTextRu || 'Вызвать мебельщика') 
+                    : (lang === 'kz' 
+                      ? (landingBlocks?.hero?.[2]?.btnTextKz || 'Шеберді шақыру') 
+                      : 'Call a furniture master'),
                   img: './slide_furniture.png',
                   cat: 'mebel',
                   widget1: { icon: 'ri-sofa-line', label: lang === 'ru' ? 'Перетяжка' : (lang === 'kz' ? 'Қаптау' : 'Reupholstery'), value: lang === 'ru' ? 'от 8 000 ₸' : (lang === 'kz' ? '8 000 ₸ бастап' : 'from 8,000 ₸') },
@@ -4931,12 +5319,19 @@ const pageDataMap = {
                           </div>
 
                           <ul className="hero-stats">
-                            {statsData.map((st, idx) => (
-                              <li key={idx}>
-                                <strong>{t(st.num)}</strong>
-                                <span>{t(st.label)}</span>
-                              </li>
-                            ))}
+                            {(() => {
+                              const customStats = (landingBlocks?.stats || []).map(st => ({
+                                num: st.num,
+                                label: lang === 'ru' ? st.labelRu : (lang === 'kz' ? st.labelKz : st.labelRu)
+                              }));
+                              const displayStats = customStats.length > 0 ? customStats : statsData;
+                              return displayStats.map((st, idx) => (
+                                <li key={idx}>
+                                  <strong>{t(st.num)}</strong>
+                                  <span>{t(st.label)}</span>
+                                </li>
+                              ));
+                            })()}
                           </ul>
                         </div>
 
@@ -5663,7 +6058,7 @@ const pageDataMap = {
               </div>
 
               <a
-                href={`https://wa.me/77058462749?text=${encodeURIComponent(
+                href={`https://wa.me/${getWhatsappRaw()}?text=${encodeURIComponent(
                   lang === 'ru'
                     ? `Здравствуйте! Хочу заказать услугу: "${t(formService)}"`
                     : lang === 'kz'
@@ -5720,9 +6115,9 @@ const pageDataMap = {
         </div>
         <div className="f-col">
           <h5>{t('f_contact')}</h5>
-          <p><a href="tel:+77058462749">+7 (705) 846-27-49</a></p>
+          <p><a href={`tel:${getPhoneRaw()}`}>{getPhoneFormatted()}</a></p>
           <p>{t('f_hours')}</p>
-          <p><span>{lang === 'en' ? getCityDisplay(city) : (lang === 'kz' ? getCityDisplay(city) + ' қ.' : 'г. ' + getCityDisplay(city))}</span>, {t('f_address')}</p>
+          <p><span>{lang === 'en' ? getCityDisplay(city) : (lang === 'kz' ? getCityDisplay(city) + ' қ.' : 'г. ' + getCityDisplay(city))}</span>, {getAddress()}</p>
         </div>
         <div className="f-col">
           <h5>{t('f_sections')}</h5>
@@ -6626,10 +7021,10 @@ const pageDataMap = {
                   </p>
 
                   <div className="support-actions">
-                    <a href="https://wa.me/77058462749" target="_blank" rel="noopener noreferrer" className="support-btn whatsapp-btn">
+                    <a href={`https://wa.me/${getWhatsappRaw()}`} target="_blank" rel="noopener noreferrer" className="support-btn whatsapp-btn">
                       <i className="ri-whatsapp-line"></i> Написать в WhatsApp
                     </a>
-                    <a href="tel:+77058462749" className="support-btn phone-btn">
+                    <a href={`tel:${getPhoneRaw()}`} className="support-btn phone-btn">
                       <i className="ri-phone-line"></i> Позвонить оператору
                     </a>
                   </div>
@@ -7036,7 +7431,7 @@ const pageDataMap = {
 
       {/* Floating WhatsApp Button */}
       <a
-        href="https://wa.me/77058462749"
+        href={`https://wa.me/${getWhatsappRaw()}`}
         target="_blank"
         rel="noopener noreferrer"
         className="whatsapp-float"
