@@ -3963,28 +3963,27 @@ body.light-theme .reviews-floating-btn:hover {
   }
   .mega-mobile-tabs-scroll {
     display: flex;
+    flex-direction: column;
     gap: 8px;
-    padding: 12px 16px;
-    overflow-x: auto;
+    padding: 16px;
     border-bottom: 1px solid var(--line);
     background: var(--surface);
-    scrollbar-width: none;
     flex-shrink: 0;
   }
-  .mega-mobile-tabs-scroll::-webkit-scrollbar {
-    display: none;
-  }
   .mega-mobile-tab-pill {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
     font-weight: 700;
     border: 1.5px solid var(--line);
     background: var(--surface-2);
     color: var(--muted);
     cursor: pointer;
     transition: all 0.2s ease;
-    white-space: nowrap;
     font-family: inherit;
   }
   .mega-mobile-tab-pill.active {
@@ -4148,22 +4147,37 @@ body.light-theme .reviews-floating-btn:hover {
 
   /* Mobile services catalog optimization */
   .cat-nav-pills {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    margin-left: -6vw;
-    margin-right: -6vw;
-    padding: 10px 6vw;
-    margin-bottom: 24px;
-    background: transparent;
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    box-shadow: none;
-    backdrop-filter: none;
+    display: flex;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 24px !important;
+    background: var(--surface-2) !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    overflow-x: visible !important;
   }
   .cat-pill {
-    padding: 8px 16px;
-    font-size: 13px;
+    width: 100% !important;
+    justify-content: space-between !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    border-radius: 12px !important;
+  }
+  .cat-pill::after {
+    content: '→';
+    margin-left: 10px;
+    opacity: 0.5;
+    display: inline-block !important;
+  }
+  .cat-pill.active::after {
+    content: '✓';
+    opacity: 1;
+    font-weight: bold;
   }
   .srv-cards-grid {
     gap: 16px;

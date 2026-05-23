@@ -3478,8 +3478,8 @@ const pageDataMap = {
           <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему">
             <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
           </button>
-          <a href="tel:+77780211316" className="phone" aria-label="Позвонить">
-            <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>+7 (778) 021-13-16</span>
+          <a href="tel:+77058462749" className="phone" aria-label="Позвонить">
+            <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>+7 (705) 846-27-49</span>
           </a>
           
           {user ? (
@@ -4035,14 +4035,13 @@ const pageDataMap = {
 
               {/* Mobile Accordion layout - visible only on mobile */}
               <div className="mega-mobile-body">
-                {/* Swipeable Tabs Scroll row */}
+                {/* Mobile Section Tabs List */}
                 <div className="mega-mobile-tabs-scroll">
                   {megaTabs.map(tab => (
                     <button
                       key={tab.id}
                       className={`mega-mobile-tab-pill ${activeMegaTab === tab.id ? 'active' : ''}`}
-                      onClick={(e) => {
-                        e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                      onClick={() => {
                         setActiveMegaTab(tab.id);
                         const firstCat = megaCategories.find(c => c.tab === tab.id);
                         if (firstCat) {
@@ -4050,7 +4049,12 @@ const pageDataMap = {
                         }
                       }}
                     >
-                      {t(tab.label)}
+                      <span>{t(tab.label)}</span>
+                      {activeMegaTab === tab.id ? (
+                        <i className="ri-checkbox-circle-fill" style={{ fontSize: '16px', color: 'var(--accent)' }}></i>
+                      ) : (
+                        <i className="ri-arrow-right-s-line" style={{ opacity: 0.5 }}></i>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -5481,7 +5485,7 @@ const pageDataMap = {
         </div>
         <div className="f-col">
           <h5>{t('f_contact')}</h5>
-          <p><a href="tel:+77780211316">+7 (778) 021-13-16</a></p>
+          <p><a href="tel:+77058462749">+7 (705) 846-27-49</a></p>
           <p>{t('f_hours')}</p>
           <p><span>{lang === 'en' ? getCityDisplay(city) : (lang === 'kz' ? getCityDisplay(city) + ' қ.' : 'г. ' + getCityDisplay(city))}</span>, {t('f_address')}</p>
         </div>
@@ -6315,10 +6319,10 @@ const pageDataMap = {
                   </p>
 
                   <div className="support-actions">
-                    <a href="https://wa.me/77780211316" target="_blank" rel="noopener noreferrer" className="support-btn whatsapp-btn">
+                    <a href="https://wa.me/77058462749" target="_blank" rel="noopener noreferrer" className="support-btn whatsapp-btn">
                       <i className="ri-whatsapp-line"></i> Написать в WhatsApp
                     </a>
-                    <a href="tel:+77780211316" className="support-btn phone-btn">
+                    <a href="tel:+77058462749" className="support-btn phone-btn">
                       <i className="ri-phone-line"></i> Позвонить оператору
                     </a>
                   </div>
