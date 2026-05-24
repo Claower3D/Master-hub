@@ -4925,29 +4925,9 @@ const pageDataMap = {
               {/* Mobile Accordion layout - visible only on mobile */}
               <div className="mega-mobile-body">
                 {/* Mobile controls header - all in one single line */}
-                <div className="mega-mobile-top-controls" style={{
-                  padding: '4px 0 16px 0',
-                  borderBottom: '1px solid var(--line)',
-                  marginBottom: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '8px',
-                  flexShrink: 0
-                }}>
-                  {/* City selector - styled very compactly */}
-                  <div className="city-switch" style={{ 
-                    flex: 1, 
-                    minWidth: '90px', 
-                    height: '38px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '0 8px',
-                    background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
-                    border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '10px'
-                  }}>
+                <div className="mega-mobile-top-controls">
+                  {/* City selector - styled via CSS class */}
+                  <div className="city-switch">
                     <i className="ri-map-pin-line" style={{ color: 'var(--accent)', fontSize: '14px' }}></i>
                     <select 
                       className="city-select" 
@@ -4989,101 +4969,54 @@ const pageDataMap = {
                     </select>
                   </div>
                   
-                  {/* Language Selector */}
-                  <div className="lang-switch" style={{ 
-                    display: 'flex', 
-                    gap: '2px', 
-                    background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.04)',
-                    border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '10px',
-                    padding: '2px'
-                  }}>
+                  {/* Language Selector - styled via CSS class */}
+                  <div className="lang-switch">
                     <button 
                       className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} 
                       onClick={() => setLang('ru')}
-                      style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                      style={{ border: 'none', cursor: 'pointer' }}
                     >
                       RU
                     </button>
                     <button 
                       className={`lang-btn ${lang === 'kz' ? 'active' : ''}`} 
                       onClick={() => setLang('kz')}
-                      style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                      style={{ border: 'none', cursor: 'pointer' }}
                     >
                       KZ
                     </button>
                     <button 
                       className={`lang-btn ${lang === 'en' ? 'active' : ''}`} 
                       onClick={() => setLang('en')}
-                      style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}
+                      style={{ border: 'none', cursor: 'pointer' }}
                     >
                       EN
                     </button>
                   </div>
 
-                  {/* Theme Toggle - circular/square compact icon */}
+                  {/* Theme Toggle - styled via CSS class */}
                   <button 
                     className="theme-toggle" 
                     onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} 
-                    aria-label="Переключить тему" 
-                    style={{
-                      width: '38px',
-                      height: '38px',
-                      borderRadius: '10px',
-                      border: theme === 'light' ? '1px solid rgba(0,0,0,0.1)' : '1px solid rgba(255,255,255,0.1)',
-                      background: theme === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.05)',
-                      color: 'var(--text)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '15px',
-                      flexShrink: 0
-                    }}
+                    aria-label="Переключить тему"
                   >
                     <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
                   </button>
                   
-                  {/* Login/Cabinet icon-only button */}
+                  {/* Login/Cabinet icon-only button - styled via CSS class */}
                   {user ? (
                     <button 
+                      className="auth-btn"
                       onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }} 
                       title={t('nav_cabinet')}
-                      style={{ 
-                        width: '38px', 
-                        height: '38px', 
-                        borderRadius: '10px', 
-                        background: 'var(--accent)', 
-                        color: '#0b1020', 
-                        border: 'none', 
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '16px',
-                        flexShrink: 0
-                      }}
                     >
                       <i className="ri-user-line"></i>
                     </button>
                   ) : (
                     <button 
+                      className="auth-btn"
                       onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }} 
                       title={t('nav_login')}
-                      style={{ 
-                        width: '38px', 
-                        height: '38px', 
-                        borderRadius: '10px', 
-                        background: 'var(--accent)', 
-                        color: '#0b1020', 
-                        border: 'none', 
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '16px',
-                        flexShrink: 0
-                      }}
                     >
                       <i className="ri-login-box-line"></i>
                     </button>
