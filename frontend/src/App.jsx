@@ -1720,6 +1720,10 @@ export default function App() {
       });
     });
 
+    // Sort alphabetically from A to Z (localeCompare in active lang)
+    matchingCats.sort((a, b) => t(a.title).localeCompare(t(b.title), lang));
+    matchingSubs.sort((a, b) => t(a.title).localeCompare(t(b.title), lang));
+
     return { categories: matchingCats, subcategories: matchingSubs };
   };
 
@@ -4474,22 +4478,7 @@ const pageDataMap = {
           <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} aria-label="Переключить тему">
             <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
           </button>
-          <a href={`https://wa.me/${getWhatsappRaw()}`} target="_blank" rel="noopener noreferrer" className="header-whatsapp-btn" title="Написать в WhatsApp" style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '38px',
-            height: '38px',
-            borderRadius: '50%',
-            background: 'rgba(37, 211, 102, 0.12)',
-            border: '1px solid rgba(37, 211, 102, 0.35)',
-            color: '#25d366',
-            fontSize: '20px',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-            textDecoration: 'none',
-            marginRight: '12px'
-          }}>
+          <a href={`https://wa.me/${getWhatsappRaw()}`} target="_blank" rel="noopener noreferrer" className="header-whatsapp-btn" title="Написать в WhatsApp">
             <i className="ri-whatsapp-line"></i>
           </a>
           <a href={`tel:${getPhoneRaw()}`} className="phone" aria-label="Позвонить">
@@ -4520,98 +4509,15 @@ const pageDataMap = {
             {lang === 'ru' ? 'Каталог услуг' : (lang === 'kz' ? 'Қызметтер каталогы' : 'Services Catalog')}
           </div>
 
-          {/* Search & Close Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto' }}>
-            {/* Interactive Search Button */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-              {isMegaSearchExpanded || megaSearchQuery ? (
-                <div style={{ position: 'relative', width: '260px', display: 'flex', alignItems: 'center' }}>
-                  <i className="ri-search-line" style={{
-                    position: 'absolute', left: '12px', top: '50%',
-                    transform: 'translateY(-50%)',
-                    color: megaSearchQuery ? 'var(--accent)' : 'var(--muted)',
-                    fontSize: '14px', pointerEvents: 'none', transition: 'color 0.2s'
-                  }}></i>
-                  <input
-                    type="text"
-                    autoFocus
-                    placeholder={lang === 'ru' ? 'Поиск по каталогу...' : lang === 'kz' ? 'Іздеу...' : 'Search...'}
-                    value={megaSearchQuery}
-                    onChange={(e) => setMegaSearchQuery(e.target.value)}
-                    onBlur={() => {
-                      if (!megaSearchQuery) {
-                        setIsMegaSearchExpanded(false);
-                      }
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '8px 36px 8px 34px',
-                      background: megaSearchQuery
-                        ? (theme === 'light' ? 'rgba(124,242,199,0.09)' : 'rgba(124,242,199,0.07)')
-                        : (theme === 'light' ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.07)'),
-                      border: megaSearchQuery ? '1.5px solid var(--accent)' : (theme === 'light' ? '1.5px solid rgba(0,0,0,0.1)' : '1.5px solid rgba(255,255,255,0.12)'),
-                      borderRadius: '999px',
-                      color: theme === 'light' ? 'var(--text)' : '#fff',
-                      fontSize: '13px', fontWeight: '500', outline: 'none',
-                      transition: 'all 0.2s',
-                      boxShadow: megaSearchQuery ? '0 0 0 3px rgba(124,242,199,0.13)' : 'none'
-                    }}
-                  />
-                  {(megaSearchQuery || isMegaSearchExpanded) && (
-                    <button
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        setMegaSearchQuery('');
-                        setIsMegaSearchExpanded(false);
-                      }}
-                      style={{
-                        position: 'absolute', right: '10px', top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none', border: 'none',
-                        color: 'var(--accent)', cursor: 'pointer',
-                        fontSize: '14px', display: 'flex', alignItems: 'center', padding: 0
-                      }}
-                      title={lang === 'ru' ? 'Скрыть/Сбросить' : 'Hide/Clear'}
-                    >
-                      <i className="ri-close-circle-fill"></i>
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsMegaSearchExpanded(true)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '10px 20px',
-                    borderRadius: '999px',
-                    background: 'var(--surface-2)',
-                    border: '1px solid var(--line)',
-                    color: 'var(--text)',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  <i className="ri-search-line" style={{ fontSize: '15px' }}></i>
-                  <span>{lang === 'ru' ? 'Поиск' : lang === 'kz' ? 'Іздеу' : 'Search'}</span>
-                </button>
-              )}
-            </div>
-
-            {/* Close Button */}
-            <button
-              onClick={() => setMegaMenuOpen(false)}
-              className="mega-nav-close"
-              style={{ display: 'grid', flexShrink: 0, marginLeft: '16px' }}
-              title="Закрыть каталог"
-            >
-              ✕
-            </button>
-          </div>
+          {/* Close Button */}
+          <button
+            onClick={() => setMegaMenuOpen(false)}
+            className="mega-nav-close"
+            style={{ display: 'grid', flexShrink: 0 }}
+            title="Закрыть каталог"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Search Bar Row */}
