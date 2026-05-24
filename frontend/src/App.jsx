@@ -4757,7 +4757,7 @@ const pageDataMap = {
 
                 {/* Col 1: Categories */}
                 <div className="mega-col1">
-                  {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => (
+                  {[...megaCategories.filter(c => c.tab === activeMegaTab)].sort((a, b) => t(a.title).localeCompare(t(b.title), lang)).map(cat => (
                     <div
                       key={cat.id}
                       className={`mega-cat ${activeMegaCat === cat.id ? 'active' : ''}`}
@@ -4799,7 +4799,7 @@ const pageDataMap = {
                       <i className="ri-arrow-right-line mega-sub-arrow" style={{ color: 'var(--accent)' }}></i>
                     </div>
                   )}
-                  {(megaSubcategories[activeMegaCat] || []).map(sub => (
+                  {[...(megaSubcategories[activeMegaCat] || [])].sort((a, b) => t(a.title).localeCompare(t(b.title), lang)).map(sub => (
                     <div
                       key={sub.id}
                       className={`mega-sub ${activeMegaSub === sub.id ? 'active' : ''}`}
@@ -5146,7 +5146,7 @@ const pageDataMap = {
                       {lang === 'ru' ? 'Выберите категорию' : lang === 'kz' ? 'Санатты таңдаңыз' : 'Select category'}
                     </div>
 
-                    {megaCategories.filter(c => c.tab === activeMegaTab).map(cat => (
+                    {[...megaCategories.filter(c => c.tab === activeMegaTab)].sort((a, b) => t(a.title).localeCompare(t(b.title), lang)).map(cat => (
                       <div
                         key={cat.id}
                         onClick={() => {
@@ -5228,7 +5228,7 @@ const pageDataMap = {
                         {lang === 'ru' ? 'Нет подразделов' : lang === 'kz' ? 'Бөлімдер жоқ' : 'No subcategories'}
                       </div>
                     ) : (
-                      (megaSubcategories[activeMegaCat] || []).map(sub => (
+                      [...(megaSubcategories[activeMegaCat] || [])].sort((a, b) => t(a.title).localeCompare(t(b.title), lang)).map(sub => (
                         <div
                           key={sub.id}
                           onClick={() => {
