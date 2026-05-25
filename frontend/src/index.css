@@ -6119,7 +6119,7 @@ body.light-theme .geo-city-pill:hover {
     width: 100% !important;
   }
   .cb-form input,
-  .cb-form select,
+  .cb-form select:not(.cb-country-select),
   .cb-form textarea {
     width: 100% !important;
     box-sizing: border-box !important;
