@@ -385,6 +385,68 @@ export default function App() {
     return landingBlocks?.contacts?.addressRu || 'г. Алматы, пр. Аль-Фараби 77/7';
   };
 
+  const handleInlineEdit = (type, keyPath, label, currentValue) => {
+    const newVal = prompt(`Изменить ${label} [${previewLang.toUpperCase()}]:`, currentValue);
+    if (newVal === null) return; // User cancelled
+    
+    if (type === 'landing') {
+      const updated = { ...landingBlocks };
+      let currentObj = updated;
+      for (let i = 0; i < keyPath.length - 1; i++) {
+        currentObj = currentObj[keyPath[i]];
+      }
+      currentObj[keyPath[keyPath.length - 1]] = newVal;
+      setLandingBlocks(updated);
+      localStorage.setItem('landingBlocks', JSON.stringify(updated));
+      syncCatalogWithBackend(megaTabs, megaCategories, megaSubcategories, megaDetails, updated);
+    } else if (type === 'category-title') {
+      const catId = keyPath;
+      const updated = megaCategories.map(cat => cat.id === catId ? { ...cat, title: newVal } : cat);
+      setMegaCategories(updated);
+      localStorage.setItem('megaCategories', JSON.stringify(updated));
+      syncCatalogWithBackend(megaTabs, updated, megaSubcategories, megaDetails, landingBlocks);
+    } else if (type === 'category-detail') {
+      const [catId, field, idx] = keyPath;
+      const updated = { ...megaDetails };
+      if (!updated[catId]) updated[catId] = {};
+      if (idx !== undefined) {
+        if (field === 'features') {
+          const arr = [...(updated[catId].features || [])];
+          arr[idx] = newVal;
+          updated[catId].features = arr;
+        } else if (field === 'specs-label') {
+          const arr = [...(updated[catId].specs || [])];
+          arr[idx] = { ...arr[idx], label: newVal };
+          updated[catId].specs = arr;
+        } else if (field === 'specs-value') {
+          const arr = [...(updated[catId].specs || [])];
+          arr[idx] = { ...arr[idx], value: newVal };
+          updated[catId].specs = arr;
+        }
+      } else {
+        updated[catId][field] = newVal;
+      }
+      setMegaDetails(updated);
+      localStorage.setItem('megaDetails', JSON.stringify(updated));
+      syncCatalogWithBackend(megaTabs, megaCategories, megaSubcategories, updated, landingBlocks);
+    } else if (type === 'subcategory-title') {
+      const [catId, subId] = keyPath;
+      const updated = { ...megaSubcategories };
+      updated[catId] = updated[catId].map(sub => sub.id === subId ? { ...sub, title: newVal } : sub);
+      setMegaSubcategories(updated);
+      localStorage.setItem('megaSubcategories', JSON.stringify(updated));
+      syncCatalogWithBackend(megaTabs, megaCategories, updated, megaDetails, landingBlocks);
+    } else if (type === 'subcategory-detail') {
+      const [subId, field] = keyPath;
+      const updated = { ...megaDetails };
+      if (!updated[subId]) updated[subId] = {};
+      updated[subId][field] = newVal;
+      setMegaDetails(updated);
+      localStorage.setItem('megaDetails', JSON.stringify(updated));
+      syncCatalogWithBackend(megaTabs, megaCategories, megaSubcategories, updated, landingBlocks);
+    }
+  };
+
   // Section (Tab) Form State
   const [showTabForm, setShowTabForm] = useState(false);
   const [editingTabObj, setEditingTabObj] = useState(null);
@@ -4263,13 +4325,24 @@ export default function App() {
                                 return (
                                   <div>
                                     <h3
+                                      className="editable-preview-block"
+                                      onClick={() => handleInlineEdit('landing', ['hero', currentHeroSlide, previewLang === 'ru' ? 'titleRu' : 'titleKz'], 'Заголовок слайда', previewLang === 'ru' ? h.titleRu : h.titleKz)}
                                       style={{ fontSize: '16px', fontWeight: '850', color: 'var(--text)', marginBottom: '8px' }}
                                       dangerouslySetInnerHTML={{ __html: previewLang === 'ru' ? (h.titleRu || 'Заголовок') : (h.titleKz || 'Тақырып') }}
                                     />
-                                    <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '12px', lineHeight: '1.4' }}>
+                                    <p
+                                      className="editable-preview-block"
+                                      onClick={() => handleInlineEdit('landing', ['hero', currentHeroSlide, previewLang === 'ru' ? 'leadRu' : 'leadKz'], 'Описание слайда', previewLang === 'ru' ? h.leadRu : h.leadKz)}
+                                      style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '12px', lineHeight: '1.4' }}
+                                    >
                                       {previewLang === 'ru' ? h.leadRu : h.leadKz}
                                     </p>
-                                    <button type="button" className="btn-primary" style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '6px' }}>
+                                    <button
+                                      type="button"
+                                      className="btn-primary editable-preview-block"
+                                      onClick={() => handleInlineEdit('landing', ['hero', currentHeroSlide, previewLang === 'ru' ? 'btnTextRu' : 'btnTextKz'], 'Текст кнопки слайда', previewLang === 'ru' ? h.btnTextRu : h.btnTextKz)}
+                                      style={{ padding: '6px 12px', fontSize: '11px', borderRadius: '6px' }}
+                                    >
                                       {previewLang === 'ru' ? h.btnTextRu : h.btnTextKz}
                                     </button>
                                   </div>
@@ -4287,8 +4360,20 @@ export default function App() {
                                   const st = landingBlocks?.stats?.[i] || {};
                                   return (
                                     <div key={i} style={{ textAlign: 'center', background: 'var(--surface)', padding: '8px 4px', borderRadius: '6px', border: '1px solid var(--line)' }}>
-                                      <strong style={{ fontSize: '12px', color: 'var(--accent)', display: 'block' }}>{st.num || '0'}</strong>
-                                      <span style={{ fontSize: '8px', color: 'var(--muted)', display: 'block', lineHeight: '1.1' }}>{previewLang === 'ru' ? st.labelRu : st.labelKz}</span>
+                                      <strong
+                                        className="editable-preview-block"
+                                        onClick={() => handleInlineEdit('landing', ['stats', i, 'num'], 'Число статистики', st.num)}
+                                        style={{ fontSize: '12px', color: 'var(--accent)', display: 'block' }}
+                                      >
+                                        {st.num || '0'}
+                                      </strong>
+                                      <span
+                                        className="editable-preview-block"
+                                        onClick={() => handleInlineEdit('landing', ['stats', i, previewLang === 'ru' ? 'labelRu' : 'labelKz'], 'Подпись статистики', previewLang === 'ru' ? st.labelRu : st.labelKz)}
+                                        style={{ fontSize: '8px', color: 'var(--muted)', display: 'block', lineHeight: '1.1' }}
+                                      >
+                                        {previewLang === 'ru' ? st.labelRu : st.labelKz}
+                                      </span>
                                     </div>
                                   );
                                 })}
@@ -4301,9 +4386,24 @@ export default function App() {
                                 📞 КОНТАКТНЫЕ ДАННЫЕ
                               </span>
                               <div style={{ fontSize: '11px', color: 'var(--text)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                <div><strong>Звонки:</strong> {landingBlocks?.contacts?.phone}</div>
-                                <div><strong>WhatsApp:</strong> {landingBlocks?.contacts?.whatsapp}</div>
-                                <div><strong>Адрес:</strong> {previewLang === 'ru' ? landingBlocks?.contacts?.addressRu : landingBlocks?.contacts?.addressKz}</div>
+                                <div
+                                  className="editable-preview-block"
+                                  onClick={() => handleInlineEdit('landing', ['contacts', 'phone'], 'Телефон', landingBlocks?.contacts?.phone)}
+                                >
+                                  <strong>Звонки:</strong> {landingBlocks?.contacts?.phone}
+                                </div>
+                                <div
+                                  className="editable-preview-block"
+                                  onClick={() => handleInlineEdit('landing', ['contacts', 'whatsapp'], 'WhatsApp', landingBlocks?.contacts?.whatsapp)}
+                                >
+                                  <strong>WhatsApp:</strong> {landingBlocks?.contacts?.whatsapp}
+                                </div>
+                                <div
+                                  className="editable-preview-block"
+                                  onClick={() => handleInlineEdit('landing', ['contacts', previewLang === 'ru' ? 'addressRu' : 'addressKz'], 'Адрес', previewLang === 'ru' ? landingBlocks?.contacts?.addressRu : landingBlocks?.contacts?.addressKz)}
+                                >
+                                  <strong>Адрес:</strong> {previewLang === 'ru' ? landingBlocks?.contacts?.addressRu : landingBlocks?.contacts?.addressKz}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -4345,15 +4445,30 @@ export default function App() {
                                     <span style={{ fontSize: '9px', background: 'rgba(124, 242, 199, 0.1)', color: 'var(--accent)', padding: '2px 6px', borderRadius: '4px', fontWeight: '700', textTransform: 'uppercase' }}>
                                       Услуги категории
                                     </span>
-                                    <h3 style={{ fontSize: '16px', fontWeight: '850', margin: '6px 0 8px 0' }}>{cat.title}</h3>
-                                    <p style={{ fontSize: '11px', color: 'var(--muted)', lineHeight: '1.4', marginBottom: '12px' }}>
+                                    <h3
+                                      className="editable-preview-block"
+                                      onClick={() => handleInlineEdit('category-title', cat.id, 'Название категории', cat.title)}
+                                      style={{ fontSize: '16px', fontWeight: '850', margin: '6px 0 8px 0' }}
+                                    >
+                                      {cat.title}
+                                    </h3>
+                                    <p
+                                      className="editable-preview-block"
+                                      onClick={() => handleInlineEdit('category-detail', [cat.id, 'desc'], 'Описание категории', catMeta.desc)}
+                                      style={{ fontSize: '11px', color: 'var(--muted)', lineHeight: '1.4', marginBottom: '12px' }}
+                                    >
                                       {catMeta.desc}
                                     </p>
 
                                     {/* Features mock */}
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
                                       {catMeta.features.map((feat, fIdx) => (
-                                        <div key={fIdx} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}>
+                                        <div
+                                          key={fIdx}
+                                          className="editable-preview-block"
+                                          onClick={() => handleInlineEdit('category-detail', [cat.id, 'features', fIdx], `Преимущество #${fIdx + 1}`, feat)}
+                                          style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', fontWeight: '600' }}
+                                        >
                                           <i className="ri-checkbox-circle-fill" style={{ color: 'var(--accent)' }}></i>
                                           <span>{feat}</span>
                                         </div>
@@ -4367,8 +4482,20 @@ export default function App() {
                                     <div style={{ position: 'absolute', bottom: '8px', left: '8px', right: '8px', background: 'rgba(20,27,52,0.9)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(124,242,199,0.3)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
                                       {catMeta.specs.map((spec, sIdx) => (
                                         <div key={sIdx} style={{ textAlign: 'center', fontSize: '8px' }}>
-                                          <div style={{ color: 'var(--muted)', fontSize: '6px', textTransform: 'uppercase' }}>{spec.label}</div>
-                                          <div style={{ color: 'var(--accent)', fontWeight: '700' }}>{spec.value}</div>
+                                          <div
+                                            className="editable-preview-block"
+                                            onClick={() => handleInlineEdit('category-detail', [cat.id, 'specs-label', sIdx], `Подпись характеристики #${sIdx + 1}`, spec.label)}
+                                            style={{ color: 'var(--muted)', fontSize: '6px', textTransform: 'uppercase' }}
+                                          >
+                                            {spec.label}
+                                          </div>
+                                          <div
+                                            className="editable-preview-block"
+                                            onClick={() => handleInlineEdit('category-detail', [cat.id, 'specs-value', sIdx], `Значение характеристики #${sIdx + 1}`, spec.value)}
+                                            style={{ color: 'var(--accent)', fontWeight: '700' }}
+                                          >
+                                            {spec.value}
+                                          </div>
                                         </div>
                                       ))}
                                     </div>
@@ -4387,14 +4514,36 @@ export default function App() {
                                     return (
                                       <div key={sub.id} style={{ background: 'var(--surface)', padding: '12px', borderRadius: '10px', border: '1px solid var(--line)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                                         <div>
-                                          <strong style={{ fontSize: '11px', display: 'block', marginBottom: '4px' }}>{sub.title}</strong>
-                                          <p style={{ fontSize: '9px', color: 'var(--muted)', lineHeight: '1.3' }}>
+                                          <strong
+                                            className="editable-preview-block"
+                                            onClick={() => handleInlineEdit('subcategory-title', [cat.id, sub.id], 'Название услуги', sub.title)}
+                                            style={{ fontSize: '11px', display: 'block', marginBottom: '4px' }}
+                                          >
+                                            {sub.title}
+                                          </strong>
+                                          <p
+                                            className="editable-preview-block"
+                                            onClick={() => handleInlineEdit('subcategory-detail', [sub.id, 'desc'], 'Описание услуги', subDetails.desc)}
+                                            style={{ fontSize: '9px', color: 'var(--muted)', lineHeight: '1.3' }}
+                                          >
                                             {subDetails.desc || 'Описание отсутствует...'}
                                           </p>
                                         </div>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', borderTop: '1px solid var(--line)', paddingTop: '6px', fontSize: '9px' }}>
-                                          <span style={{ color: 'var(--accent)', fontWeight: '750' }}>{subDetails.price || 'от 2 500 ₸'}</span>
-                                          <span style={{ color: 'var(--muted)' }}>{subDetails.warr || 'Гарантия 1 год'}</span>
+                                          <span
+                                            className="editable-preview-block"
+                                            onClick={() => handleInlineEdit('subcategory-detail', [sub.id, 'price'], 'Цена услуги', subDetails.price)}
+                                            style={{ color: 'var(--accent)', fontWeight: '750' }}
+                                          >
+                                            {subDetails.price || 'от 2 500 ₸'}
+                                          </span>
+                                          <span
+                                            className="editable-preview-block"
+                                            onClick={() => handleInlineEdit('subcategory-detail', [sub.id, 'warr'], 'Гарантия услуги', subDetails.warr)}
+                                            style={{ color: 'var(--muted)' }}
+                                          >
+                                            {subDetails.warr || 'Гарантия 1 год'}
+                                          </span>
                                         </div>
                                       </div>
                                     );
