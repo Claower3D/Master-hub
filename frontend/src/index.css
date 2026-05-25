@@ -67,6 +67,12 @@ section{padding:88px 6vw}
   color: #0b1020;
 }
 .catalog-btn i { font-size: 16px; }
+.catalog-text-desktop {
+  display: inline !important;
+}
+.catalog-text-mobile {
+  display: none !important;
+}
 
 .top-nav a:not(.catalog-btn){
   color:var(--muted);font-weight:600;font-size:13px;padding:6px 14px;border-radius:999px;transition:all .2s;white-space:nowrap;
@@ -3196,6 +3202,12 @@ body.light-theme .status-completed {
     gap: 4px !important;
     display: inline-flex !important;
   }
+  .catalog-text-desktop {
+    display: none !important;
+  }
+  .catalog-text-mobile {
+    display: inline !important;
+  }
   .top-cta {
     gap: 8px !important;
     margin-left: auto !important;
@@ -3252,19 +3264,30 @@ body.light-theme .status-completed {
 
 @media (max-width: 480px) {
   .topbar {
-    padding: 6px 16px !important;
+    padding: 6px 12px !important;
     margin: 0 !important;
     border-radius: 0 !important;
     width: 100% !important;
+    gap: 8px !important;
+  }
+  .brand {
     gap: 6px !important;
+  }
+  .logo {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 12px !important;
   }
   .brand-name {
     font-size: 13px !important;
   }
   .catalog-btn {
-    padding: 5px 10px !important;
+    padding: 6px 10px !important;
     font-size: 11px !important;
-    gap: 3px !important;
+    gap: 4px !important;
+  }
+  .top-cta {
+    gap: 6px !important;
   }
   .top-cta .phone {
     width: 32px !important;
@@ -3280,6 +3303,36 @@ body.light-theme .status-completed {
     width: 32px !important;
     height: 32px !important;
     font-size: 14px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .topbar {
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+  .logo {
+    display: none !important;
+  }
+  .brand-name {
+    font-size: 12px !important;
+  }
+  .catalog-text-mobile {
+    display: none !important;
+  }
+  .catalog-btn {
+    padding: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  }
+  .top-cta {
+    gap: 4px !important;
   }
 }
 

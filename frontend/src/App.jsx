@@ -4476,7 +4476,9 @@ export default function App() {
         </a>
         <nav className="top-nav">
           <a href="#" className="catalog-btn" onClick={(e) => { e.preventDefault(); setMegaMenuOpen(!megaMenuOpen); }}>
-            <i className="ri-menu-line"></i> <span>{t('nav_catalog')}</span>
+            <i className="ri-menu-line"></i>
+            <span className="catalog-text-desktop">{t('nav_catalog')}</span>
+            <span className="catalog-text-mobile">{lang === 'ru' ? 'Каталог' : (lang === 'kz' ? 'Каталог' : 'Catalog')}</span>
           </a>
           <a href="#contact">{t('nav_contact')}</a>
         </nav>

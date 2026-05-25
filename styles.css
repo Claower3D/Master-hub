@@ -900,6 +900,12 @@ footer{
   color: #0b1020 !important; box-shadow: 0 0 30px rgba(124,242,199,0.6);
   transform: translateY(-2px); border-color: transparent;
 }
+.catalog-text-desktop {
+  display: inline !important;
+}
+.catalog-text-mobile {
+  display: none !important;
+}
 
 .mega-nav {
   display: flex; align-items: center; gap: 10px; padding: 16px 32px;
