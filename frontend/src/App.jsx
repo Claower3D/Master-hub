@@ -6459,20 +6459,6 @@ const pageDataMap = {
             </div>
           </section>
 
-          {/* ═══ BRANDS ═══ */}
-          <section className="brands-section" data-reveal="fade-up">
-            <div className="wrap">
-              <div className="section-head" style={{ textAlign: 'center' }}>
-                <h2>{lang === 'ru' ? 'Работаем с любыми брендами' : lang === 'kz' ? 'Кез-келген брендпен жұмыс жасаймыз' : 'We Work With Any Brand'}</h2>
-                <p>{lang === 'ru' ? 'Оригинальные запчасти и сертифицированный сервис.' : lang === 'kz' ? 'Түпнұсқа бөлшектер және сертификатталған қызмет.' : 'Original parts and certified service.'}</p>
-              </div>
-              <div className="brands-pills-row">
-                {['Bosch','Samsung','LG','Indesit','Atlant','Siemens','Whirlpool','Electrolux','Beko','Candy','Gorenje','Ariston','Miele','AEG','Haier'].map((brand) => (
-                  <span key={brand} className="brand-pill">{brand}</span>
-                ))}
-              </div>
-            </div>
-          </section>
 
           {/* ═══ GEOGRAPHY ═══ */}
           <section className="geo-section" data-reveal="fade-up">
