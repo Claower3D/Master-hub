@@ -1,4 +1,4 @@
-:root{
+﻿:root{
   --bg:#0b1020;
   --bg-2:#0f152b;
   --surface:#141b34;
@@ -738,7 +738,7 @@ body.light-theme .hero-glow {
   transform: translateY(-2px);
 }
 
-/* WHY — horizontal timeline */
+/* WHY вЂ” horizontal timeline */
 .timeline {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -4451,13 +4451,13 @@ body.light-theme .reviews-floating-btn:hover {
     border-radius: 12px !important;
   }
   .cat-pill::after {
-    content: '→';
+    content: 'в†’';
     margin-left: 10px;
     opacity: 0.5;
     display: inline-block !important;
   }
   .cat-pill.active::after {
-    content: '✓';
+    content: 'вњ“';
     opacity: 1;
     font-weight: bold;
   }
@@ -4733,9 +4733,9 @@ body.light-theme .mega-mobile-top-controls .lang-btn.active {
 
 
 
-/* ══════════════════════════════════════════════════════════════════
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    HOW WE WORK SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .how-we-work-section {
   padding: 80px 0;
   background: var(--bg);
@@ -4854,9 +4854,9 @@ body.light-theme .how-step-card:hover .how-step-icon-wrap {
   .how-steps-grid { grid-template-columns: 1fr; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    STATS BANNER SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .stats-banner-section {
   padding: 0;
   background: var(--bg);
@@ -4928,9 +4928,9 @@ body.light-theme .stats-banner-item:hover { background: rgba(249,115,22,0.03); }
   .stats-banner-label { font-size: 11px; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    BRANDS SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .brands-section {
   padding: 80px 0;
   background: var(--bg);
@@ -4985,9 +4985,9 @@ body.light-theme .brand-pill:hover {
   .brands-pills-row { gap: 8px; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    GEOGRAPHY SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .geo-section {
   padding: 80px 0;
   background: var(--surface);
@@ -5081,14 +5081,16 @@ body.light-theme .geo-address-card:hover {
   gap: 10px;
 }
 .geo-city-pill {
-  padding: 14px 16px;
+  padding: 11px 14px;
   background: var(--bg);
   border: 1px solid var(--line);
   border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
   color: var(--text);
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   cursor: default;
   transition: all 0.28s cubic-bezier(0.2,0.8,0.2,1);
   position: relative;
@@ -5111,20 +5113,38 @@ body.light-theme .geo-address-card:hover {
 body.light-theme .geo-city-pill:hover {
   border-color: rgba(249,115,22,0.3);
   box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+.geo-pill-icon { font-size: 14px; color: var(--accent); opacity: 0.8; flex-shrink: 0; }
+
+/* Geo stat chips */
+.geo-stats-row { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+.geo-stat-chip { display: flex; align-items: center; gap: 7px; padding: 9px 14px; background: rgba(124,242,199,0.06); border: 1px solid rgba(124,242,199,0.18); border-radius: 50px; font-size: 13px; color: var(--text); font-weight: 500; }
+.geo-stat-chip i { color: var(--accent); font-size: 15px; }
+.geo-stat-chip strong { color: var(--accent); }
+body.light-theme .geo-stat-chip { background: rgba(249,115,22,0.06); border-color: rgba(249,115,22,0.18); }
+
+/* Geo districts label */
+.geo-districts-header { margin-bottom: 16px; }
+.geo-districts-label { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); background: rgba(124,242,199,0.08); border: 1px solid rgba(124,242,199,0.2); border-radius: 50px; padding: 6px 14px; }
+body.light-theme .geo-districts-label { color: #e85d04; background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.2); }
+
 @media (max-width: 768px) {
   .stats-banner-inner { grid-template-columns: repeat(2, 1fr); border-radius: 16px; }
   .stats-banner-item { padding: 32px 16px; }
   .stats-banner-num { font-size: 28px; }
   .stats-banner-item:nth-child(2)::after { display: none; }
+  .geo-stats-row { gap: 8px; }
+  .geo-stat-chip { font-size: 12px; padding: 7px 12px; }
 }
 @media (max-width: 420px) {
   .stats-banner-num { font-size: 22px; }
   .stats-banner-label { font-size: 11px; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
+
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    BRANDS SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .brands-section {
   padding: 80px 0;
   background: var(--bg);
@@ -5179,9 +5199,9 @@ body.light-theme .brand-pill:hover {
   .brands-pills-row { gap: 8px; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    GEOGRAPHY SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .geo-section {
   padding: 80px 0;
   background: var(--surface);
@@ -5316,9 +5336,9 @@ body.light-theme .geo-city-pill:hover {
   .stats-banner-label { font-size: 11px; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    BRANDS SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .brands-section {
   padding: 80px 0;
   background: var(--bg);
@@ -5373,9 +5393,9 @@ body.light-theme .brand-pill:hover {
   .brands-pills-row { gap: 8px; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
    GEOGRAPHY SECTION
-══════════════════════════════════════════════════════════════════ */
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .geo-section {
   padding: 80px 0;
   background: var(--surface);
@@ -5515,9 +5535,9 @@ body.light-theme .geo-city-pill:hover {
   .geo-city-pill { padding: 12px 10px; font-size: 12px; }
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   GLOBAL MOBILE — side padding + text centering for ALL sections
-══════════════════════════════════════════════════════════════════ */
+/* в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+   GLOBAL MOBILE вЂ” side padding + text centering for ALL sections
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 @media (max-width: 768px) {
 
   /* 1. Base section padding with 16px side gutters */
@@ -5525,7 +5545,7 @@ body.light-theme .geo-city-pill:hover {
     padding: 56px 16px !important;
   }
 
-  /* 2. Section headings — centered on mobile */
+  /* 2. Section headings вЂ” centered on mobile */
   .section-head {
     text-align: center !important;
     padding: 0 !important;
@@ -5540,7 +5560,7 @@ body.light-theme .geo-city-pill:hover {
     max-width: 360px !important;
   }
 
-  /* 3. HOW WE WORK — center text inside cards */
+  /* 3. HOW WE WORK вЂ” center text inside cards */
   .how-we-work-section {
     padding: 56px 16px !important;
   }
@@ -5572,7 +5592,7 @@ body.light-theme .geo-city-pill:hover {
     text-align: center !important;
   }
 
-  /* 4. STATS BANNER — 2 columns, centered */
+  /* 4. STATS BANNER вЂ” 2 columns, centered */
   .stats-banner-section {
     padding: 0 16px !important;
   }
@@ -5598,7 +5618,7 @@ body.light-theme .geo-city-pill:hover {
     display: none !important;
   }
 
-  /* 5. BRANDS — centered pills, side padding */
+  /* 5. BRANDS вЂ” centered pills, side padding */
   .brands-section {
     padding: 56px 16px !important;
   }
@@ -5614,7 +5634,7 @@ body.light-theme .geo-city-pill:hover {
     font-size: 13px !important;
   }
 
-  /* 6. GEOGRAPHY — single column, centered text */
+  /* 6. GEOGRAPHY вЂ” single column, centered text */
   .geo-section {
     padding: 56px 16px !important;
   }
@@ -5656,7 +5676,7 @@ body.light-theme .geo-city-pill:hover {
     text-align: center !important;
   }
 
-  /* 7. Other existing sections — center headings */
+  /* 7. Other existing sections вЂ” center headings */
   .why .section-head,
   .masters .section-head,
   .services .section-head,
@@ -5670,7 +5690,7 @@ body.light-theme .geo-city-pill:hover {
     text-align: center !important;
   }
 
-  /* 8. Timeline (Why section) — center items */
+  /* 8. Timeline (Why section) вЂ” center items */
   .t-item {
     text-align: center !important;
   }
@@ -5680,7 +5700,7 @@ body.light-theme .geo-city-pill:hover {
 }
 
 @media (max-width: 480px) {
-  /* Extra small — single column steps */
+  /* Extra small вЂ” single column steps */
   .how-steps-grid {
     grid-template-columns: 1fr !important;
   }

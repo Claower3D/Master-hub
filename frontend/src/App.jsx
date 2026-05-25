@@ -6442,49 +6442,259 @@ const pageDataMap = {
           {/* ═══ GEOGRAPHY ═══ */}
           <section className="geo-section">
             <div className="wrap">
-              <div className="geo-inner">
-                <div className="geo-left">
-                  <div className="geo-tag">
-                    <i className="ri-map-pin-line"></i>
-                    {lang === 'ru' ? 'География работы' : lang === 'kz' ? 'Жұмыс географиясы' : 'Service Area'}
-                  </div>
-                  <h2 className="geo-title">
-                    {lang === 'ru' ? 'Выезжаем по всему Казахстану' : lang === 'kz' ? 'Бүкіл Қазақстан бойынша барамыз' : 'We Serve All of Kazakhstan'}
-                  </h2>
-                  <p className="geo-desc">
-                    {lang === 'ru' ? 'Более 200 мастеров на линии каждый день — выезд в любой город в течение часа.' : lang === 'kz' ? 'Күн сайын желіде 200-ден астам шебер — бір сағат ішінде кез-келген қалаға шығу.' : 'Over 200 masters on duty daily — arrival anywhere within one hour.'}
-                  </p>
-                  <div className="geo-address-card">
-                    <i className="ri-building-4-line"></i>
-                    <div>
-                      <strong>{lang === 'ru' ? 'Алматы, пр. Аль-Фараби, 77/1' : lang === 'kz' ? 'Алматы, Әл-Фараби д., 77/1' : 'Almaty, Al-Farabi Ave, 77/1'}</strong>
-                      <span>{lang === 'ru' ? 'Главный сервисный центр' : lang === 'kz' ? 'Басты сервістік орталық' : 'Main Service Center'}</span>
+              {(() => {
+                // ── District data by city key ──────────────────────────────
+                const cityDistricts = {
+                  almaty: {
+                    address: { ru: 'пр. Аль-Фараби, 77/1', kz: 'Әл-Фараби д., 77/1', en: 'Al-Farabi Ave, 77/1' },
+                    districts: [
+                      { ru: 'Бостандыкский р-н', kz: 'Бостандық ауданы', en: 'Bostandyk District' },
+                      { ru: 'Медеуский р-н', kz: 'Медеу ауданы', en: 'Medeu District' },
+                      { ru: 'Алатауский р-н', kz: 'Алатау ауданы', en: 'Alatau District' },
+                      { ru: 'Ауэзовский р-н', kz: 'Әуезов ауданы', en: 'Auezov District' },
+                      { ru: 'Наурызбайский р-н', kz: 'Наурызбай ауданы', en: 'Nauryzbay District' },
+                      { ru: 'Жетысуский р-н', kz: 'Жетісу ауданы', en: 'Zhetysu District' },
+                      { ru: 'Турксибский р-н', kz: 'Түрксіб ауданы', en: 'Turksib District' },
+                      { ru: 'Алмалинский р-н', kz: 'Алмалы ауданы', en: 'Almaly District' },
+                      { ru: 'мкр Самал', kz: 'Самал ш/а', en: 'Samal Microdistrict' },
+                      { ru: 'мкр Тастак', kz: 'Тастақ ш/а', en: 'Tastak' },
+                      { ru: 'мкр Алгабас', kz: 'Алғабас ш/а', en: 'Algabas' },
+                      { ru: 'пос. Алатау', kz: 'Алатау к/е', en: 'Alatau settlement' },
+                    ],
+                  },
+                  astana: {
+                    address: { ru: 'пр. Туран, 22', kz: 'Туран д., 22', en: 'Turan Ave, 22' },
+                    districts: [
+                      { ru: 'р-н Есиль', kz: 'Есіл ауданы', en: 'Yesil District' },
+                      { ru: 'р-н Алматы', kz: 'Алматы ауданы', en: 'Almaty District' },
+                      { ru: 'р-н Сарыарка', kz: 'Сарыарқа ауданы', en: 'Saryarka District' },
+                      { ru: 'р-н Байконур', kz: 'Байқоңыр ауданы', en: 'Baikonur District' },
+                      { ru: 'Левый берег', kz: 'Сол жағалау', en: 'Left Bank' },
+                      { ru: 'Правый берег', kz: 'Оң жағалау', en: 'Right Bank' },
+                      { ru: 'пос. Акмол', kz: 'Ақмол к/е', en: 'Akmol settlement' },
+                      { ru: 'мкр Чубары', kz: 'Шұбар ш/а', en: 'Chubary' },
+                    ],
+                  },
+                  shymkent: {
+                    address: { ru: 'пр. Республики, 45', kz: 'Республика д., 45', en: 'Respubliki Ave, 45' },
+                    districts: [
+                      { ru: 'р-н Аль-Фараби', kz: 'Әл-Фараби ауданы', en: 'Al-Farabi District' },
+                      { ru: 'р-н Абай', kz: 'Абай ауданы', en: 'Abay District' },
+                      { ru: 'р-н Каратау', kz: 'Қаратау ауданы', en: 'Karatau District' },
+                      { ru: 'р-н Енбекши', kz: 'Еңбекші ауданы', en: 'Yenbekshy District' },
+                      { ru: 'мкр Нурсат', kz: 'Нұрсат ш/а', en: 'Nursat' },
+                      { ru: 'мкр Самал', kz: 'Самал ш/а', en: 'Samal' },
+                    ],
+                  },
+                  karaganda: {
+                    address: { ru: 'ул. Ерубаева, 37', kz: 'Еруbaev к., 37', en: 'Yerbayev St, 37' },
+                    districts: [
+                      { ru: 'р-н Казыбек би', kz: 'Қазыбек би ауданы', en: 'Kazybek bi District' },
+                      { ru: 'р-н Алихан Бокейхан', kz: 'Әлихан Бөкейхан ауданы', en: 'Alikhan Bokeikhan District' },
+                      { ru: 'р-н Наурызбай батыр', kz: 'Наурызбай батыр ауданы', en: 'Nauryzbaybatyr District' },
+                      { ru: 'Майкудук', kz: 'Майқұдық', en: 'Maikuduk' },
+                      { ru: 'Пришахтинск', kz: 'Пришахтинск', en: 'Prishakhtinsk' },
+                      { ru: 'Юго-Восток', kz: 'Оңтүстік-Шығыс', en: 'South-East' },
+                    ],
+                  },
+                  aktobe: {
+                    address: { ru: 'пр. Абилкайыр хана, 55', kz: 'Әбілқайыр хан д., 55', en: 'Abilkayyr Khan Ave, 55' },
+                    districts: [
+                      { ru: 'р-н Астана', kz: 'Астана ауданы', en: 'Astana District' },
+                      { ru: 'р-н Нур Актобе', kz: 'Нұр Ақтөбе ауданы', en: 'Nur Aktobe District' },
+                      { ru: 'р-н Алматы', kz: 'Алматы ауданы', en: 'Almaty District' },
+                      { ru: 'мкр Болашак', kz: 'Болашақ ш/а', en: 'Bolashak' },
+                      { ru: 'Жилгородок', kz: 'Жилгородок', en: 'Zhilgorodok' },
+                    ],
+                  },
+                  taraz: {
+                    address: { ru: 'ул. Толе би, 53', kz: 'Төле би к., 53', en: 'Tole Bi St, 53' },
+                    districts: [
+                      { ru: 'р-н Байзак', kz: 'Байзақ ауданы', en: 'Bayzak District' },
+                      { ru: 'р-н Жамбыл', kz: 'Жамбыл ауданы', en: 'Zhambyl District' },
+                      { ru: 'р-н Коксай', kz: 'Қоқсай ауданы', en: 'Koksay District' },
+                      { ru: 'мкр Восток', kz: 'Шығыс ш/а', en: 'East District' },
+                    ],
+                  },
+                  pavlodar: {
+                    address: { ru: 'ул. Ленина, 111', kz: 'Ленин к., 111', en: 'Lenin St, 111' },
+                    districts: [
+                      { ru: 'р-н Достык', kz: 'Достық ауданы', en: 'Dostyk District' },
+                      { ru: 'р-н Ленин', kz: 'Ленин ауданы', en: 'Lenin District' },
+                      { ru: 'р-н Ак-Кудук', kz: 'Ақ-Құдық ауданы', en: 'Ak-Kuduk District' },
+                      { ru: 'мкр Химгородок', kz: 'Химгородок ш/а', en: 'Khimgorodok' },
+                    ],
+                  },
+                  oskemen: {
+                    address: { ru: 'пр. Независимости, 12', kz: 'Тәуелсіздік д., 12', en: 'Independence Ave, 12' },
+                    districts: [
+                      { ru: 'р-н Ульба', kz: 'Үлба ауданы', en: 'Ulba District' },
+                      { ru: 'р-н Аблакетка', kz: 'Аблакетка ауданы', en: 'Ablaketka District' },
+                      { ru: 'Защита', kz: 'Защита', en: 'Zashchita' },
+                      { ru: 'мкр Согра', kz: 'Сोғра ш/а', en: 'Sogra' },
+                    ],
+                  },
+                  semey: {
+                    address: { ru: 'ул. Шакарима, 18', kz: 'Шәкәрім к., 18', en: 'Shakarim St, 18' },
+                    districts: [
+                      { ru: 'р-н Абай', kz: 'Абай ауданы', en: 'Abay District' },
+                      { ru: 'р-н Алашкала', kz: 'Алашқала ауданы', en: 'Alashkala District' },
+                      { ru: 'Жана Семей', kz: 'Жаңа Семей', en: 'Zhana Semey' },
+                    ],
+                  },
+                  atyrau: {
+                    address: { ru: 'ул. Азаттык, 45', kz: 'Азаттық к., 45', en: 'Azattyk St, 45' },
+                    districts: [
+                      { ru: 'р-н Макат', kz: 'Мақат ауданы', en: 'Makat District' },
+                      { ru: 'р-н Привокзальный', kz: 'Привокзальный ауданы', en: 'Privokzalny District' },
+                      { ru: 'Авангард', kz: 'Авангард', en: 'Avangard' },
+                      { ru: 'ж/м Нурсая', kz: 'Нұрсая т/м', en: 'Nursaya' },
+                    ],
+                  },
+                  aktau: {
+                    address: { ru: '14-й микрорайон', kz: '14-ші шағын аудан', en: '14th Microdistrict' },
+                    districts: [
+                      { ru: '1–9 мкр', kz: '1–9 ш/а', en: 'Microdistricts 1–9' },
+                      { ru: '10–17 мкр', kz: '10–17 ш/а', en: 'Microdistricts 10–17' },
+                      { ru: 'Новый город', kz: 'Жаңа қала', en: 'New City' },
+                      { ru: 'мкр Мирас', kz: 'Мирас ш/а', en: 'Miras' },
+                    ],
+                  },
+                  kostanay: {
+                    address: { ru: 'пр. Аль-Фараби, 100', kz: 'Әл-Фараби д., 100', en: 'Al-Farabi Ave, 100' },
+                    districts: [
+                      { ru: 'р-н Костанай', kz: 'Қостанай ауданы', en: 'Kostanay District' },
+                      { ru: 'р-н Тобол', kz: 'Тобыл ауданы', en: 'Tobol District' },
+                      { ru: 'мкр Юбилейный', kz: 'Юбилейный ш/а', en: 'Yubileynyy' },
+                    ],
+                  },
+                  kyzylorda: {
+                    address: { ru: 'пр. Достык, 3', kz: 'Достық д., 3', en: 'Dostyk Ave, 3' },
+                    districts: [
+                      { ru: 'р-н Шиели', kz: 'Шиелі ауданы', en: 'Shiyeli District' },
+                      { ru: 'р-н Арал', kz: 'Арал ауданы', en: 'Aral District' },
+                      { ru: 'мкр Саяхат', kz: 'Саяхат ш/а', en: 'Sayakhat' },
+                    ],
+                  },
+                  oral: {
+                    address: { ru: 'ул. Достык, 22', kz: 'Достық к., 22', en: 'Dostyk St, 22' },
+                    districts: [
+                      { ru: 'р-н Каратюбинский', kz: 'Қаратөбе ауданы', en: 'Karatyube District' },
+                      { ru: 'р-н Зачаганск', kz: 'Зачаганск ауданы', en: 'Zachagansk District' },
+                      { ru: 'Старый Уральск', kz: 'Ескі Орал', en: 'Old Oral' },
+                    ],
+                  },
+                  petropavl: {
+                    address: { ru: 'ул. Конституции, 8', kz: 'Конституция к., 8', en: 'Konstitutsii St, 8' },
+                    districts: [
+                      { ru: 'Северный р-н', kz: 'Солтүстік ауданы', en: 'North District' },
+                      { ru: 'Центральный р-н', kz: 'Орталық ауданы', en: 'Central District' },
+                      { ru: 'мкр Береке', kz: 'Береке ш/а', en: 'Bereke' },
+                    ],
+                  },
+                  taldykorgan: {
+                    address: { ru: 'ул. Сейткали, 20', kz: 'Сейткали к., 20', en: 'Seytkali St, 20' },
+                    districts: [
+                      { ru: 'р-н Жетысу', kz: 'Жетісу ауданы', en: 'Zhetysu District' },
+                      { ru: 'Центр', kz: 'Орталық', en: 'Center' },
+                      { ru: 'мкр Жастар', kz: 'Жастар ш/а', en: 'Zhastar' },
+                    ],
+                  },
+                  kokshetau: {
+                    address: { ru: 'ул. Абылай хана, 9', kz: 'Әбілай хан к., 9', en: 'Ablai Khan St, 9' },
+                    districts: [
+                      { ru: 'р-н Красный Яр', kz: 'Қызыл жар ауданы', en: 'Krasny Yar District' },
+                      { ru: 'Центральный р-н', kz: 'Орталық ауданы', en: 'Central District' },
+                      { ru: 'мкр Северный', kz: 'Солтүстік ш/а', en: 'Severny' },
+                    ],
+                  },
+                  turkistan: {
+                    address: { ru: 'пр. Байдибек, 15', kz: 'Байдібек д., 15', en: 'Baydibek Ave, 15' },
+                    districts: [
+                      { ru: 'р-н Туркистан', kz: 'Түркістан ауданы', en: 'Turkistan District' },
+                      { ru: 'Старый город', kz: 'Ескі қала', en: 'Old Town' },
+                      { ru: 'мкр Новый', kz: 'Жаңа ш/а', en: 'New Microdistrict' },
+                    ],
+                  },
+                  zhezkazgan: {
+                    address: { ru: 'ул. Гагарина, 22', kz: 'Гагарин к., 22', en: 'Gagarin St, 22' },
+                    districts: [
+                      { ru: 'р-н Кенгир', kz: 'Кеңгір ауданы', en: 'Kengir District' },
+                      { ru: 'Балтабай', kz: 'Балтабай', en: 'Baltabay' },
+                      { ru: 'мкр Горняк', kz: 'Горняк ш/а', en: 'Gornyak' },
+                    ],
+                  },
+                  konaev: {
+                    address: { ru: 'ул. Конаев, 30', kz: 'Қонаев к., 30', en: 'Konaev St, 30' },
+                    districts: [
+                      { ru: 'Центральный р-н', kz: 'Орталық ауданы', en: 'Central District' },
+                      { ru: 'ж/м Самал', kz: 'Самал т/м', en: 'Samal' },
+                      { ru: 'Западный р-н', kz: 'Батыс ауданы', en: 'West District' },
+                    ],
+                  },
+                };
+
+                const data = cityDistricts[city] || cityDistricts['almaty'];
+                const cityName = getCityDisplay(city);
+                const addr = lang === 'kz' ? data.address.kz : lang === 'en' ? data.address.en : data.address.ru;
+
+                return (
+                  <div className="geo-inner">
+                    <div className="geo-left">
+                      <div className="geo-tag">
+                        <i className="ri-map-pin-line"></i>
+                        {lang === 'ru' ? 'Районы выезда' : lang === 'kz' ? 'Шығу аудандары' : 'Service Districts'}
+                      </div>
+                      <h2 className="geo-title">
+                        {lang === 'ru' ? <>Выезжаем по всей <span style={{ color: 'var(--accent)' }}>{cityName}</span></> : lang === 'kz' ? <>{cityName} бойынша <span style={{ color: 'var(--accent)' }}>барамыз</span></> : <>Serving all of <span style={{ color: 'var(--accent)' }}>{cityName}</span></>}
+                      </h2>
+                      <p className="geo-desc">
+                        {lang === 'ru' ? `Мастера работают во всех районах ${cityName}. Выезд в течение 45–60 минут.` : lang === 'kz' ? `Шеберлер ${cityName} барлық аудандарында жұмыс жасайды. 45–60 минут ішінде шығу.` : `Masters operate across all districts of ${cityName}. Arrival within 45–60 min.`}
+                      </p>
+                      <div className="geo-address-card">
+                        <i className="ri-building-4-line"></i>
+                        <div>
+                          <strong>{cityName}, {addr}</strong>
+                          <span>{lang === 'ru' ? 'Сервисный центр' : lang === 'kz' ? 'Сервістік орталық' : 'Service Center'}</span>
+                        </div>
+                      </div>
+                      <div className="geo-stats-row">
+                        <div className="geo-stat-chip">
+                          <i className="ri-map-pin-2-line"></i>
+                          <span><strong>{data.districts.length}</strong> {lang === 'ru' ? 'районов охвата' : lang === 'kz' ? 'аудан' : 'districts'}</span>
+                        </div>
+                        <div className="geo-stat-chip">
+                          <i className="ri-time-line"></i>
+                          <span><strong>45</strong> {lang === 'ru' ? 'мин выезд' : lang === 'kz' ? 'мин шығу' : 'min arrival'}</span>
+                        </div>
+                        <div className="geo-stat-chip">
+                          <i className="ri-user-star-line"></i>
+                          <span><strong>24/7</strong></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="geo-right">
+                      <div className="geo-districts-header">
+                        <span className="geo-districts-label">
+                          <i className="ri-focus-3-line"></i>
+                          {lang === 'ru' ? `Районы обслуживания — ${cityName}` : lang === 'kz' ? `${cityName} қызмет аудандары` : `Coverage — ${cityName}`}
+                        </span>
+                      </div>
+                      <div className="geo-cities-grid">
+                        {data.districts.map((d, idx) => (
+                          <div key={idx} className="geo-city-pill">
+                            <i className="ri-checkbox-circle-line geo-pill-icon"></i>
+                            {lang === 'kz' ? d.kz : lang === 'en' ? d.en : d.ru}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="geo-right">
-                  <div className="geo-cities-grid">
-                    {[
-                      { ru: 'Алматы',           kz: 'Алматы',          en: 'Almaty' },
-                      { ru: 'Астана',            kz: 'Астана',          en: 'Astana' },
-                      { ru: 'Шымкент',           kz: 'Шымкент',         en: 'Shymkent' },
-                      { ru: 'Алматинская обл.',  kz: 'Алматы облысы',   en: 'Almaty Region' },
-                      { ru: 'Семей',             kz: 'Семей',           en: 'Semey' },
-                      { ru: 'Атырау',            kz: 'Атырау',          en: 'Atyrau' },
-                      { ru: 'Актобе',            kz: 'Ақтөбе',          en: 'Aktobe' },
-                      { ru: 'Костанай',          kz: 'Қостанай',        en: 'Kostanay' },
-                      { ru: 'Павлодар',          kz: 'Павлодар',        en: 'Pavlodar' },
-                      { ru: 'Усть-Каменогорск', kz: 'Өскемен',         en: 'Oskemen' },
-                      { ru: 'Тараз',             kz: 'Тараз',           en: 'Taraz' },
-                      { ru: 'Кызылорда',         kz: 'Қызылорда',       en: 'Kyzylorda' },
-                    ].map((c) => (
-                      <div key={c.ru} className="geo-city-pill">{lang === 'kz' ? c.kz : lang === 'en' ? c.en : c.ru}</div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
             </div>
           </section>
+
 
         </>
       )}
