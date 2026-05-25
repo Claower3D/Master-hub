@@ -264,7 +264,7 @@ export default function App() {
   // Assistant Modal State
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [assistantMessages, setAssistantMessages] = useState([
-    { sender: 'ai', text: 'Здравствуйте! Меня зовут Иришка. Я виртуальный ассистент hubmaster. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
+    { sender: 'ai', text: 'Здравствуйте! Меня зовут Иришка. Я виртуальный ассистент HUB MASTER. Помогу подобрать услугу, рассчитать стоимость или вызвать мастера. Какой у вас вопрос?' }
   ]);
   const [assistantInput, setAssistantInput] = useState('');
   const [showAssistantTooltip, setShowAssistantTooltip] = useState(false);
@@ -2155,7 +2155,7 @@ export default function App() {
               fontSize: '16px', fontWeight: '900', color: '#0b1020'
             }}>HM</div>
             <div>
-              <div className="admin-header-title">hubmaster Admin</div>
+              <div className="admin-header-title">HUB MASTER Admin</div>
               <div className="admin-header-subtitle">Панель мониторинга</div>
             </div>
           </div>
@@ -2195,7 +2195,7 @@ export default function App() {
                     <i className="ri-shield-keyhole-line"></i>
                   </div>
                   <div className="admin-login-title">Вход в панель</div>
-                  <div className="admin-login-subtitle">Доступ только для администраторов hubmaster</div>
+                  <div className="admin-login-subtitle">Доступ только для администраторов HUB MASTER</div>
                 </div>
 
                 {adminError && (
@@ -5392,7 +5392,7 @@ export default function App() {
             const dbMeta = megaDetails[catId] || {};
             const meta = categoryMetaMap[catId] || {
               img: dbMeta.img || './slide_windows.png',
-              desc: dbMeta.desc || 'Профессиональные услуги и оригинальные комплектующие от сервисного центра hubmaster. Выезд квалифицированного специалиста по городу в течение 45 минут. Письменная официальная гарантия на все выполненные работы до 12 месяцев.',
+              desc: dbMeta.desc || 'Профессиональные услуги и оригинальные комплектующие от сервисного центра HUB MASTER. Выезд квалифицированного специалиста по городу в течение 45 минут. Письменная официальная гарантия на все выполненные работы до 12 месяцев.',
               features: (dbMeta.features && dbMeta.features.length > 0) ? dbMeta.features : ['Бесплатный выезд специалиста на дом при проведении работ', 'Только проверенные оригинальные запчасти и комплектующие', 'Использование современного профессионального инструмента', 'Прозрачный прайс-лист без скрытых доплат и наценок'],
               specs: (dbMeta.specs && dbMeta.specs.length > 0) ? dbMeta.specs : [
                 { label: 'Выезд мастера', value: 'за 45 минут' },
@@ -5880,7 +5880,7 @@ export default function App() {
                             {/* Main Premium Category Visual Illustration Container */}
                             <div className="hero-img-container" style={{ position: 'relative', overflow: 'visible' }}>
                               <div className="hero-img-inner-wrapper" style={{ position: 'absolute', inset: 0, borderRadius: '24px', overflow: 'hidden' }}>
-                                <img src={slide.img} alt="hubmaster Premium Service" className="hero-main-img" style={{ transform: 'scale(1.02)', transition: 'all 0.5s ease' }} />
+                                <img src={slide.img} alt="HUB MASTER Premium Service" className="hero-main-img" style={{ transform: 'scale(1.02)', transition: 'all 0.5s ease' }} />
                                 <div className="hero-img-overlay"></div>
                               </div>
                               <div className="hero-card-container" style={{ bottom: '-35px' }}>
@@ -7779,7 +7779,7 @@ export default function App() {
                             <div>
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                                 <span style={{ fontSize: '11px', letterSpacing: '1px', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'uppercase' }}>
-                                  hubmaster GUARANTEE
+                                  HUB MASTER GUARANTEE
                                 </span>
                                 <span style={{
                                   fontSize: '11px',

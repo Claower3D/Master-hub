@@ -1,6 +1,6 @@
 export const translations = {
   ru: {
-    brand_name: "hubmaster",
+    brand_name: "HUB MASTER",
     brand_sub_year: "с 2018",
     city_almaty: "Алматы",
     city_astana: "Астана",
@@ -54,7 +54,7 @@ export const translations = {
     cat_extra: "<i class='ri-more-fill'></i> Дополнительно",
     srv_btn: "Заказать",
     srv_more_btn: "Подробнее",
-    why_title: "Почему выбирают hubmaster",
+    why_title: "Почему выбирают HUB MASTER",
     why_sub: "9 принципов, на которых построен наш сервис.",
     why1_h: "112 услуг в одном месте", why1_p: "83% клиентов заказывают 2–3 услуги сразу — экономия до 6 часов.",
     why2_h: "Выезд за 45 минут", why2_p: "Среднее время прибытия. В экстренных — от 30 минут.",
@@ -80,10 +80,10 @@ export const translations = {
     call_btn: "Заказать звонок",
     call_ok: "✓ Спасибо! Перезвоним в течение 15 минут.",
     f_contact: "Контакты", f_sections: "Разделы", f_payment: "Оплата",
-    f_desc: "Мультисервис бытовых и бизнес-услуг. ТОО «hubmaster», БИН 000000000000.",
+    f_desc: "Мультисервис бытовых и бизнес-услуг. ТОО «HUB MASTER», БИН 000000000000.",
     f_hours: "пн–вс: 09:00 – 21:00",
     f_address: "пр. Аль-Фараби, 77/1",
-    f_bot: "© 2026 hubmaster. Все права защищены.",
+    f_bot: "© 2026 HUB MASTER. Все права защищены.",
     nav_login: "Войти",
     nav_cabinet: "Кабинет",
     auth_title_login: "Вход в систему",
@@ -123,7 +123,7 @@ export const translations = {
     cab_bonus_qr_coming: "Сканировать QR-код (скоро)"
   },
   kz: {
-    brand_name: "hubmaster",
+    brand_name: "HUB MASTER",
     brand_sub_year: "2018 жылдан",
     city_almaty: "Алматы",
     city_astana: "Астана",
@@ -177,7 +177,7 @@ export const translations = {
     cat_extra: "<i class='ri-more-fill'></i> Қосымша",
     srv_btn: "Тапсырыс беру",
     srv_more_btn: "Толығырақ",
-    why_title: "Неге hubmaster-ді таңдайды",
+    why_title: "Неге HUB MASTER-ді таңдайды",
     why_sub: "Біздің сервис құрылған 9 қағида.",
     why1_h: "Бір жерде 112 қызмет", why1_p: "Клиенттердің 83%-ы бірден 2–3 қызметке тапсырыс береді — 6 сағатқа дейін үнемдеу.",
     why2_h: "45 минутта келу", why2_p: "Орташа келу уақыты. Шұғыл жағдайларда — 30 минуттан бастап.",
@@ -203,13 +203,13 @@ export const translations = {
     call_btn: "Қоңырауға тапсырыс беру",
     call_ok: "✓ Рақмет! 15 минут ішінде хабарласамыз.",
     f_contact: "Байланыс", f_sections: "Бөлімдер", f_payment: "Төлем",
-    f_desc: "Тұрмыстық және бизнес-қызметтер мультисервисі. «hubmaster» ЖШС, БСН 000000000000.",
+    f_desc: "Тұрмыстық және бизнес-қызметтер мультисервисі. «HUB MASTER» ЖШС, БСН 000000000000.",
     f_hours: "дс–жс: 09:00 – 21:00",
     f_address: "Әл-Фараби даңғылы, 77/1",
-    f_bot: "© 2026 hubmaster. Барлық құқықтар қоргaлған."
+    f_bot: "© 2026 HUB MASTER. Барлық құқықтар қоргaлған."
   },
   en: {
-    brand_name: "hubmaster",
+    brand_name: "HUB MASTER",
     brand_sub_year: "since 2018",
     city_almaty: "Almaty",
     city_astana: "Astana",
@@ -263,7 +263,7 @@ export const translations = {
     cat_extra: "<i class='ri-more-fill'></i> Additional",
     srv_btn: "Order",
     srv_more_btn: "Details",
-    why_title: "Why Choose hubmaster",
+    why_title: "Why Choose HUB MASTER",
     why_sub: "9 principles our service is built upon.",
     why1_h: "112 services in one place", why1_p: "83% of clients order 2–3 services at once — saving up to 6 hours.",
     why2_h: "Arrival in 45 minutes", why2_p: "Average arrival time. Urgent cases — from 30 minutes.",
@@ -289,10 +289,10 @@ export const translations = {
     call_btn: "Request Call",
     call_ok: "✓ Thank you! We will call you back within 15 minutes.",
     f_contact: "Contact", f_sections: "Sections", f_payment: "Payment",
-    f_desc: "Multiservice for home & business. hubmaster LLP, BIN 000000000000.",
+    f_desc: "Multiservice for home & business. HUB MASTER LLP, BIN 000000000000.",
     f_hours: "Mon–Sun: 09:00 – 21:00",
     f_address: "Al-Farabi Ave, 77/1",
-    f_bot: "© 2026 hubmaster. All rights reserved."
+    f_bot: "© 2026 HUB MASTER. All rights reserved."
   },
   dictionary: {
     kz: {

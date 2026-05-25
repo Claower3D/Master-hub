@@ -935,7 +935,7 @@ func main() {
 		port = "8080"
 	}
 
-	fmt.Printf("🚀 hubmaster Go Backend server running on http://localhost:%s (serving from %s)\n", port, staticDir)
+	fmt.Printf("🚀 HUB MASTER Go Backend server running on http://localhost:%s (serving from %s)\n", port, staticDir)
 	log.Fatal(http.ListenAndServe(":"+port, mux))
 }
 
