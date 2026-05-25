@@ -126,19 +126,23 @@ export default function App() {
   /* ── Scroll-reveal (desktop only) ── */
   useEffect(() => {
     if (window.matchMedia('(max-width: 768px)').matches) return;
-    const els = document.querySelectorAll('[data-reveal]');
-    if (!els.length) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('revealed');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.10, rootMargin: '0px 0px -60px 0px' });
-    els.forEach(el => io.observe(el));
-    return () => io.disconnect();
-  }, [activePage]);
+    // Use rAF so React has flushed the DOM (important for dynamically rendered lists)
+    const tid = requestAnimationFrame(() => {
+      const els = document.querySelectorAll('[data-reveal]:not(.revealed)');
+      if (!els.length) return;
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('revealed');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+      els.forEach(el => io.observe(el));
+      return () => io.disconnect();
+    });
+    return () => cancelAnimationFrame(tid);
+  }, [activePage, reviewsData]);
 
   useEffect(() => {
     fetch(API_BASE + '/api/catalog')
@@ -6060,7 +6064,7 @@ const pageDataMap = {
             </div>
             <div className="srv-cards-grid">
               {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
-                <div className="srv-card" key={idx} data-reveal="fade-up" style={{ '--reveal-delay': `${idx * 70}ms`, overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
+                <div className="srv-card" key={idx} style={{ '--reveal-delay': `${idx * 70}ms`, overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
                   {card.img && (
                     <div 
                       className="srv-img-wrapper" 
@@ -6205,7 +6209,7 @@ const pageDataMap = {
                 { cat: 'mebel', name: 'Руслан Б.', role: 'Мягкая мебель', exp: '8 лет', rating: '4.9', reviews: 134, photo: 'a4' },
                 { cat: 'mebel', name: 'Денис В.', role: 'Корпусная мебель', exp: '6 лет', rating: '4.7', reviews: 95, photo: 'a3' },
               ].filter(m => m.cat === activeMasterCat).map((m, idx) => (
-                <div className="m-card" key={idx} data-reveal="fade-up" style={{'--reveal-delay': `${idx * 60}ms`}}>
+                <div className="m-card" key={idx} style={{'--reveal-delay': `${idx * 60}ms`}}>
                   <div className={`m-photo ${m.photo === 'a1' ? '' : m.photo}`}><i className="ri-user-line"></i></div>
                   <h4>{m.name}</h4>
                   <span>{m.role}</span>
@@ -6258,7 +6262,7 @@ const pageDataMap = {
             </div>
             <div className="r-grid">
               {reviewsData.map((rev, idx) => (
-                <blockquote key={idx} data-reveal="fade-up" style={{ '--reveal-delay': `${idx * 60}ms`, position: 'relative', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <blockquote key={idx} style={{ animationDelay: `${idx * 60}ms`, position: 'relative', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <div style={{ color: '#ffcc00', fontSize: '14px', display: 'flex', gap: '2px' }}>
                     {Array.from({ length: rev.rating || 5 }).map((_, i) => (
                       <i key={i} className="ri-star-fill"></i>
