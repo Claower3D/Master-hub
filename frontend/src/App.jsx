@@ -6376,6 +6376,116 @@ const pageDataMap = {
               </form>
             </div>
           </section>
+
+          {/* ═══ HOW WE WORK — 5 Steps ═══ */}
+          <section className="how-we-work-section">
+            <div className="wrap">
+              <div className="section-head">
+                <h2>{lang === 'ru' ? 'Как мы работаем' : lang === 'kz' ? 'Біз қалай жұмыс жасаймыз' : 'How We Work'}</h2>
+                <p>{lang === 'ru' ? 'Пять простых шагов от заявки до готового результата.' : lang === 'kz' ? 'Өтінімнен дайын нәтижеге дейін бес қарапайым қадам.' : 'Five simple steps from request to finished result.'}</p>
+              </div>
+              <div className="how-steps-grid">
+                {[
+                  { num: '01', icon: 'ri-phone-line',      title: lang === 'ru' ? 'Заявка'       : lang === 'kz' ? 'Өтінім'      : 'Request',   desc: lang === 'ru' ? 'Оставьте номер или позвоните — ответим за минуту.'                            : lang === 'kz' ? 'Нөміріңізді қалдырыңыз немесе қоңырау шалыңыз — бір минутта жауап береміз.'   : 'Leave your number or call — we respond in a minute.' },
+                  { num: '02', icon: 'ri-clipboard-line',   title: lang === 'ru' ? 'Диагностика'  : lang === 'kz' ? 'Диагностика' : 'Diagnosis', desc: lang === 'ru' ? 'Мастер выезжает и определяет причину поломки.'                             : lang === 'kz' ? 'Шебер барып, ақаулықтың себебін анықтайды.'                                    : 'Master arrives and identifies the fault.' },
+                  { num: '03', icon: 'ri-file-list-3-line', title: lang === 'ru' ? 'Согласование' : lang === 'kz' ? 'Келісу'      : 'Agreement', desc: lang === 'ru' ? 'Фиксируем стоимость и сроки перед началом работ.'                          : lang === 'kz' ? 'Жұмыс басталмас бұрын баға мен мерзімді бекітеміз.'                           : 'We fix cost and timeline before starting.' },
+                  { num: '04', icon: 'ri-tools-line',       title: lang === 'ru' ? 'Ремонт'       : lang === 'kz' ? 'Жөндеу'      : 'Repair',    desc: lang === 'ru' ? 'Выполняем работу с оригинальными запчастями.'                             : lang === 'kz' ? 'Жұмысты түпнұсқа бөлшектермен орындаймыз.'                                    : 'We perform work using original spare parts.' },
+                  { num: '05', icon: 'ri-award-line',       title: lang === 'ru' ? 'Гарантия'     : lang === 'kz' ? 'Кепілдік'    : 'Warranty',  desc: lang === 'ru' ? 'Выдаём акт, чек и официальную гарантию до 12 мес.'                      : lang === 'kz' ? 'Акт, чек және 12 айға дейінгі ресми кепілдік береміз.'                      : 'We issue an act, receipt & warranty up to 12 months.' },
+                ].map((step, idx) => (
+                  <div key={idx} className="how-step-card">
+                    <div className="how-step-top">
+                      <div className="how-step-icon-wrap"><i className={step.icon}></i></div>
+                      <span className="how-step-num">{step.num}</span>
+                    </div>
+                    <h4 className="how-step-title">{step.title}</h4>
+                    <p className="how-step-desc">{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ═══ STATS BANNER ═══ */}
+          <section className="stats-banner-section">
+            <div className="wrap">
+              <div className="stats-banner-inner">
+                {[
+                  { num: '50 000+', label: lang === 'ru' ? 'довольных клиентов'     : lang === 'kz' ? 'қанағаттанған клиент'     : 'happy clients' },
+                  { num: '12 482',  label: lang === 'ru' ? 'отзыва с оценкой 4.9'  : lang === 'kz' ? 'пікір, баға 4.9'          : 'reviews rated 4.9' },
+                  { num: '45 мин',  label: lang === 'ru' ? 'среднее время выезда'   : lang === 'kz' ? 'орташа шығу уақыты'       : 'avg. arrival time' },
+                  { num: '12 мес',  label: lang === 'ru' ? 'гарантия на работы'     : lang === 'kz' ? 'жұмыстарға кепілдік'      : 'warranty on work' },
+                ].map((stat, idx) => (
+                  <div key={idx} className="stats-banner-item">
+                    <span className="stats-banner-num">{stat.num}</span>
+                    <span className="stats-banner-label">{stat.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ═══ BRANDS ═══ */}
+          <section className="brands-section">
+            <div className="wrap">
+              <div className="section-head" style={{ textAlign: 'center' }}>
+                <h2>{lang === 'ru' ? 'Работаем с любыми брендами' : lang === 'kz' ? 'Кез-келген брендпен жұмыс жасаймыз' : 'We Work With Any Brand'}</h2>
+                <p>{lang === 'ru' ? 'Оригинальные запчасти и сертифицированный сервис.' : lang === 'kz' ? 'Түпнұсқа бөлшектер және сертификатталған қызмет.' : 'Original parts and certified service.'}</p>
+              </div>
+              <div className="brands-pills-row">
+                {['Bosch','Samsung','LG','Indesit','Atlant','Siemens','Whirlpool','Electrolux','Beko','Candy','Gorenje','Ariston','Miele','AEG','Haier'].map((brand) => (
+                  <span key={brand} className="brand-pill">{brand}</span>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ═══ GEOGRAPHY ═══ */}
+          <section className="geo-section">
+            <div className="wrap">
+              <div className="geo-inner">
+                <div className="geo-left">
+                  <div className="geo-tag">
+                    <i className="ri-map-pin-line"></i>
+                    {lang === 'ru' ? 'География работы' : lang === 'kz' ? 'Жұмыс географиясы' : 'Service Area'}
+                  </div>
+                  <h2 className="geo-title">
+                    {lang === 'ru' ? 'Выезжаем по всему Казахстану' : lang === 'kz' ? 'Бүкіл Қазақстан бойынша барамыз' : 'We Serve All of Kazakhstan'}
+                  </h2>
+                  <p className="geo-desc">
+                    {lang === 'ru' ? 'Более 200 мастеров на линии каждый день — выезд в любой город в течение часа.' : lang === 'kz' ? 'Күн сайын желіде 200-ден астам шебер — бір сағат ішінде кез-келген қалаға шығу.' : 'Over 200 masters on duty daily — arrival anywhere within one hour.'}
+                  </p>
+                  <div className="geo-address-card">
+                    <i className="ri-building-4-line"></i>
+                    <div>
+                      <strong>{lang === 'ru' ? 'Алматы, пр. Аль-Фараби, 77/1' : lang === 'kz' ? 'Алматы, Әл-Фараби д., 77/1' : 'Almaty, Al-Farabi Ave, 77/1'}</strong>
+                      <span>{lang === 'ru' ? 'Главный сервисный центр' : lang === 'kz' ? 'Басты сервістік орталық' : 'Main Service Center'}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="geo-right">
+                  <div className="geo-cities-grid">
+                    {[
+                      { ru: 'Алматы',           kz: 'Алматы',          en: 'Almaty' },
+                      { ru: 'Астана',            kz: 'Астана',          en: 'Astana' },
+                      { ru: 'Шымкент',           kz: 'Шымкент',         en: 'Shymkent' },
+                      { ru: 'Алматинская обл.',  kz: 'Алматы облысы',   en: 'Almaty Region' },
+                      { ru: 'Семей',             kz: 'Семей',           en: 'Semey' },
+                      { ru: 'Атырау',            kz: 'Атырау',          en: 'Atyrau' },
+                      { ru: 'Актобе',            kz: 'Ақтөбе',          en: 'Aktobe' },
+                      { ru: 'Костанай',          kz: 'Қостанай',        en: 'Kostanay' },
+                      { ru: 'Павлодар',          kz: 'Павлодар',        en: 'Pavlodar' },
+                      { ru: 'Усть-Каменогорск', kz: 'Өскемен',         en: 'Oskemen' },
+                      { ru: 'Тараз',             kz: 'Тараз',           en: 'Taraz' },
+                      { ru: 'Кызылорда',         kz: 'Қызылорда',       en: 'Kyzylorda' },
+                    ].map((c) => (
+                      <div key={c.ru} className="geo-city-pill">{lang === 'kz' ? c.kz : lang === 'en' ? c.en : c.ru}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
         </>
       )}
 
