@@ -5714,3 +5714,371 @@ body.light-theme .geo-city-pill:hover {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   FULL MOBILE ADAPTATION — v2  (≤768px)
+   • 16px side padding everywhere
+   • All headings / descriptions centred
+   • Cards stacked, chips wrapped, grids collapsed
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ─ 0. Container / wrap ─ */
+  .wrap {
+    padding-inline: 16px !important;
+  }
+
+  /* ─ 1. HERO ─ */
+  .hero {
+    padding: 100px 16px 64px !important;
+    text-align: center !important;
+  }
+  .hero-inner {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 32px !important;
+  }
+  .hero-content {
+    align-items: center !important;
+    text-align: center !important;
+    max-width: 100% !important;
+  }
+  .hero-title {
+    font-size: clamp(28px, 8vw, 44px) !important;
+    text-align: center !important;
+  }
+  .hero-sub {
+    text-align: center !important;
+    margin-inline: auto !important;
+    max-width: 340px !important;
+  }
+  .hero-cta-row {
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+  .hero-cta-row a,
+  .hero-cta-row button {
+    width: 100% !important;
+    max-width: 320px !important;
+    justify-content: center !important;
+  }
+  .hero-badges {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .hero-visual {
+    width: 100% !important;
+    max-width: 340px !important;
+    margin-inline: auto !important;
+  }
+
+  /* ─ 2. HEADER / NAV ─ */
+  .header-inner {
+    padding-inline: 16px !important;
+  }
+
+  /* ─ 3. SERVICES ─ */
+  .services {
+    padding: 56px 16px !important;
+  }
+  .services .section-head {
+    text-align: center !important;
+    padding-inline: 0 !important;
+  }
+  .services .section-head h2,
+  .services .section-head p {
+    text-align: center !important;
+    margin-inline: auto !important;
+  }
+  .svc-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .svc-card {
+    padding: 20px 14px !important;
+    text-align: center !important;
+  }
+  .svc-card-icon {
+    margin-inline: auto !important;
+  }
+
+  /* ─ 4. WHY / TIMELINE ─ */
+  .why {
+    padding: 56px 16px !important;
+  }
+  .why .section-head {
+    text-align: center !important;
+  }
+  .why .section-head h2,
+  .why .section-head p {
+    text-align: center !important;
+    margin-inline: auto !important;
+  }
+  .why-inner {
+    flex-direction: column !important;
+    gap: 32px !important;
+  }
+  .t-list {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .t-item {
+    text-align: center !important;
+    padding: 20px 16px !important;
+  }
+  .t-item-icon-wrapper {
+    justify-content: center !important;
+    margin-inline: auto !important;
+  }
+  .t-item h3 {
+    text-align: center !important;
+  }
+  .t-item p {
+    text-align: center !important;
+    margin-inline: auto !important;
+  }
+
+  /* ─ 5. HOW WE WORK ─ */
+  .how-we-work-section {
+    padding: 56px 16px !important;
+  }
+  .how-section-head {
+    text-align: center !important;
+    padding-inline: 0 !important;
+  }
+  .how-section-head h2,
+  .how-section-head p {
+    text-align: center !important;
+    margin-inline: auto !important;
+    max-width: 320px !important;
+  }
+  .how-steps-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  .how-step-card {
+    padding: 20px 14px !important;
+    text-align: center !important;
+  }
+  .how-step-top {
+    flex-direction: column-reverse !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+  .how-step-icon-wrap {
+    margin-inline: auto !important;
+  }
+  .how-step-title,
+  .how-step-desc {
+    text-align: center !important;
+  }
+
+  /* ─ 6. STATS BANNER ─ */
+  .stats-banner-section {
+    padding: 0 16px !important;
+  }
+  .stats-banner-inner {
+    grid-template-columns: 1fr 1fr !important;
+    border-radius: 16px !important;
+  }
+  .stats-banner-item {
+    padding: 28px 10px !important;
+    text-align: center !important;
+  }
+  .stats-banner-num {
+    font-size: 26px !important;
+    text-align: center !important;
+  }
+  .stats-banner-label {
+    font-size: 12px !important;
+    text-align: center !important;
+  }
+  .stats-banner-item:nth-child(2)::after,
+  .stats-banner-item:nth-child(4)::after {
+    display: none !important;
+  }
+
+  /* ─ 7. MASTERS ─ */
+  .masters {
+    padding: 56px 16px !important;
+  }
+  .masters .section-head {
+    text-align: center !important;
+  }
+  .masters .section-head h2,
+  .masters .section-head p {
+    text-align: center !important;
+    margin-inline: auto !important;
+  }
+  .masters-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  .master-card {
+    padding: 20px 14px !important;
+    text-align: center !important;
+  }
+
+  /* ─ 8. BRANDS ─ */
+  .brands-section {
+    padding: 56px 16px !important;
+  }
+  .brands-section .section-head {
+    text-align: center !important;
+  }
+  .brands-pills-row {
+    justify-content: center !important;
+    gap: 8px !important;
+    padding-inline: 0 !important;
+  }
+  .brand-pill {
+    padding: 9px 18px !important;
+    font-size: 13px !important;
+  }
+
+  /* ─ 9. GEOGRAPHY ─ */
+  .geo-section {
+    padding: 56px 16px !important;
+  }
+  .geo-inner {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+  .geo-left {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .geo-tag {
+    align-self: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .geo-title {
+    text-align: center !important;
+    font-size: clamp(22px, 6vw, 30px) !important;
+  }
+  .geo-desc {
+    text-align: center !important;
+    max-width: 100% !important;
+    margin-inline: auto !important;
+  }
+  .geo-address-card {
+    width: 100% !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+  }
+  .geo-stats-row {
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  .geo-stat-chip {
+    font-size: 12px !important;
+    padding: 7px 12px !important;
+  }
+  .geo-districts-header {
+    text-align: center !important;
+  }
+  .geo-districts-label {
+    justify-content: center !important;
+  }
+  .geo-cities-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .geo-city-pill {
+    font-size: 12px !important;
+    padding: 10px 8px !important;
+    justify-content: flex-start !important;
+  }
+
+  /* ─ 10. REVIEWS ─ */
+  #reviews {
+    padding: 56px 16px !important;
+  }
+  #reviews .section-head {
+    text-align: center !important;
+  }
+  #reviews .section-head h2,
+  #reviews .section-head p {
+    text-align: center !important;
+    margin-inline: auto !important;
+  }
+
+  /* ─ 11. CALLBACK ─ */
+  .callback {
+    padding: 56px 16px !important;
+  }
+  .callback-inner {
+    padding: 32px 20px !important;
+    flex-direction: column !important;
+    gap: 28px !important;
+  }
+  .callback-inner h2 {
+    font-size: clamp(22px, 6vw, 30px) !important;
+    text-align: center !important;
+  }
+  .callback-inner p {
+    text-align: center !important;
+    margin-inline: auto !important;
+  }
+  .cb-feat {
+    text-align: left !important;
+    padding-left: 20px !important;
+  }
+  .cb-form {
+    width: 100% !important;
+  }
+  .cb-form input,
+  .cb-form select,
+  .cb-form textarea {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ─ 12. FOOTER ─ */
+  .footer-inner {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 32px !important;
+    text-align: center !important;
+    padding-inline: 16px !important;
+  }
+  .footer-col {
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .footer-links {
+    align-items: center !important;
+  }
+  .footer-bottom {
+    flex-direction: column !important;
+    gap: 8px !important;
+    text-align: center !important;
+    padding-inline: 16px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   EXTRA SMALL  ≤480px
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .hero-title { font-size: 26px !important; }
+  .how-steps-grid { grid-template-columns: 1fr !important; }
+  .how-step-card { padding: 18px 12px !important; }
+  .svc-grid { grid-template-columns: 1fr 1fr !important; }
+  .svc-card { padding: 16px 10px !important; }
+  .masters-grid { grid-template-columns: 1fr 1fr !important; }
+  .stats-banner-num { font-size: 20px !important; }
+  .stats-banner-label { font-size: 11px !important; }
+  .stats-banner-inner { grid-template-columns: 1fr 1fr !important; }
+  .geo-cities-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .geo-city-pill { font-size: 11px !important; padding: 9px 6px !important; }
+  .brand-pill { font-size: 12px !important; padding: 8px 14px !important; }
+  .callback-inner { padding: 24px 16px !important; }
+}
