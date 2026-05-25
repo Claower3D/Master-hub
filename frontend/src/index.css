@@ -5111,6 +5111,394 @@ body.light-theme .geo-address-card:hover {
 body.light-theme .geo-city-pill:hover {
   border-color: rgba(249,115,22,0.3);
   box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+@media (max-width: 768px) {
+  .stats-banner-inner { grid-template-columns: repeat(2, 1fr); border-radius: 16px; }
+  .stats-banner-item { padding: 32px 16px; }
+  .stats-banner-num { font-size: 28px; }
+  .stats-banner-item:nth-child(2)::after { display: none; }
+}
+@media (max-width: 420px) {
+  .stats-banner-num { font-size: 22px; }
+  .stats-banner-label { font-size: 11px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BRANDS SECTION
+══════════════════════════════════════════════════════════════════ */
+.brands-section {
+  padding: 80px 0;
+  background: var(--bg);
+}
+.brands-section .section-head { margin-bottom: 44px; }
+.brands-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  cursor: default;
+  transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.brand-pill::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(124,242,199,0.06), rgba(91,140,255,0.06));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.brand-pill:hover {
+  border-color: rgba(124,242,199,0.35);
+  color: var(--accent);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 20px rgba(124,242,199,0.08);
+}
+.brand-pill:hover::before { opacity: 1; }
+body.light-theme .brand-pill:hover {
+  border-color: rgba(249,115,22,0.4);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 20px rgba(249,115,22,0.08);
+}
+@media (max-width: 768px) {
+  .brands-section { padding: 56px 16px; }
+  .brand-pill { padding: 10px 20px; font-size: 14px; }
+}
+@media (max-width: 480px) {
+  .brand-pill { padding: 9px 14px; font-size: 13px; }
+  .brands-pills-row { gap: 8px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GEOGRAPHY SECTION
+══════════════════════════════════════════════════════════════════ */
+.geo-section {
+  padding: 80px 0;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+.geo-section::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91,140,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.geo-section::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: -80px;
+  width: 340px; height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,242,199,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.geo-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
+  align-items: center;
+  position: relative; z-index: 1;
+}
+.geo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  padding: 8px 16px;
+  background: rgba(124,242,199,0.08);
+  border: 1px solid rgba(124,242,199,0.2);
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+body.light-theme .geo-tag {
+  background: rgba(249,115,22,0.08);
+  border-color: rgba(249,115,22,0.2);
+}
+.geo-title {
+  font-size: clamp(26px,4vw,40px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+.geo-desc {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 32px;
+  max-width: 420px;
+}
+.geo-address-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 24px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.geo-address-card:hover {
+  border-color: rgba(124,242,199,0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+body.light-theme .geo-address-card:hover {
+  border-color: rgba(249,115,22,0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+}
+.geo-address-card > i { font-size: 22px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+.geo-address-card strong { display: block; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.geo-address-card span { font-size: 12px; color: var(--muted); }
+
+.geo-cities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.geo-city-pill {
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  cursor: default;
+  transition: all 0.28s cubic-bezier(0.2,0.8,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.geo-city-pill::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(124,242,199,0.06), rgba(91,140,255,0.04));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.geo-city-pill:hover {
+  border-color: rgba(124,242,199,0.3);
+  color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.geo-city-pill:hover::before { opacity: 1; }
+body.light-theme .geo-city-pill:hover {
+  border-color: rgba(249,115,22,0.3);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+@media (max-width: 900px) {
+  .geo-inner { grid-template-columns: 1fr; gap: 40px; }
+  .geo-desc { max-width: 100%; }
+}
+@media (max-width: 420px) {
+  .stats-banner-num { font-size: 22px; }
+  .stats-banner-label { font-size: 11px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BRANDS SECTION
+══════════════════════════════════════════════════════════════════ */
+.brands-section {
+  padding: 80px 0;
+  background: var(--bg);
+}
+.brands-section .section-head { margin-bottom: 44px; }
+.brands-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  cursor: default;
+  transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.brand-pill::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(124,242,199,0.06), rgba(91,140,255,0.06));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.brand-pill:hover {
+  border-color: rgba(124,242,199,0.35);
+  color: var(--accent);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 20px rgba(124,242,199,0.08);
+}
+.brand-pill:hover::before { opacity: 1; }
+body.light-theme .brand-pill:hover {
+  border-color: rgba(249,115,22,0.4);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 20px rgba(249,115,22,0.08);
+}
+@media (max-width: 768px) {
+  .brands-section { padding: 56px 16px; }
+  .brand-pill { padding: 10px 20px; font-size: 14px; }
+}
+@media (max-width: 480px) {
+  .brand-pill { padding: 9px 14px; font-size: 13px; }
+  .brands-pills-row { gap: 8px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GEOGRAPHY SECTION
+══════════════════════════════════════════════════════════════════ */
+.geo-section {
+  padding: 80px 0;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+.geo-section::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(91,140,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.geo-section::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: -80px;
+  width: 340px; height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,242,199,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.geo-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
+  align-items: center;
+  position: relative; z-index: 1;
+}
+.geo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  padding: 8px 16px;
+  background: rgba(124,242,199,0.08);
+  border: 1px solid rgba(124,242,199,0.2);
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+body.light-theme .geo-tag {
+  background: rgba(249,115,22,0.08);
+  border-color: rgba(249,115,22,0.2);
+}
+.geo-title {
+  font-size: clamp(26px,4vw,40px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.15;
+  margin: 0 0 16px;
+}
+.geo-desc {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 32px;
+  max-width: 420px;
+}
+.geo-address-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px 24px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.geo-address-card:hover {
+  border-color: rgba(124,242,199,0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+body.light-theme .geo-address-card:hover {
+  border-color: rgba(249,115,22,0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+}
+.geo-address-card > i { font-size: 22px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+.geo-address-card strong { display: block; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.geo-address-card span { font-size: 12px; color: var(--muted); }
+
+.geo-cities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.geo-city-pill {
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  cursor: default;
+  transition: all 0.28s cubic-bezier(0.2,0.8,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.geo-city-pill::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(124,242,199,0.06), rgba(91,140,255,0.04));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.geo-city-pill:hover {
+  border-color: rgba(124,242,199,0.3);
+  color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.geo-city-pill:hover::before { opacity: 1; }
+body.light-theme .geo-city-pill:hover {
+  border-color: rgba(249,115,22,0.3);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
 }
 
 @media (max-width: 900px) {
@@ -5125,4 +5513,184 @@ body.light-theme .geo-city-pill:hover {
 @media (max-width: 480px) {
   .geo-cities-grid { gap: 8px; }
   .geo-city-pill { padding: 12px 10px; font-size: 12px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GLOBAL MOBILE — side padding + text centering for ALL sections
+══════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* 1. Base section padding with 16px side gutters */
+  section {
+    padding: 56px 16px !important;
+  }
+
+  /* 2. Section headings — centered on mobile */
+  .section-head {
+    text-align: center !important;
+    padding: 0 !important;
+  }
+  .section-head h2 {
+    font-size: clamp(22px, 6vw, 30px) !important;
+    text-align: center !important;
+  }
+  .section-head p {
+    text-align: center !important;
+    margin-inline: auto !important;
+    max-width: 360px !important;
+  }
+
+  /* 3. HOW WE WORK — center text inside cards */
+  .how-we-work-section {
+    padding: 56px 16px !important;
+  }
+  .how-steps-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  .how-step-card {
+    text-align: center !important;
+    padding: 22px 16px !important;
+  }
+  .how-step-top {
+    flex-direction: column-reverse !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+  }
+  .how-step-num {
+    font-size: 28px !important;
+    opacity: 0.18 !important;
+  }
+  .how-step-icon-wrap {
+    margin-inline: auto !important;
+  }
+  .how-step-title {
+    text-align: center !important;
+  }
+  .how-step-desc {
+    text-align: center !important;
+  }
+
+  /* 4. STATS BANNER — 2 columns, centered */
+  .stats-banner-section {
+    padding: 0 16px !important;
+  }
+  .stats-banner-inner {
+    grid-template-columns: 1fr 1fr !important;
+    border-radius: 16px !important;
+  }
+  .stats-banner-item {
+    padding: 28px 12px !important;
+    text-align: center !important;
+  }
+  .stats-banner-num {
+    font-size: 26px !important;
+    text-align: center !important;
+  }
+  .stats-banner-label {
+    font-size: 12px !important;
+    text-align: center !important;
+  }
+  /* Hide dividers between items 2 and 4 (right column) */
+  .stats-banner-item:nth-child(2)::after,
+  .stats-banner-item:nth-child(4)::after {
+    display: none !important;
+  }
+
+  /* 5. BRANDS — centered pills, side padding */
+  .brands-section {
+    padding: 56px 16px !important;
+  }
+  .brands-section .section-head {
+    text-align: center !important;
+  }
+  .brands-pills-row {
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+  .brand-pill {
+    padding: 9px 18px !important;
+    font-size: 13px !important;
+  }
+
+  /* 6. GEOGRAPHY — single column, centered text */
+  .geo-section {
+    padding: 56px 16px !important;
+  }
+  .geo-inner {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    text-align: center !important;
+  }
+  .geo-left {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .geo-tag {
+    align-self: center !important;
+    justify-content: center !important;
+  }
+  .geo-title {
+    text-align: center !important;
+    font-size: 26px !important;
+  }
+  .geo-desc {
+    text-align: center !important;
+    margin-inline: auto !important;
+    max-width: 100% !important;
+  }
+  .geo-address-card {
+    text-align: left !important;
+    width: 100% !important;
+  }
+  .geo-cities-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .geo-city-pill {
+    font-size: 13px !important;
+    padding: 12px 8px !important;
+    text-align: center !important;
+  }
+
+  /* 7. Other existing sections — center headings */
+  .why .section-head,
+  .masters .section-head,
+  .services .section-head,
+  #reviews .section-head {
+    text-align: center !important;
+  }
+  .why .section-head h2,
+  .masters .section-head h2,
+  .services .section-head h2,
+  #reviews .section-head h2 {
+    text-align: center !important;
+  }
+
+  /* 8. Timeline (Why section) — center items */
+  .t-item {
+    text-align: center !important;
+  }
+  .t-item-icon-wrapper {
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small — single column steps */
+  .how-steps-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .stats-banner-inner {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .stats-banner-num {
+    font-size: 20px !important;
+  }
+  .geo-cities-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
