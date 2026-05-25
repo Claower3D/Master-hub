@@ -901,6 +901,16 @@ func main() {
 		}
 	}
 
+	mux.Handle("/sitemap.xml", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/xml")
+		http.ServeFile(w, r, filepath.Join(staticDir, "sitemap.xml"))
+	}))
+
+	mux.Handle("/robots.txt", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		http.ServeFile(w, r, filepath.Join(staticDir, "robots.txt"))
+	}))
+
 	fileServer := http.FileServer(http.Dir(staticDir))
 	mux.Handle("/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/api/") {
