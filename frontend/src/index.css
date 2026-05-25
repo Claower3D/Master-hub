@@ -4535,13 +4535,13 @@ body.light-theme .reviews-floating-btn:hover {
     border-radius: 12px !important;
   }
   .cat-pill::after {
-    content: 'в†’';
+    content: '\2192';
     margin-left: 10px;
     opacity: 0.5;
     display: inline-block !important;
   }
   .cat-pill.active::after {
-    content: 'вњ“';
+    content: '\2713';
     opacity: 1;
     font-weight: bold;
   }
