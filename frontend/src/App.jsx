@@ -126,8 +126,8 @@ export default function App() {
   /* ── Scroll-reveal (desktop only) ── */
   useEffect(() => {
     if (window.matchMedia('(max-width: 768px)').matches) return;
-    // Use rAF so React has flushed the DOM (important for dynamically rendered lists)
-    const tid = requestAnimationFrame(() => {
+
+    const observe = () => {
       const els = document.querySelectorAll('[data-reveal]:not(.revealed)');
       if (!els.length) return;
       const io = new IntersectionObserver((entries) => {
@@ -139,10 +139,24 @@ export default function App() {
         });
       }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
       els.forEach(el => io.observe(el));
-      return () => io.disconnect();
+      return io;
+    };
+
+    // Initial pass after first paint
+    let io = observe();
+
+    // Re-observe when new [data-reveal] elements are added (e.g. after API fetch)
+    const mo = new MutationObserver(() => {
+      if (io) io.disconnect();
+      io = observe();
     });
-    return () => cancelAnimationFrame(tid);
-  }, [activePage, reviewsData]);
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      if (io) io.disconnect();
+      mo.disconnect();
+    };
+  }, [activePage]);
 
   useEffect(() => {
     fetch(API_BASE + '/api/catalog')
