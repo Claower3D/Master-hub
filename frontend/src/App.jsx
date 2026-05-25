@@ -5873,23 +5873,23 @@ const pageDataMap = {
           </section>
 
           {/* QUICK STEPS */}
-          <section className="quick-steps">
+          <section className="quick-steps" data-reveal="fade-up">
             <div className="quick-steps-grid">
-              <div className="quick-step-item">
+              <div className="quick-step-item" data-reveal="fade-up" style={{'--reveal-delay':'0ms'}}>
                 <div className="quick-step-icon"><i className="ri-hand-coin-line"></i></div>
                 <div>
                   <h4 className="quick-step-title">1. Выбираете услугу</h4>
                   <p className="quick-step-desc">Фиксированный прайс без скрытых наценок</p>
                 </div>
               </div>
-              <div className="quick-step-item">
+              <div className="quick-step-item" data-reveal="fade-up" style={{'--reveal-delay':'100ms'}}>
                 <div className="quick-step-icon"><i className="ri-timer-flash-line"></i></div>
                 <div>
                   <h4 className="quick-step-title">2. Выезд за 45 минут</h4>
                   <p className="quick-step-desc">Мастер прибудет в среднем за 45 минут</p>
                 </div>
               </div>
-              <div className="quick-step-item">
+              <div className="quick-step-item" data-reveal="fade-up" style={{'--reveal-delay':'200ms'}}>
                 <div className="quick-step-icon"><i className="ri-shield-star-line"></i></div>
                 <div>
                   <h4 className="quick-step-title">3. Гарантия 1 год</h4>
@@ -5900,7 +5900,7 @@ const pageDataMap = {
           </section>
 
           {/* WHAT WE DO SLIDER */}
-          <section id="about" className="what-we-do">
+          <section id="about" className="what-we-do" data-reveal="fade-up">
             <div className="section-head" style={{ marginBottom: '40px' }}>
               <h2>Чем мы занимаемся</h2>
               <p>Три ключевых направления нашего мультисервиса с гарантией качества и фиксированным прайсом.</p>
@@ -6040,7 +6040,7 @@ const pageDataMap = {
           </section>
 
           {/* SERVICES CATALOG */}
-          <section id="services" className="services">
+          <section id="services" className="services" data-reveal="fade-up">
             <div className="section-head">
               <h2>{t('srv_title')}</h2>
               <p>{t('srv_sub')}</p>
@@ -6060,7 +6060,7 @@ const pageDataMap = {
             </div>
             <div className="srv-cards-grid">
               {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
-                <div className="srv-card" key={idx} style={{ overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
+                <div className="srv-card" key={idx} data-reveal="fade-up" style={{ '--reveal-delay': `${idx * 70}ms`, overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
                   {card.img && (
                     <div 
                       className="srv-img-wrapper" 
@@ -6170,7 +6170,7 @@ const pageDataMap = {
           </section>
 
           {/* MASTERS */}
-          <section id="masters" className="masters">
+          <section id="masters" className="masters" data-reveal="fade-up">
             <div className="section-head">
               <h2>{t('masters_title')}</h2>
               <p>{t('masters_sub')}</p>
@@ -6205,7 +6205,7 @@ const pageDataMap = {
                 { cat: 'mebel', name: 'Руслан Б.', role: 'Мягкая мебель', exp: '8 лет', rating: '4.9', reviews: 134, photo: 'a4' },
                 { cat: 'mebel', name: 'Денис В.', role: 'Корпусная мебель', exp: '6 лет', rating: '4.7', reviews: 95, photo: 'a3' },
               ].filter(m => m.cat === activeMasterCat).map((m, idx) => (
-                <div className="m-card" key={idx}>
+                <div className="m-card" key={idx} data-reveal="fade-up" style={{'--reveal-delay': `${idx * 60}ms`}}>
                   <div className={`m-photo ${m.photo === 'a1' ? '' : m.photo}`}><i className="ri-user-line"></i></div>
                   <h4>{m.name}</h4>
                   <span>{m.role}</span>
@@ -6216,7 +6216,7 @@ const pageDataMap = {
           </section>
 
           {/* WHY US */}
-          <section id="why" className="why">
+          <section id="why" className="why" data-reveal="fade-up">
             <div className="section-head">
               <h2>{t('why_title')}</h2>
               <p>{t('why_sub')}</p>
@@ -6233,7 +6233,7 @@ const pageDataMap = {
                 { num: 8, icon: 'ri-hand-heart-line' },
                 { num: 9, icon: 'ri-safe-2-line' }
               ].map(item => (
-                <div className="t-item" key={item.num}>
+                <div className="t-item" key={item.num} data-reveal="fade-up" style={{'--reveal-delay': `${(item.num - 1) * 55}ms`}}>
                   <div className="t-item-icon-wrapper">
                     <div className="t-item-icon">
                       <i className={item.icon}></i>
@@ -6251,14 +6251,14 @@ const pageDataMap = {
           
 
           {/* REVIEWS */}
-          <section id="reviews">
+          <section id="reviews" data-reveal="fade-up">
             <div className="section-head">
               <h2>{t('reviews_title')}</h2>
               <p>{t('reviews_sub')}</p>
             </div>
             <div className="r-grid">
               {reviewsData.map((rev, idx) => (
-                <blockquote key={idx} style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <blockquote key={idx} data-reveal="fade-up" style={{ '--reveal-delay': `${idx * 60}ms`, position: 'relative', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <div style={{ color: '#ffcc00', fontSize: '14px', display: 'flex', gap: '2px' }}>
                     {Array.from({ length: rev.rating || 5 }).map((_, i) => (
                       <i key={i} className="ri-star-fill"></i>
@@ -6718,12 +6718,12 @@ const pageDataMap = {
 
       {/* CALLBACK FORM */}
       {activePage !== 'admin' && (
-      <section id="contact" className="callback" style={{ position: 'relative', overflow: 'hidden' }}>
+      <section id="contact" className="callback" data-reveal="fade-up" style={{ position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
           <img src="./why_bg.png" alt="Smart Home Interior" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, filter: 'blur(3px)' }} />
           <div style={{ position: 'absolute', inset: 0, background: 'var(--callback-overlay)' }}></div>
         </div>
-        <div className="callback-inner" style={{ position: 'relative', zIndex: 2, background: 'var(--callback-bg)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.2)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
+        <div className="callback-inner" data-reveal="zoom-in" style={{ '--reveal-delay': '100ms', position: 'relative', zIndex: 2, background: 'var(--callback-bg)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.2)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
           <div>
             <h2>{t('call_title')}</h2>
             <p>{t('call_sub')}</p>
