@@ -3,15 +3,166 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>hubmaster — Мультисервис бытовых и бизнес-услуг</title>
+    <title>hubmaster — Ремонт окон на дому, ремонт холодильников и бытовой техники</title>
+    <meta name="description" content="Профессиональный ремонт окон на дому, ремонт холодильников, стиральных машин, сантехники и электрики от сервиса hubmaster. Быстрый выезд мастера за 45 минут в Алматы, Астане, Павлодаре. Гарантия до 12 месяцев." />
+    
+    <!-- Geo Targeting -->
+    <meta name="geo.region" content="KZ" />
+    <meta name="geo.position" content="43.2185;76.9272" />
+    <meta name="ICBM" content="43.2185, 76.9272" />
+
+    <!-- Language Alternates -->
+    <link rel="alternate" hreflang="ru" href="https://masterhub.kz/" />
+    <link rel="alternate" hreflang="kk" href="https://masterhub.kz/?lang=kz" />
+    <link rel="alternate" hreflang="en" href="https://masterhub.kz/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://masterhub.kz/" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://masterhub.kz/#localbusiness",
+          "name": "hubmaster",
+          "image": "https://masterhub.kz/favicon.svg",
+          "telephone": "+77058462749",
+          "priceRange": "$$",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "пр. Аль-Фараби, 77/7",
+            "addressLocality": "Алматы",
+            "addressCountry": "KZ"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "43.2185",
+            "longitude": "76.9272"
+          },
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ],
+            "opens": "09:00",
+            "closes": "21:00"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "2380"
+          }
+        },
+        {
+          "@type": "Service",
+          "name": "Ремонт окон на дому",
+          "serviceType": "Ремонт и регулировка пластиковых окон",
+          "provider": {
+            "@id": "https://masterhub.kz/#localbusiness"
+          },
+          "areaServed": [
+            {
+              "@type": "City",
+              "name": "Алматы"
+            },
+            {
+              "@type": "City",
+              "name": "Астана"
+            },
+            {
+              "@type": "City",
+              "name": "Павлодар"
+            }
+          ]
+        },
+        {
+          "@type": "Service",
+          "name": "Ремонт холодильников и бытовой техники",
+          "serviceType": "Ремонт крупной и мелкой бытовой техники",
+          "provider": {
+            "@id": "https://masterhub.kz/#localbusiness"
+          },
+          "areaServed": [
+            {
+              "@type": "City",
+              "name": "Алматы"
+            },
+            {
+              "@type": "City",
+              "name": "Астана"
+            },
+            {
+              "@type": "City",
+              "name": "Павлодар"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Какова гарантия на ремонт окон и бытовой техники?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Мы предоставляем официальную письменную гарантию на все виды работ и замененные комплектующие на срок до 12 месяцев."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Как быстро приезжает мастер по ремонту?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "В среднем мастер приезжает по городу в течение 45 минут после подтверждения заявки оператором."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Используются ли оригинальные запчасти?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Да, наши мастера используют исключительно оригинальные запчасти и комплектующие с собственного склада."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Premium loading screen & SEO content -->
+      <div id="seo-preloader" style="position: fixed; inset: 0; background: #0b1020; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Manrope', sans-serif; z-index: 9999; text-align: center; padding: 20px;">
+        <div style="width: 50px; height: 50px; border: 3px solid rgba(0, 242, 254, 0.1); border-top-color: #00f2fe; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 24px;"></div>
+        <h1 style="font-size: 24px; font-weight: 800; margin: 0 0 12px 0; background: linear-gradient(135deg, #00f2fe, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          hubmaster
+        </h1>
+        <p style="font-size: 14px; color: #8fa0dd; max-width: 450px; margin: 0 0 24px 0; line-height: 1.6;">
+          Мультисервис бытовых услуг. Ремонт холодильников, ремонт окон на дому, сборка мебели, сантехника, электрика и клининг.
+        </p>
+        <div style="font-size: 11px; color: #4e5d8c; letter-spacing: 0.5px;">
+          Выезд мастера за 45 минут в Алматы, Астане, Павлодаре
+        </div>
+        
+        <style>
+          @keyframes spin { to { transform: rotate(360deg); } }
+        </style>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
