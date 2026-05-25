@@ -4381,7 +4381,7 @@ export default function App() {
                             </div>
 
                             {/* Contacts Mock */}
-                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px' }}>
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
                               <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', display: 'block', marginBottom: '8px' }}>
                                 📞 КОНТАКТНЫЕ ДАННЫЕ
                               </span>
@@ -4404,6 +4404,219 @@ export default function App() {
                                 >
                                   <strong>Адрес:</strong> {previewLang === 'ru' ? landingBlocks?.contacts?.addressRu : landingBlocks?.contacts?.addressKz}
                                 </div>
+                              </div>
+                            </div>
+
+                            {/* Quick Steps Mock */}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+                              <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', display: 'block', marginBottom: '10px' }}>
+                                ⚡️ БЫСТРЫЕ ШАГИ
+                              </span>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                                {[
+                                  { key: 'step1', defaultTitle: '1. Выбираете услугу', defaultDesc: 'Фиксированный прайс без скрытых наценок' },
+                                  { key: 'step2', defaultTitle: '2. Выезд за 45 минут', defaultDesc: 'Мастер прибудет в среднем за 45 минут' },
+                                  { key: 'step3', defaultTitle: '3. Гарантия 1 год', defaultDesc: 'Официальная гарантия и страхование работ' }
+                                ].map((step) => {
+                                  const titleKey = previewLang === 'ru' ? `${step.key}TitleRu` : `${step.key}TitleKz`;
+                                  const descKey = previewLang === 'ru' ? `${step.key}DescRu` : `${step.key}DescKz`;
+                                  const currentTitle = landingBlocks?.[titleKey] || step.defaultTitle;
+                                  const currentDesc = landingBlocks?.[descKey] || step.defaultDesc;
+                                  return (
+                                    <div key={step.key} style={{ background: 'var(--surface)', padding: '8px 4px', borderRadius: '6px', border: '1px solid var(--line)', textAlign: 'center' }}>
+                                      <strong
+                                        className="editable-preview-block"
+                                        onClick={() => handleInlineEdit('landing', [titleKey], 'Заголовок шага', currentTitle)}
+                                        style={{ fontSize: '9px', color: 'var(--accent)', display: 'block', marginBottom: '4px' }}
+                                      >
+                                        {currentTitle}
+                                      </strong>
+                                      <span
+                                        className="editable-preview-block"
+                                        onClick={() => handleInlineEdit('landing', [descKey], 'Описание шага', currentDesc)}
+                                        style={{ fontSize: '7px', color: 'var(--muted)', display: 'block', lineHeight: '1.1' }}
+                                      >
+                                        {currentDesc}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* What We Do Mock */}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+                              <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', display: 'block', marginBottom: '10px' }}>
+                                🛠️ ЧЕМ МЫ ЗАНИМАЕМСЯ
+                              </span>
+                              <div style={{ background: 'var(--surface)', padding: '10px', borderRadius: '8px', border: '1px solid var(--line)' }}>
+                                <strong
+                                  className="editable-preview-block"
+                                  onClick={() => handleInlineEdit('landing', ['whatWeDo', previewLang === 'ru' ? 'titleRu' : 'titleKz'], 'Заголовок Чем мы занимаемся', previewLang === 'ru' ? (landingBlocks?.whatWeDo?.titleRu || 'Чем мы занимаемся') : (landingBlocks?.whatWeDo?.titleKz || 'Біз немен айналысамыз'))}
+                                  style={{ fontSize: '12px', display: 'block', marginBottom: '4px' }}
+                                >
+                                  {previewLang === 'ru' ? (landingBlocks?.whatWeDo?.titleRu || 'Чем мы занимаемся') : (landingBlocks?.whatWeDo?.titleKz || 'Біз немен айналысамыз')}
+                                </strong>
+                                <p
+                                  className="editable-preview-block"
+                                  onClick={() => handleInlineEdit('landing', ['whatWeDo', previewLang === 'ru' ? 'subRu' : 'subKz'], 'Подзаголовок Чем мы занимаемся', previewLang === 'ru' ? (landingBlocks?.whatWeDo?.subRu || 'Три ключевых направления...') : (landingBlocks?.whatWeDo?.subKz || 'Үш негізгі бағыт...'))}
+                                  style={{ fontSize: '9px', color: 'var(--muted)', lineHeight: '1.3', marginBottom: '10px' }}
+                                >
+                                  {previewLang === 'ru' ? (landingBlocks?.whatWeDo?.subRu || 'Три ключевых направления нашего мультисервиса с гарантией качества и фиксированным прайсом.') : (landingBlocks?.whatWeDo?.subKz || 'Сапа кепілдігімен және бекітілген прайспен біздің мультисервистің үш негізгі бағыты.')}
+                                </p>
+                                
+                                <div style={{ borderTop: '1px solid var(--line)', paddingTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                  {[
+                                    { id: 'okna', defaultTitleRu: 'Окна и оконные системы', defaultSubtitleRu: 'Москитные сетки, детская защита, регулировка...' },
+                                    { id: 'servis', defaultTitleRu: 'Сервис и ремонт техники', defaultSubtitleRu: 'Профессиональный ремонт стиральных машин...' },
+                                    { id: 'mebel', defaultTitleRu: 'Мебель на заказ и реставрация', defaultSubtitleRu: 'Изготовление корпусной и мягкой мебели...' }
+                                  ].map((slide, sIdx) => {
+                                    const custom = landingBlocks?.whatWeDo?.slides?.[sIdx] || {};
+                                    const sTitle = previewLang === 'ru' ? (custom.titleRu || slide.defaultTitleRu) : (custom.titleKz || slide.defaultTitleRu);
+                                    const sSubtitle = previewLang === 'ru' ? (custom.subtitleRu || slide.defaultSubtitleRu) : (custom.subtitleKz || slide.defaultSubtitleRu);
+                                    return (
+                                      <div key={slide.id} style={{ background: 'var(--bg)', padding: '6px', borderRadius: '6px', border: '1px solid var(--line)' }}>
+                                        <strong
+                                          className="editable-preview-block"
+                                          onClick={() => handleInlineEdit('landing', ['whatWeDo', 'slides', sIdx, previewLang === 'ru' ? 'titleRu' : 'titleKz'], 'Название направления', sTitle)}
+                                          style={{ fontSize: '9px', color: 'var(--accent)', display: 'block' }}
+                                        >
+                                          {sTitle}
+                                        </strong>
+                                        <span
+                                          className="editable-preview-block"
+                                          onClick={() => handleInlineEdit('landing', ['whatWeDo', 'slides', sIdx, previewLang === 'ru' ? 'subtitleRu' : 'subtitleKz'], 'Описание направления', sSubtitle)}
+                                          style={{ fontSize: '8px', color: 'var(--muted)', display: 'block' }}
+                                        >
+                                          {sSubtitle}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Categories / Services Grid Mock */}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+                              <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', display: 'block', marginBottom: '10px' }}>
+                                💼 НАШИ УСЛУГИ / КАТЕГОРИИ
+                              </span>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                {megaCategories.map(cat => {
+                                  const dbMeta = megaDetails[cat.id] || {};
+                                  return (
+                                    <div
+                                      key={cat.id}
+                                      style={{
+                                        background: 'var(--surface)',
+                                        padding: '10px',
+                                        borderRadius: '8px',
+                                        border: '1px solid var(--line)',
+                                        cursor: 'pointer',
+                                        transition: 'border-color 0.2s'
+                                      }}
+                                      title="Нажмите, чтобы открыть эту страницу для полного редактирования"
+                                      onClick={(e) => {
+                                        if (e.target.closest('.editable-preview-block')) return;
+                                        setSelectedPageToEdit(cat.id);
+                                      }}
+                                    >
+                                      <strong
+                                        className="editable-preview-block"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleInlineEdit('category-title', cat.id, 'Название категории', cat.title);
+                                        }}
+                                        style={{ fontSize: '11px', color: 'var(--text)', display: 'block', marginBottom: '4px' }}
+                                      >
+                                        {cat.title}
+                                      </strong>
+                                      <span
+                                        className="editable-preview-block"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleInlineEdit('category-detail', [cat.id, 'desc'], 'Описание категории', dbMeta.desc || 'Описание отсутствует...')
+                                        }}
+                                        style={{ fontSize: '8px', color: 'var(--muted)', display: 'block', lineHeight: '1.2', height: '24px', overflow: 'hidden' }}
+                                      >
+                                        {dbMeta.desc || 'Описание отсутствует...'}
+                                      </span>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px', fontSize: '8px', borderTop: '1px solid var(--line)', paddingTop: '4px' }}>
+                                        <span style={{ color: 'var(--accent)' }}>Редактировать →</span>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Why Us Mock */}
+                            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--line)', borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+                              <span style={{ fontSize: '10px', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: '700', display: 'block', marginBottom: '10px' }}>
+                                💎 ПОЧЕМУ ВЫБИРАЮТ НАС
+                              </span>
+                              {(() => {
+                                const whyTitle = previewLang === 'ru' 
+                                  ? (landingBlocks?.whyUs?.titleRu || 'Почему выбирают HUB MASTER') 
+                                  : (landingBlocks?.whyUs?.titleKz || 'Неліктен HUB MASTER таңдайды');
+                                const whySub = previewLang === 'ru'
+                                  ? (landingBlocks?.whyUs?.subRu || 'Мы гарантируем надежность, качество и честные цены')
+                                  : (landingBlocks?.whyUs?.subKz || 'Біз сенімділікке, сапаға және адал бағаға кепілдік береміз');
+                                return (
+                                  <div>
+                                    <strong
+                                      className="editable-preview-block"
+                                      onClick={() => handleInlineEdit('landing', ['whyUs', previewLang === 'ru' ? 'titleRu' : 'titleKz'], 'Заголовок секции Почему мы', whyTitle)}
+                                      style={{ fontSize: '11px', color: 'var(--text)', display: 'block', marginBottom: '2px' }}
+                                    >
+                                      {whyTitle}
+                                    </strong>
+                                    <span
+                                      className="editable-preview-block"
+                                      onClick={() => handleInlineEdit('landing', ['whyUs', previewLang === 'ru' ? 'subRu' : 'subKz'], 'Подзаголовок секции Почему мы', whySub)}
+                                      style={{ fontSize: '8px', color: 'var(--muted)', display: 'block', marginBottom: '12px' }}
+                                    >
+                                      {whySub}
+                                    </span>
+                                  </div>
+                                );
+                              })()}
+
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                {[
+                                  { num: 1, defaultTitleRu: "100% Гарантия", defaultDescRu: "На все работы и запчасти до 12 месяцев" },
+                                  { num: 2, defaultTitleRu: "Профессионалы", defaultDescRu: "Опытные мастера с профильным стажем от 5 лет" },
+                                  { num: 3, defaultTitleRu: "Фиксированные цены", defaultDescRu: "Стоимость известна до начала ремонта" },
+                                  { num: 4, defaultTitleRu: "Быстрый выезд", defaultDescRu: "Приезд мастера в течение 45 минут по всему городу" },
+                                  { num: 5, defaultTitleRu: "Оригинальные детали", defaultDescRu: "Собственный склад оригинальных комплектующих" },
+                                  { num: 6, defaultTitleRu: "Современное оборудование", defaultDescRu: "Профессиональный инструмент и точная диагностика" },
+                                  { num: 7, defaultTitleRu: "Честный расчет", defaultDescRu: "Оплата производится только после приема работы" },
+                                  { num: 8, defaultTitleRu: "Забота о клиенте", defaultDescRu: "Вежливые операторы и аккуратные мастера" },
+                                  { num: 9, defaultTitleRu: "Безопасность", defaultDescRu: "Все мастера проходят проверку СБ" }
+                                ].map((item, idx) => {
+                                  const customItem = landingBlocks?.whyUs?.items?.[idx] || {};
+                                  const itemTitle = previewLang === 'ru' ? (customItem.titleRu || item.defaultTitleRu) : (customItem.titleKz || item.defaultTitleRu);
+                                  const itemDesc = previewLang === 'ru' ? (customItem.descRu || item.defaultDescRu) : (customItem.descKz || item.defaultDescRu);
+                                  return (
+                                    <div key={item.num} style={{ background: 'var(--surface)', padding: '8px 4px', borderRadius: '6px', border: '1px solid var(--line)' }}>
+                                      <strong
+                                        className="editable-preview-block"
+                                        onClick={() => handleInlineEdit('landing', ['whyUs', 'items', idx, previewLang === 'ru' ? 'titleRu' : 'titleKz'], 'Заголовок преимущества', itemTitle)}
+                                        style={{ fontSize: '9px', color: 'var(--accent)', display: 'block', marginBottom: '2px' }}
+                                      >
+                                        {itemTitle}
+                                      </strong>
+                                      <span
+                                        className="editable-preview-block"
+                                        onClick={() => handleInlineEdit('landing', ['whyUs', 'items', idx, previewLang === 'ru' ? 'descRu' : 'descKz'], 'Описание преимущества', itemDesc)}
+                                        style={{ fontSize: '7px', color: 'var(--muted)', display: 'block', lineHeight: '1.1' }}
+                                      >
+                                        {itemDesc}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           </div>
@@ -6067,166 +6280,164 @@ export default function App() {
           {/* QUICK STEPS */}
           <section className="quick-steps" data-reveal="fade-up">
             <div className="quick-steps-grid">
-              <div className="quick-step-item" data-reveal="fade-up" style={{ '--reveal-delay': '0ms' }}>
-                <div className="quick-step-icon"><i className="ri-hand-coin-line"></i></div>
-                <div>
-                  <h4 className="quick-step-title">1. Выбираете услугу</h4>
-                  <p className="quick-step-desc">Фиксированный прайс без скрытых наценок</p>
-                </div>
-              </div>
-              <div className="quick-step-item" data-reveal="fade-up" style={{ '--reveal-delay': '100ms' }}>
-                <div className="quick-step-icon"><i className="ri-timer-flash-line"></i></div>
-                <div>
-                  <h4 className="quick-step-title">2. Выезд за 45 минут</h4>
-                  <p className="quick-step-desc">Мастер прибудет в среднем за 45 минут</p>
-                </div>
-              </div>
-              <div className="quick-step-item" data-reveal="fade-up" style={{ '--reveal-delay': '200ms' }}>
-                <div className="quick-step-icon"><i className="ri-shield-star-line"></i></div>
-                <div>
-                  <h4 className="quick-step-title">3. Гарантия 1 год</h4>
-                  <p className="quick-step-desc">Официальная гарантия и страхование работ</p>
-                </div>
-              </div>
+              {[
+                { key: 'step1', num: 1, icon: 'ri-hand-coin-line', defaultTitle: '1. Выбираете услугу', defaultDesc: 'Фиксированный прайс без скрытых наценок' },
+                { key: 'step2', num: 2, icon: 'ri-timer-flash-line', defaultTitle: '2. Выезд за 45 минут', defaultDesc: 'Мастер прибудет в среднем за 45 минут' },
+                { key: 'step3', num: 3, icon: 'ri-shield-star-line', defaultTitle: '3. Гарантия 1 год', defaultDesc: 'Официальная гарантия и страхование работ' }
+              ].map((step, idx) => {
+                const titleKey = lang === 'ru' ? `${step.key}TitleRu` : `${step.key}TitleKz`;
+                const descKey = lang === 'ru' ? `${step.key}DescRu` : `${step.key}DescKz`;
+                
+                const titleText = landingBlocks?.[titleKey] || step.defaultTitle;
+                const descText = landingBlocks?.[descKey] || step.defaultDesc;
+                
+                return (
+                  <div key={step.key} className="quick-step-item" data-reveal="fade-up" style={{ '--reveal-delay': `${idx * 100}ms` }}>
+                    <div className="quick-step-icon"><i className={step.icon}></i></div>
+                    <div>
+                      <h4 className="quick-step-title">{titleText}</h4>
+                      <p className="quick-step-desc">{descText}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
 
           {/* WHAT WE DO SLIDER */}
           <section id="about" className="what-we-do" data-reveal="fade-up">
             <div className="section-head" style={{ marginBottom: '40px' }}>
-              <h2>Чем мы занимаемся</h2>
-              <p>Три ключевых направления нашего мультисервиса с гарантией качества и фиксированным прайсом.</p>
+              <h2>{lang === 'ru' ? (landingBlocks?.whatWeDo?.titleRu || 'Чем мы занимаемся') : (landingBlocks?.whatWeDo?.titleKz || 'Біз немен айналысамыз')}</h2>
+              <p>{lang === 'ru' ? (landingBlocks?.whatWeDo?.subRu || 'Три ключевых направления нашего мультисервиса с гарантией качества и фиксированным прайсом.') : (landingBlocks?.whatWeDo?.subKz || 'Сапа кепілдігімен және бекітілген прайспен біздің мультисервистің үш негізгі бағыты.')}</p>
             </div>
 
             {/* Slider Tabs */}
-            <div className="what-we-do-tabs">
-              {[
-                {
-                  id: 'okna',
-                  title: 'Окна и оконные системы',
-                  subtitle: 'Москитные сетки, детская защита, регулировка и сложный ремонт окон любой конфигурации.',
-                  img: './slide_windows.png',
-                  features: ['Замена стеклопакетов и уплотнителей', 'Установка детских замков и решеток', 'Изготовление и монтаж под ключ'],
-                  pillCat: 'okna'
-                },
-                {
-                  id: 'servis',
-                  title: 'Сервис и ремонт техники',
-                  subtitle: 'Профессиональный ремонт стиральных машин, холодильников, кондиционеров и посудомоечных машин.',
-                  img: './slide_appliances.png',
-                  features: ['Срочный выезд мастера за 45 минут', 'Оригинальные запчасти в наличии', 'Гарантия на все работы до 12 месяцев'],
-                  pillCat: 'servis'
-                },
-                {
-                  id: 'mebel',
-                  title: 'Мебель на заказ и реставрация',
-                  subtitle: 'Изготовление корпусной и мягкой мебели по индивидуальным проектам, перетяжка и ремонт.',
-                  img: './slide_furniture.png',
-                  features: ['Разработка 3D-дизайн проекта', 'Премиальные материалы и фурнитура', 'Распил, кромление и сборка'],
-                  pillCat: 'mebel'
-                }
-              ].map((slide, idx, arr) => (
-                <button
-                  key={slide.id}
-                  onClick={() => setActiveSlide(idx)}
-                  className={`what-we-do-tab-btn ${activeSlide === idx ? 'active' : ''}`}
-                >
-                  <i className={slide.id === 'okna' ? 'ri-window-line' : (slide.id === 'servis' ? 'ri-tools-line' : 'ri-sofa-line')}></i>
-                  {slide.title}
-                </button>
-              ))}
-            </div>
-
-            {/* Slide Content */}
             {(() => {
-              const slides = [
+              const defaultSlides = [
                 {
                   id: 'okna',
-                  title: 'Окна и оконные системы',
-                  subtitle: 'Москитные сетки, детская защита, регулировка и сложный ремонт окон любой конфигурации.',
+                  titleRu: 'Окна и оконные системы',
+                  titleKz: 'Терезелер және терезе жүйелері',
+                  subtitleRu: 'Москитные сетки, детская защита, регулировка и сложный ремонт окон любой конфигурации.',
+                  subtitleKz: 'Москит торлары, балалар қорғанысы, терезелерді реттеу және кез келген конфигурациядағы терезелерді күрделі жөндеу.',
                   img: './slide_windows.png',
-                  features: ['Замена стеклопакетов и уплотнителей', 'Установка детских замков и решеток', 'Изготовление и монтаж под ключ'],
+                  featuresRu: ['Замена стеклопакетов и уплотнителей', 'Установка детских замков и решеток', 'Изготовление и монтаж под ключ'],
+                  featuresKz: ['Шыны пакеттер мен тығыздағыштарды ауыстыру', 'Балалар құлыптары мен торларын орнату', 'Кілтпен дайындау және орнату'],
                   pillCat: 'okna'
                 },
                 {
                   id: 'servis',
-                  title: 'Сервис и ремонт техники',
-                  subtitle: 'Профессиональный ремонт стиральных машин, холодильников, кондиционеров и посудомоечных машин.',
+                  titleRu: 'Сервис и ремонт техники',
+                  titleKz: 'Тұрмыстық техниканы үйге барып жөндеу',
+                  subtitleRu: 'Профессиональный ремонт стиральных машин, холодильников, кондиционеров и посудомоечных машин.',
+                  subtitleKz: 'Тоңазытқыштарды, кір жуғыш және ыдыс жуғыш машиналарды кәсіби жөндеу.',
                   img: './slide_appliances.png',
-                  features: ['Срочный выезд мастера за 45 минут', 'Оригинальные запчасти в наличии', 'Гарантия на все работы до 12 месяцев'],
+                  featuresRu: ['Срочный выезд мастера за 45 минут', 'Оригинальные запчасти в наличии', 'Гарантия на все работы до 12 месяцев'],
+                  featuresKz: ['Шебердің 45 минутта жедел келуі', 'Түпнұсқа қосалқы бөлшектер қолжетімді', 'Барлық жұмыстарға 12 айға дейін кепілдік'],
                   pillCat: 'servis'
                 },
                 {
                   id: 'mebel',
-                  title: 'Мебель на заказ и реставрация',
-                  subtitle: 'Изготовление корпусной и мягкой мебели по индивидуальным проектам, перетяжка и ремонт.',
+                  titleRu: 'Мебель на заказ и реставрация',
+                  titleKz: 'Жиһаздарды құрастыру және қалпына келтіру',
+                  subtitleRu: 'Изготовление корпусной и мягкой мебели по индивидуальным проектам, перетяжка и ремонт.',
+                  subtitleKz: 'Жеке жобалар бойынша корпустық және жұмсақ жиһаз дайындау, қаптау және жөндеу.',
                   img: './slide_furniture.png',
-                  features: ['Разработка 3D-дизайн проекта', 'Премиальные материалы и фурнитура', 'Распил, кромление и сборка'],
+                  featuresRu: ['Разработка 3D-дизайн проекта', 'Премиальные материалы и фурнитура', 'Распил, кромление и сборка'],
+                  featuresKz: ['3D-дизайн жобасын әзірлеу', 'Премиум материалдар мен фурнитура', 'Аралау, жиектеу және құрастыру'],
                   pillCat: 'mebel'
                 }
               ];
+
+              const slides = defaultSlides.map((slide, idx) => {
+                const custom = landingBlocks?.whatWeDo?.slides?.[idx] || {};
+                return {
+                  id: slide.id,
+                  title: lang === 'ru' ? (custom.titleRu || slide.titleRu) : (custom.titleKz || slide.titleKz),
+                  subtitle: lang === 'ru' ? (custom.subtitleRu || slide.subtitleRu) : (custom.subtitleKz || slide.subtitleKz),
+                  img: custom.img || slide.img,
+                  features: lang === 'ru' ? (custom.featuresRu || slide.featuresRu) : (custom.featuresKz || slide.featuresKz),
+                  pillCat: slide.pillCat
+                };
+              });
+
               return (
-                <div className="what-we-do-viewport">
-                  <div
-                    className="what-we-do-wrapper"
-                    style={{
-                      display: 'flex',
-                      width: '300%',
-                      transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-                      transform: `translateX(-${activeSlide * 33.3333}%)`
-                    }}
-                  >
-                    {slides.map((currentSlide, sIdx) => (
-                      <div
-                        key={currentSlide.id}
-                        className="what-we-do-slide"
-                        style={{
-                          width: '33.3333%',
-                          flexShrink: 0,
-                          display: 'grid',
-                          gridTemplateColumns: '1.1fr 1fr',
-                          alignItems: 'stretch'
-                        }}
+                <>
+                  <div className="what-we-do-tabs">
+                    {slides.map((slide, idx) => (
+                      <button
+                        key={slide.id}
+                        onClick={() => setActiveSlide(idx)}
+                        className={`what-we-do-tab-btn ${activeSlide === idx ? 'active' : ''}`}
                       >
-                        <div className="what-we-do-content">
-                          <div className="what-we-do-tag">
-                            Направление 0{sIdx + 1}
-                          </div>
-                          <h3 className="what-we-do-title">
-                            {currentSlide.title}
-                          </h3>
-                          <p className="what-we-do-subtitle">
-                            {currentSlide.subtitle}
-                          </p>
-                          <ul className="what-we-do-features">
-                            {currentSlide.features.map((feat, fIdx) => (
-                              <li key={fIdx} className="what-we-do-feature-item">
-                                <i className="ri-checkbox-circle-fill"></i> {feat}
-                              </li>
-                            ))}
-                          </ul>
-                          <button
-                            className="btn-primary"
-                            onClick={() => {
-                              setActiveCatPill(currentSlide.pillCat);
-                              document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
-                            }}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '16px 32px', fontSize: '16px', alignSelf: 'flex-start' }}
-                          >
-                            Перейти в каталог услуг <i className="ri-arrow-right-line"></i>
-                          </button>
-                        </div>
-                        <div className="what-we-do-image-wrapper">
-                          <img
-                            src={currentSlide.img}
-                            alt={currentSlide.title}
-                            className="what-we-do-image"
-                          />
-                        </div>
-                      </div>
+                        <i className={slide.id === 'okna' ? 'ri-window-line' : (slide.id === 'servis' ? 'ri-tools-line' : 'ri-sofa-line')}></i>
+                        {slide.title}
+                      </button>
                     ))}
                   </div>
-                </div>
+
+                  <div className="what-we-do-viewport">
+                    <div
+                      className="what-we-do-wrapper"
+                      style={{
+                        display: 'flex',
+                        width: '300%',
+                        transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                        transform: `translateX(-${activeSlide * 33.3333}%)`
+                      }}
+                    >
+                      {slides.map((currentSlide, sIdx) => (
+                        <div
+                          key={currentSlide.id}
+                          className="what-we-do-slide"
+                          style={{
+                            width: '33.3333%',
+                            flexShrink: 0,
+                            display: 'grid',
+                            gridTemplateColumns: '1.1fr 1fr',
+                            alignItems: 'stretch'
+                          }}
+                        >
+                          <div className="what-we-do-content">
+                            <div className="what-we-do-tag">
+                              Направление 0{sIdx + 1}
+                            </div>
+                            <h3 className="what-we-do-title">
+                              {currentSlide.title}
+                            </h3>
+                            <p className="what-we-do-subtitle">
+                              {currentSlide.subtitle}
+                            </p>
+                            <ul className="what-we-do-features">
+                              {currentSlide.features.map((feat, fIdx) => (
+                                <li key={fIdx} className="what-we-do-feature-item">
+                                  <i className="ri-checkbox-circle-fill"></i> {feat}
+                                </li>
+                              ))}
+                            </ul>
+                            <button
+                              className="btn-primary"
+                              onClick={() => {
+                                setActiveCatPill(currentSlide.pillCat);
+                                document.getElementById('services').scrollIntoView({ behavior: 'smooth' });
+                              }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '16px 32px', fontSize: '16px', alignSelf: 'flex-start' }}
+                            >
+                              Перейти в каталог услуг <i className="ri-arrow-right-line"></i>
+                            </button>
+                          </div>
+                          <div className="what-we-do-image-wrapper">
+                            <img
+                              src={currentSlide.img}
+                              alt={currentSlide.title}
+                              className="what-we-do-image"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
               );
             })()}
           </section>
@@ -6418,32 +6629,42 @@ export default function App() {
           {/* WHY US */}
           <section id="why" className="why" data-reveal="fade-up">
             <div className="section-head">
-              <h2>{t('why_title')}</h2>
-              <p>{t('why_sub')}</p>
+              <h2>{lang === 'ru' ? (landingBlocks?.whyUs?.titleRu || t('why_title')) : (landingBlocks?.whyUs?.titleKz || t('why_title'))}</h2>
+              <p>{lang === 'ru' ? (landingBlocks?.whyUs?.subRu || t('why_sub')) : (landingBlocks?.whyUs?.subKz || t('why_sub'))}</p>
             </div>
             <div className="timeline">
               {[
-                { num: 1, icon: 'ri-stack-line' },
-                { num: 2, icon: 'ri-speed-mini-fill' },
-                { num: 3, icon: 'ri-shield-star-line' },
-                { num: 4, icon: 'ri-user-heart-line' },
-                { num: 5, icon: 'ri-verified-badge-line' },
-                { num: 6, icon: 'ri-camera-lens-line' },
-                { num: 7, icon: 'ri-wallet-3-line' },
-                { num: 8, icon: 'ri-hand-heart-line' },
-                { num: 9, icon: 'ri-safe-2-line' }
-              ].map(item => (
-                <div className="t-item" key={item.num} data-reveal="fade-up" style={{ '--reveal-delay': `${(item.num - 1) * 55}ms` }}>
-                  <div className="t-item-icon-wrapper">
-                    <div className="t-item-icon">
-                      <i className={item.icon}></i>
+                { num: 1, icon: 'ri-stack-line', titleRu: "100% Гарантия", descRu: "На все работы и запчасти до 12 месяцев", titleKz: "100% Кепілдік", descKz: "Барлық жұмыстар мен қосалқы бөлшектерге 12 айға дейін" },
+                { num: 2, icon: 'ri-speed-mini-fill', titleRu: "Профессионалы", descRu: "Опытные мастера с профильным стажем от 5 лет", titleKz: "Кәсіби мамандар", descKz: "5 жылдан астам бейіндік жұмыс өтілі бар тәжірибелі шеберлер" },
+                { num: 3, icon: 'ri-shield-star-line', titleRu: "Фиксированные цены", descRu: "Стоимость известна до начала ремонта", titleKz: "Бекітілген бағалар", descKz: "Жөндеу басталғанға дейін құны белгілі" },
+                { num: 4, icon: 'ri-user-heart-line', titleRu: "Быстрый выезд", descRu: "Приезд мастера в течение 45 минут по всему городу", titleKz: "Жедел келу", descKz: "Шебердің қала бойынша 45 минут ішінде келуі" },
+                { num: 5, icon: 'ri-verified-badge-line', titleRu: "Оригинальные детали", descRu: "Собственный склад оригинальных комплектующих", titleKz: "Түпнұсқа бөлшектер", descKz: "Түпнұсқа жиынтықтауыштардың жеке қоймасы" },
+                { num: 6, icon: 'ri-camera-lens-line', titleRu: "Современное оборудование", descRu: "Профессиональный инструмент и точная диагностика", titleKz: "Заманауи жабдық", descKz: "Кәсіби құрал және дәл диагностика" },
+                { num: 7, icon: 'ri-wallet-3-line', titleRu: "Честный расчет", descRu: "Оплата производится только после приема работы", titleKz: "Адал есептесу", descKz: "Төлем жұмыс қабылданғаннан кейін ғана жүргізіледі" },
+                { num: 8, icon: 'ri-hand-heart-line', titleRu: "Забота о клиенте", descRu: "Вежливые операторы и аккуратные мастера", titleKz: "Клиентке қамқорлық", descKz: "Сыпайы операторлар мен ұқыпты шеберлер" },
+                { num: 9, icon: 'ri-safe-2-line', titleRu: "Безопасность", descRu: "Все мастера получают проверку СБ", titleKz: "Қауіпсіздік", descKz: "Барлық шеберлер қауіпсіздік қызметінің тексеруінен өтеді" }
+              ].map((item, idx) => {
+                const customItem = landingBlocks?.whyUs?.items?.[idx] || {};
+                const itemTitle = lang === 'ru' 
+                  ? (customItem.titleRu || item.titleRu) 
+                  : (customItem.titleKz || item.titleKz || t(`why${item.num}_h`));
+                const itemDesc = lang === 'ru' 
+                  ? (customItem.descRu || item.descRu) 
+                  : (customItem.descKz || item.descKz || t(`why${item.num}_p`));
+
+                return (
+                  <div className="t-item" key={item.num} data-reveal="fade-up" style={{ '--reveal-delay': `${(item.num - 1) * 55}ms` }}>
+                    <div className="t-item-icon-wrapper">
+                      <div className="t-item-icon">
+                        <i className={item.icon}></i>
+                      </div>
+                      <div className="t-num">0{item.num}</div>
                     </div>
-                    <div className="t-num">0{item.num}</div>
+                    <h4>{itemTitle}</h4>
+                    <p>{itemDesc}</p>
                   </div>
-                  <h4>{t(`why${item.num}_h`)}</h4>
-                  <p>{t(`why${item.num}_p`)}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
