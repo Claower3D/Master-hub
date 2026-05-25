@@ -6539,12 +6539,7 @@ export default function App() {
                         const maxLen = countryPhoneLengths[code] || 10;
                         setFormPhone(prev => prev.replace(/\D/g, '').slice(0, maxLen));
                       }}
-                      style={{
-                        width: '100px',
-                        flexShrink: 0,
-                        cursor: 'pointer',
-                        padding: '14px 10px'
-                      }}
+                      className="cb-country-select"
                     >
                       <option value="+7">🇰🇿 +7</option>
                       <option value="+7">🇷🇺 +7</option>
