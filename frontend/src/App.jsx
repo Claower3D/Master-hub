@@ -6264,8 +6264,8 @@ const pageDataMap = {
                       <i key={i} className="ri-star-fill"></i>
                     ))}
                   </div>
-                  <p>{t(rev.text)}</p>
-                  <cite style={{ marginTop: 'auto' }}>{t(rev.author)}</cite>
+                  <p>{rev.text}</p>
+                  <cite style={{ marginTop: 'auto' }}>{rev.author}</cite>
                 </blockquote>
               ))}
             </div>
