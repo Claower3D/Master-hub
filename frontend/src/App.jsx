@@ -4459,10 +4459,11 @@ export default function App() {
     <>
       {/* TOPBAR */}
       <header className="topbar">
-        <div
+        <a
+          href="/"
           className="brand"
-          style={{ cursor: 'pointer' }}
-          onClick={() => { navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          style={{ cursor: 'pointer', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+          onClick={(e) => { e.preventDefault(); navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           title="На главную"
         >
           <div className="logo">HM</div>
@@ -4472,7 +4473,7 @@ export default function App() {
               <span>{getCityDisplay(city)}</span> · <span>{t('brand_sub_year')}</span>
             </div>
           </div>
-        </div>
+        </a>
         <nav className="top-nav">
           <a href="#" className="catalog-btn" onClick={(e) => { e.preventDefault(); setMegaMenuOpen(!megaMenuOpen); }}>
             <i className="ri-menu-line"></i> <span>{t('nav_catalog')}</span>
@@ -4659,9 +4660,11 @@ export default function App() {
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
                     {searchResults.categories.map(cat => (
-                      <div
+                      <a
                         key={cat.id}
-                        onClick={() => {
+                        href={`/category/${cat.id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
                           setMegaMenuOpen(false);
                           setMegaSearchQuery('');
                           navigateTo(`/category/${cat.id}`);
@@ -4676,7 +4679,8 @@ export default function App() {
                           display: 'flex',
                           alignItems: 'center',
                           gap: '12px',
-                          transition: 'all 0.2s'
+                          transition: 'all 0.2s',
+                          textDecoration: 'none'
                         }}
                         className="search-result-item"
                       >
@@ -4687,7 +4691,7 @@ export default function App() {
                             {(() => { const parentTab = megaTabs.find(tab => tab.id === cat.tab); return parentTab ? `${lang === 'ru' ? 'Раздел' : lang === 'kz' ? 'Бөлім' : 'Section'}: ${t(parentTab.label)}` : cat.tab; })()}
                           </div>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -4701,9 +4705,11 @@ export default function App() {
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
                     {searchResults.subcategories.map(sub => (
-                      <div
+                      <a
                         key={sub.id}
-                        onClick={() => {
+                        href={`/service/${sub.id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
                           setMegaMenuOpen(false);
                           setMegaSearchQuery('');
                           navigateTo(`/service/${sub.id}`);
@@ -4718,7 +4724,8 @@ export default function App() {
                           display: 'flex',
                           alignItems: 'center',
                           gap: '12px',
-                          transition: 'all 0.2s'
+                          transition: 'all 0.2s',
+                          textDecoration: 'none'
                         }}
                         className="search-result-item"
                       >
@@ -4729,7 +4736,7 @@ export default function App() {
                             {t(sub.parentCat.title)}
                           </div>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -4792,15 +4799,18 @@ export default function App() {
                 {/* Col 1: Categories */}
                 <div className="mega-col1">
                   {[...megaCategories.filter(c => c.tab === activeMegaTab)].sort((a, b) => t(a.title).localeCompare(t(b.title), lang)).map(cat => (
-                    <div
+                    <a
                       key={cat.id}
+                      href={`/category/${cat.id}`}
                       className={`mega-cat ${activeMegaCat === cat.id ? 'active' : ''}`}
+                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
                       onMouseEnter={() => {
                         setActiveMegaCat(cat.id);
                         const firstSub = megaSubcategories[cat.id]?.[0];
                         setActiveMegaSub(firstSub ? firstSub.id : 'none');
                       }}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         setMegaMenuOpen(false);
                         navigateTo(`/category/${cat.id}`);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4812,17 +4822,19 @@ export default function App() {
                       {activeMegaCat === cat.id && (
                         <i className="ri-arrow-right-s-line mega-cat-arrow" style={{ opacity: 0.8, color: 'var(--accent)', marginLeft: 'auto' }}></i>
                       )}
-                    </div>
+                    </a>
                   ))}
                 </div>
 
                 {/* Col 2: Subcategories */}
                 <div className="mega-col2">
                   {megaCategories.find(c => c.id === activeMegaCat) && (
-                    <div
+                    <a
+                      href={`/category/${activeMegaCat}`}
                       className="mega-sub all-cat-link"
-                      style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700' }}
-                      onClick={() => {
+                      style={{ borderBottom: '1px solid var(--line)', paddingBottom: '12px', marginBottom: '12px', color: 'var(--accent)', fontWeight: '700', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                      onClick={(e) => {
+                        e.preventDefault();
                         const currCat = megaCategories.find(c => c.id === activeMegaCat);
                         setMegaMenuOpen(false);
                         navigateTo(`/category/${currCat.id}`);
@@ -4831,14 +4843,17 @@ export default function App() {
                     >
                       <span className="mega-sub-link">⚡ Все услуги: {t(megaCategories.find(c => c.id === activeMegaCat)?.title)}</span>
                       <i className="ri-arrow-right-line mega-sub-arrow" style={{ color: 'var(--accent)' }}></i>
-                    </div>
+                    </a>
                   )}
                   {[...(megaSubcategories[activeMegaCat] || [])].sort((a, b) => t(a.title).localeCompare(t(b.title), lang)).map(sub => (
-                    <div
+                    <a
                       key={sub.id}
+                      href={`/service/${sub.id}`}
                       className={`mega-sub ${activeMegaSub === sub.id ? 'active' : ''}`}
+                      style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
                       onMouseEnter={() => setActiveMegaSub(sub.id)}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         setActiveMegaSub(sub.id);
                         setMegaMenuOpen(false);
                         navigateTo(`/service/${sub.id}`);
@@ -4850,7 +4865,7 @@ export default function App() {
                         className="ri-arrow-right-s-line mega-sub-arrow"
                         style={activeMegaSub === sub.id ? { color: 'var(--accent)', opacity: 1 } : {}}
                       ></i>
-                    </div>
+                    </a>
                   ))}
                 </div>
 
@@ -4940,16 +4955,19 @@ export default function App() {
                         >
                           <i className="ri-whatsapp-line" style={{ fontSize: '18px' }}></i> {lang === 'ru' ? 'Заказать по WhatsApp' : lang === 'kz' ? 'WhatsApp арқылы тапсырыс' : 'Order via WhatsApp'}
                         </a>
-                        <button
+                        <a
+                          href={`/service/${activeMegaSub}`}
                           className="btn-ghost-cyan"
-                          onClick={() => {
+                          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}
+                          onClick={(e) => {
+                            e.preventDefault();
                             setMegaMenuOpen(false);
                             navigateTo(`/service/${activeMegaSub}`);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
                         >
                           {t('srv_more_btn')} <i className="ri-arrow-right-up-line"></i>
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -5165,8 +5183,10 @@ export default function App() {
                     </div>
 
                     {/* View entire category */}
-                    <div
-                      onClick={() => {
+                    <a
+                      href={`/category/${activeMegaCat}`}
+                      onClick={(e) => {
+                        e.preventDefault();
                         setMegaMenuOpen(false);
                         navigateTo(`/category/${activeMegaCat}`);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5182,12 +5202,13 @@ export default function App() {
                         color: 'var(--accent)',
                         fontSize: '13.5px',
                         fontWeight: '800',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        textDecoration: 'none'
                       }}
                     >
                       <span>⚡ {lang === 'ru' ? 'Открыть всю категорию' : (lang === 'kz' ? 'Санатты толық ашу' : 'Open entire category')}</span>
                       <i className="ri-arrow-right-line"></i>
-                    </div>
+                    </a>
 
                     {/* Subcategories list */}
                     {(megaSubcategories[activeMegaCat] || []).length === 0 ? (
@@ -5196,9 +5217,11 @@ export default function App() {
                       </div>
                     ) : (
                       [...(megaSubcategories[activeMegaCat] || [])].sort((a, b) => t(a.title).localeCompare(t(b.title), lang)).map(sub => (
-                        <div
+                        <a
                           key={sub.id}
-                          onClick={() => {
+                          href={`/service/${sub.id}`}
+                          onClick={(e) => {
+                            e.preventDefault();
                             setMegaMenuOpen(false);
                             navigateTo(`/service/${sub.id}`);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5212,12 +5235,13 @@ export default function App() {
                             border: '1px solid var(--line)',
                             background: 'var(--surface)',
                             cursor: 'pointer',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            textDecoration: 'none'
                           }}
                         >
                           <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text)' }}>{t(sub.title)}</span>
                           <i className="ri-arrow-right-s-line" style={{ color: 'var(--accent-2)', fontSize: '14px' }}></i>
-                        </div>
+                        </a>
                       ))
                     )}
                   </div>
@@ -6079,10 +6103,12 @@ export default function App() {
               {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
                 <div className="srv-card" key={idx} style={{ '--reveal-delay': `${idx * 70}ms`, overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
                   {card.img && (
-                    <div
+                    <a
+                      href={`/category/${card.id}`}
                       className="srv-img-wrapper"
-                      style={{ width: '100%', height: '180px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
-                      onClick={() => {
+                      style={{ display: 'block', width: '100%', height: '180px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
+                      onClick={(e) => {
+                        e.preventDefault();
                         navigateTo(`/category/${card.id}`);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
@@ -6096,20 +6122,23 @@ export default function App() {
                       <div style={{ position: 'absolute', top: '16px', left: '16px', background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--accent)', width: '36px', height: '36px', borderRadius: '50%', display: 'grid', placeItems: 'center', fontSize: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 5 }}>
                         <i className="ri-tools-line"></i>
                       </div>
-                    </div>
+                    </a>
                   )}
                   <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <h3
-                      className="srv-title"
-                      style={{ marginTop: 0, cursor: 'pointer', transition: 'color 0.2s ease' }}
-                      onClick={() => {
-                        navigateTo(`/category/${card.id}`);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = 'inherit'}
-                    >
-                      {t(card.title)}
+                    <h3 className="srv-title" style={{ marginTop: 0 }}>
+                      <a
+                        href={`/category/${card.id}`}
+                        style={{ color: 'inherit', textDecoration: 'none', transition: 'color 0.2s ease', cursor: 'pointer', fontWeight: 'bold' }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigateTo(`/category/${card.id}`);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'inherit'}
+                      >
+                        {t(card.title)}
+                      </a>
                     </h3>
                     <p className="srv-desc" style={{ flex: 1 }}>{t(card.desc)}</p>
 
@@ -6125,8 +6154,9 @@ export default function App() {
                           </div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                             {subs.map(sub => (
-                              <button
+                              <a
                                 key={sub.id}
+                                href={`/service/${sub.id}`}
                                 className="cyber-sub-badge"
                                 style={{
                                   background: 'rgba(91,140,255,0.06)',
@@ -6140,9 +6170,11 @@ export default function App() {
                                   transition: 'all 0.2s ease',
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  gap: '4px'
+                                  gap: '4px',
+                                  textDecoration: 'none'
                                 }}
                                 onClick={(e) => {
+                                  e.preventDefault();
                                   e.stopPropagation();
                                   navigateTo(`/service/${sub.id}`);
                                   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -6161,7 +6193,7 @@ export default function App() {
                                 }}
                               >
                                 <span style={{ color: 'var(--accent)' }}>&gt;</span> {t(sub.title)}
-                              </button>
+                              </a>
                             ))}
                           </div>
                         </div>
@@ -6892,10 +6924,11 @@ export default function App() {
       {/* FOOTER */}
       <footer>
         <div className="f-col">
-          <div
+          <a
+            href="/"
             className="brand"
-            style={{ marginBottom: '16px', cursor: 'pointer' }}
-            onClick={() => { navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            style={{ marginBottom: '16px', cursor: 'pointer', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+            onClick={(e) => { e.preventDefault(); navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             title="На главную"
           >
             <div className="logo">HM</div>
@@ -6905,7 +6938,7 @@ export default function App() {
                 <span>{getCityDisplay(city)}</span> · <span>{t('brand_sub_year')}</span>
               </div>
             </div>
-          </div>
+          </a>
           <p>{t('f_desc')}</p>
         </div>
         <div className="f-col">
@@ -6930,6 +6963,103 @@ export default function App() {
             <span style={{ padding: '4px 10px', background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '12px' }}>MasterCard</span>
           </div>
         </div>
+
+        {/* Dynamic SEO Internal Linking Block */}
+        <div className="footer-seo-links" style={{
+          borderTop: '1px solid var(--line)',
+          paddingTop: '24px',
+          marginTop: '24px',
+          width: '100%',
+          gridColumn: '1 / -1',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gap: '24px',
+          fontSize: '13px'
+        }}>
+          {megaTabs.map(tab => {
+            const tabCats = megaCategories.filter(c => c.tab === tab.id);
+            if (tabCats.length === 0) return null;
+            return (
+              <div key={tab.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <h6 style={{
+                  color: 'var(--accent)',
+                  fontSize: '11px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  margin: '0 0 4px 0',
+                  fontFamily: 'monospace',
+                  fontWeight: '700'
+                }}>
+                  {t(tab.label)}
+                </h6>
+                {tabCats.map(cat => (
+                  <a
+                    key={cat.id}
+                    href={`/category/${cat.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigateTo(`/category/${cat.id}`);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    style={{
+                      color: 'var(--muted)',
+                      textDecoration: 'none',
+                      transition: 'color 0.2s',
+                      padding: '2px 0'
+                    }}
+                    onMouseEnter={(e) => e.target.style.color = 'var(--text)'}
+                    onMouseLeave={(e) => e.target.style.color = 'var(--muted)'}
+                  >
+                    {t(cat.title)}
+                  </a>
+                ))}
+              </div>
+            );
+          })}
+          {/* Popular Services links */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <h6 style={{
+              color: 'var(--accent)',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              margin: '0 0 4px 0',
+              fontFamily: 'monospace',
+              fontWeight: '700'
+            }}>
+              {lang === 'ru' ? 'Популярные услуги' : lang === 'kz' ? 'Танымал қызметтер' : 'Popular Services'}
+            </h6>
+            {[
+              { id: 'sub-okna-3-1', title: 'Регулировка окон' },
+              { id: 'sub-okna-1-2', title: 'Сетки Антикошка' },
+              { id: 'sub-srv-1-2', title: 'Замена подшипников стиральной машины' },
+              { id: 'sub-srv-2-1', title: 'Заправка холодильника фреоном' },
+              { id: 'sub-srv-5-1', title: 'Установка кондиционеров' },
+              { id: 'sub-meb-1-5', title: 'Перетяжка и ремонт мягкой мебели' }
+            ].map(item => (
+              <a
+                key={item.id}
+                href={`/service/${item.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(`/service/${item.id}`);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                style={{
+                  color: 'var(--muted)',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s',
+                  padding: '2px 0'
+                }}
+                onMouseEnter={(e) => e.target.style.color = 'var(--text)'}
+                onMouseLeave={(e) => e.target.style.color = 'var(--muted)'}
+              >
+                {item.title}
+              </a>
+            ))}
+          </div>
+        </div>
+
         <div className="f-bot">
           {t('f_bot')}
         </div>
