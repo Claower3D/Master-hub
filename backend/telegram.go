@@ -77,7 +77,7 @@ func NotifyNewOrder(db DB, record *CallbackRecord) {
 	}
 
 	msg := fmt.Sprintf(
-		"🌐 <b>HUB MASTER — Новая заявка с сайта</b>\n"+
+		"🌐 <b>hubmaster — Новая заявка с сайта</b>\n"+
 			"━━━━━━━━━━━━━━━━━━━━\n"+
 			"🔔 <b>Заявка #%d</b>\n\n"+
 			"👤 <b>Имя:</b> %s\n"+
@@ -202,7 +202,7 @@ func handleTgUpdate(db DB, upd tgUpdate) {
 			return
 		}
 		tgSendMessage(chatID, fmt.Sprintf(
-			"✅ <b>Привет, %s!</b>\n\nВы подписаны на уведомления о новых заявках HUB MASTER.\n\n"+
+			"✅ <b>Привет, %s!</b>\n\nВы подписаны на уведомления о новых заявках hubmaster.\n\n"+
 				"📋 Команды:\n/start — подписаться\n/stop — отписаться",
 			name,
 		))
