@@ -123,6 +123,23 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
 
+  /* ── Scroll-reveal (desktop only) ── */
+  useEffect(() => {
+    if (window.matchMedia('(max-width: 768px)').matches) return;
+    const els = document.querySelectorAll('[data-reveal]');
+    if (!els.length) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('revealed');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.10, rootMargin: '0px 0px -60px 0px' });
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, [activePage]);
+
   useEffect(() => {
     fetch(API_BASE + '/api/catalog')
       .then(res => {
@@ -6378,7 +6395,7 @@ const pageDataMap = {
           </section>
 
           {/* ═══ HOW WE WORK — 5 Steps ═══ */}
-          <section className="how-we-work-section">
+          <section className="how-we-work-section" data-reveal="fade-up">
             <div className="wrap">
               <div className="section-head">
                 <h2>{lang === 'ru' ? 'Как мы работаем' : lang === 'kz' ? 'Біз қалай жұмыс жасаймыз' : 'How We Work'}</h2>
@@ -6392,7 +6409,7 @@ const pageDataMap = {
                   { num: '04', icon: 'ri-tools-line',       title: lang === 'ru' ? 'Ремонт'       : lang === 'kz' ? 'Жөндеу'      : 'Repair',    desc: lang === 'ru' ? 'Выполняем работу с оригинальными запчастями.'                             : lang === 'kz' ? 'Жұмысты түпнұсқа бөлшектермен орындаймыз.'                                    : 'We perform work using original spare parts.' },
                   { num: '05', icon: 'ri-award-line',       title: lang === 'ru' ? 'Гарантия'     : lang === 'kz' ? 'Кепілдік'    : 'Warranty',  desc: lang === 'ru' ? 'Выдаём акт, чек и официальную гарантию до 12 мес.'                      : lang === 'kz' ? 'Акт, чек және 12 айға дейінгі ресми кепілдік береміз.'                      : 'We issue an act, receipt & warranty up to 12 months.' },
                 ].map((step, idx) => (
-                  <div key={idx} className="how-step-card">
+                  <div key={idx} className="how-step-card" data-reveal="fade-up" style={{'--reveal-delay': `${idx * 80}ms`}}>
                     <div className="how-step-top">
                       <div className="how-step-icon-wrap"><i className={step.icon}></i></div>
                       <span className="how-step-num">{step.num}</span>
@@ -6406,7 +6423,7 @@ const pageDataMap = {
           </section>
 
           {/* ═══ STATS BANNER ═══ */}
-          <section className="stats-banner-section">
+          <section className="stats-banner-section" data-reveal="zoom-in">
             <div className="wrap">
               <div className="stats-banner-inner">
                 {[
@@ -6425,7 +6442,7 @@ const pageDataMap = {
           </section>
 
           {/* ═══ BRANDS ═══ */}
-          <section className="brands-section">
+          <section className="brands-section" data-reveal="fade-up">
             <div className="wrap">
               <div className="section-head" style={{ textAlign: 'center' }}>
                 <h2>{lang === 'ru' ? 'Работаем с любыми брендами' : lang === 'kz' ? 'Кез-келген брендпен жұмыс жасаймыз' : 'We Work With Any Brand'}</h2>
@@ -6440,7 +6457,7 @@ const pageDataMap = {
           </section>
 
           {/* ═══ GEOGRAPHY ═══ */}
-          <section className="geo-section">
+          <section className="geo-section" data-reveal="fade-up">
             <div className="wrap">
               {(() => {
                 // ── District data by city key ──────────────────────────────
