@@ -86,7 +86,7 @@ export default function App() {
       localStorage.setItem('megaDetails', JSON.stringify(newDetails));
     }
   };
-  
+
   // Mega Menu states
   const [activeMegaTab, setActiveMegaTab] = useState('okna');
   const [activeMegaCat, setActiveMegaCat] = useState('cat-okna-1');
@@ -99,7 +99,7 @@ export default function App() {
   const [megaNavMoreOpen, setMegaNavMoreOpen] = useState(false);
   const megaNavTabsWrapRef = useRef(null);
   const megaNavTabEls = useRef([]);
-  
+
   // Dedicated Category Page & Modal States
   const [activePage, setActivePage] = useState(() => {
     const path = window.location.pathname;
@@ -109,7 +109,7 @@ export default function App() {
   }); // 'home' | 'category' | 'admin'
   const [selectedCategoryPageObj, setSelectedCategoryPageObj] = useState(null);
   const [selectedModalItem, setSelectedModalItem] = useState(null); // { title, type: 'brand' | 'service', parentTitle }
-  
+
   // Catalog Pill state
   const [activeCatPill, setActiveCatPill] = useState('okna');
   const [activeSlide, setActiveSlide] = useState(0);
@@ -480,9 +480,9 @@ export default function App() {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(res => { 
-        if (!res.ok) throw new Error('Не удалось удалить заявку'); 
-        fetchAdminCallbacks(); 
+      .then(res => {
+        if (!res.ok) throw new Error('Не удалось удалить заявку');
+        fetchAdminCallbacks();
       })
       .catch(err => alert(err.message));
   };
@@ -581,7 +581,7 @@ export default function App() {
 
     if (editingTabObj) {
       // Edit
-      const updated = megaTabs.map(t => 
+      const updated = megaTabs.map(t =>
         t.id === editingTabObj.id ? { ...t, label: cleanLabel } : t
       );
       saveMegaTabs(updated);
@@ -662,22 +662,22 @@ export default function App() {
     }
 
     const updatedDetails = { ...megaDetails };
-    
+
     // Parse features (one per line)
     const parsedFeatures = catFormFeatures
       ? catFormFeatures.split('\n').map(f => f.trim()).filter(Boolean)
       : [];
-      
+
     // Parse specs (format: Label: Value)
     const parsedSpecs = catFormSpecs
       ? catFormSpecs.split('\n').map(s => {
-          const colonIdx = s.indexOf(':');
-          if (colonIdx === -1) return null;
-          return {
-            label: s.substring(0, colonIdx).trim(),
-            value: s.substring(colonIdx + 1).trim()
-          };
-        }).filter(item => item && item.label && item.value)
+        const colonIdx = s.indexOf(':');
+        if (colonIdx === -1) return null;
+        return {
+          label: s.substring(0, colonIdx).trim(),
+          value: s.substring(colonIdx + 1).trim()
+        };
+      }).filter(item => item && item.label && item.value)
       : [];
 
     updatedDetails[catId] = {
@@ -745,13 +745,13 @@ export default function App() {
     const updatedSubs = { ...megaSubcategories };
     if (editingSub) {
       // If parent category changed, remove from old, add to new
-      const oldCatId = Object.keys(megaSubcategories).find(catKey => 
+      const oldCatId = Object.keys(megaSubcategories).find(catKey =>
         megaSubcategories[catKey].some(s => s.id === subId)
       );
       if (oldCatId && oldCatId !== subFormCatId) {
         updatedSubs[oldCatId] = updatedSubs[oldCatId].filter(s => s.id !== subId);
       }
-      
+
       // Update or insert inside target category
       const targetCatSubs = updatedSubs[subFormCatId] || [];
       const exists = targetCatSubs.some(s => s.id === subId);
@@ -879,7 +879,7 @@ export default function App() {
     setTimeout(() => {
       let aiReply = assistantFallback;
       const qLower = query.toLowerCase();
-      
+
       for (const rule of assistantRules) {
         if (rule.triggers.some(trg => qLower.includes(trg.trim().toLowerCase()))) {
           aiReply = rule.reply;
@@ -967,7 +967,7 @@ export default function App() {
   const fetchMyCallbacks = () => {
     if (!token) return;
     setCallbacksLoading(true);
-    
+
     // Refresh user info to get latest bonuses balance
     fetch(API_BASE + '/api/auth/me', {
       headers: {
@@ -1098,7 +1098,7 @@ export default function App() {
     setTimeout(() => {
       let aiReply = assistantFallback;
       const qLower = query.toLowerCase();
-      
+
       // Look through configured rules
       for (const rule of assistantRules) {
         if (rule.triggers.some(trg => qLower.includes(trg.trim().toLowerCase()))) {
@@ -1269,7 +1269,7 @@ export default function App() {
       setCatReviewError('');
       setCatReviewText('');
       setCatReviewRating(5);
-      
+
       const catId = selectedCategoryPageObj.id;
       fetch(`${API_BASE}/api/category-reviews?category_id=${encodeURIComponent(catId)}`)
         .then(res => {
@@ -1323,7 +1323,7 @@ export default function App() {
 
     fetch(API_BASE + '/api/category-reviews/new', {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
@@ -1378,7 +1378,7 @@ export default function App() {
         return './char_window_master.png';
       case 'cat-okna-5':
         return './char_blinds.png';
-      
+
       // Сервис
       case 'cat-srv-1':
         return './char_washing.png';
@@ -1393,11 +1393,11 @@ export default function App() {
         return './char_welding_master.png';
       case 'cat-srv-8':
         return './char_electric_master.png';
-      
+
       // Мебель
       case 'cat-meb-1':
         return './char_furniture_master.png';
-      
+
       default:
         return './char_window_master.png';
     }
@@ -1610,7 +1610,7 @@ export default function App() {
   ) {
     const path = window.location.pathname;
     const pathParts = path.split('/').filter(Boolean); // e.g. ["category", "okna"] or ["admin"]
-    
+
     if (pathParts[0] === 'admin') {
       setActivePage('admin');
       setSelectedCategoryPageObj(null);
@@ -1730,7 +1730,7 @@ export default function App() {
   const getMegaSearchResults = () => {
     if (!megaSearchQuery.trim()) return { categories: [], subcategories: [] };
     const query = megaSearchQuery.toLowerCase();
-    
+
     // Find matching categories
     const matchingCats = megaCategories.filter(cat => {
       const translatedTitle = t(cat.title).toLowerCase();
@@ -1796,15 +1796,15 @@ export default function App() {
   ];
 
   // Dynamic Category Page Data Generator
-    const getCategoryPageData = (pageObj, currentLang) => {
+  const getCategoryPageData = (pageObj, currentLang) => {
     if (!pageObj) return { brands: [], services: [], parentTabLabel: 'Окна', parentCatTitle: 'Москитные сетки' };
-    
+
     const baseTitle = t(pageObj.title);
     const parentCat = megaCategories.find(c => c.id === pageObj.parentCatId) || { title: 'Москитные сетки', tab: 'okna' };
     const parentTab = megaTabs.find(t => t.id === pageObj.parentTabId || t.id === parentCat.tab) || { label: 'Окна' };
 
-    
-const pageDataMap = {
+
+    const pageDataMap = {
       // --- ОКНА ---
       'cat-okna-1': {
         brands: ['Фибергласс (Стандарт)', 'PetScreen (Антикошка)', 'MicroMesh (Антипыль)', 'Алюминиевый профиль', 'Усиленные крепления'],
@@ -2073,7 +2073,7 @@ const pageDataMap = {
         brands: ['МДФ фасады AGT / Alvic Luxe / Эмаль RAL', 'Столешницы Egger / Кедр / Искусственный камень', 'Подъемные механизмы Blum Aventos', 'Выдвижные системы Tandembox / Направляющие скрытого монтажа'],
         services: ['Замер помещения с учетом выводов сантехники и электрики', 'Создание фотореалистичного 3D-проекта кухни', 'Изготовление кухонного гарнитура под ключ', 'Врезка мойки, варочной панели и подключение вытяжки']
       },
-      
+
       'sub-meb-1-4': {
         brands: ['Качественный пенополиуретан (ППУ)', 'Специальные мебельные ткани с пропиткой Easy Clean', 'Мебельные скобы Bea / Prebena', 'Оригинальные механизмы трансформации (Книжка, Дельфин, Аккордеон)'],
         services: ['Полная или частичная перетяжка диванов, кресел, стульев', 'Замена просевшего поролона и пружинных блоков', 'Ремонт и замена механизмов раскладывания дивана', 'Реставрация деревянных элементов и столярные работы']
@@ -2236,7 +2236,7 @@ const pageDataMap = {
             <div className="admin-dashboard-container">
               {/* Admin active tab selection subbar */}
               <div className="admin-sub-tabs" style={{ display: 'flex', gap: '20px', marginBottom: '24px', borderBottom: '1px solid var(--border)', paddingBottom: '4px', flexWrap: 'wrap' }}>
-                <button 
+                <button
                   onClick={() => setAdminActiveTab('orders')}
                   style={{
                     background: 'transparent',
@@ -2256,7 +2256,7 @@ const pageDataMap = {
                 >
                   <i className="ri-file-list-3-line"></i> Заявки на звонки
                 </button>
-                <button 
+                <button
                   onClick={() => setAdminActiveTab('catalog')}
                   style={{
                     background: 'transparent',
@@ -2276,7 +2276,7 @@ const pageDataMap = {
                 >
                   <i className="ri-folder-settings-line"></i> Настройка каталога услуг
                 </button>
-                <button 
+                <button
                   onClick={() => setAdminActiveTab('assistant')}
                   style={{
                     background: 'transparent',
@@ -2296,7 +2296,7 @@ const pageDataMap = {
                 >
                   <i className="ri-robot-line"></i> Настройка ассистента Иришка
                 </button>
-                <button 
+                <button
                   onClick={() => setAdminActiveTab('pages')}
                   style={{
                     background: 'transparent',
@@ -2415,12 +2415,12 @@ const pageDataMap = {
                                   <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cb.service}</div>
                                 </td>
                                 <td style={{ padding: '14px 16px', maxWidth: '200px' }}>
-                                  <div 
-                                    style={{ 
-                                      overflow: 'hidden', 
-                                      textOverflow: 'ellipsis', 
+                                  <div
+                                    style={{
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
                                       whiteSpace: 'nowrap',
-                                      cursor: cb.comment ? 'pointer' : 'default' 
+                                      cursor: cb.comment ? 'pointer' : 'default'
                                     }}
                                     title={cb.comment}
                                     onClick={() => cb.comment && alert(cb.comment)}
@@ -2486,15 +2486,15 @@ const pageDataMap = {
                       </p>
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
-                      <button 
-                        onClick={handleResetCatalog} 
+                      <button
+                        onClick={handleResetCatalog}
                         className="btn-ghost"
                         style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', color: '#ff7a59', border: '1px solid rgba(255,122,89,0.2)' }}
                       >
                         <i className="ri-history-line"></i> Сбросить по умолчанию
                       </button>
                       {catalogSubTab === 'tabs' && (
-                        <button 
+                        <button
                           onClick={() => {
                             setEditingTabObj(null);
                             setTabFormId('');
@@ -2508,7 +2508,7 @@ const pageDataMap = {
                         </button>
                       )}
                       {catalogSubTab === 'categories' && (
-                        <button 
+                        <button
                           onClick={() => {
                             setEditingCat(null);
                             setCatFormTab(megaTabs[0]?.id || '');
@@ -2527,7 +2527,7 @@ const pageDataMap = {
                         </button>
                       )}
                       {catalogSubTab === 'subcategories' && (
-                        <button 
+                        <button
                           onClick={() => {
                             setEditingSub(null);
                             setSubFormSectionFilter('all');
@@ -2774,54 +2774,54 @@ const pageDataMap = {
                                   return 0;
                                 })
                                 .map(cat => (
-                              <tr key={cat.id} className="admin-table-row">
-                                <td style={{ color: 'var(--muted)', fontSize: '12px', fontFamily: 'monospace' }}>{cat.id}</td>
-                                <td>
-                                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(249, 115, 22, 0.12)', display: 'grid', placeItems: 'center', color: 'var(--accent)' }}>
-                                    <i className={cat.icon || 'ri-tools-line'}></i>
-                                  </div>
-                                </td>
-                                <td style={{ fontWeight: '600' }}>{cat.title}</td>
-                                <td>
-                                  <span style={{ fontSize: '12px', padding: '4px 8px', borderRadius: '6px', background: 'var(--border)', color: 'var(--text)', fontWeight: '600' }}>
-                                    {megaTabs.find(t => t.id === cat.tab)?.label || cat.tab}
-                                  </span>
-                                </td>
-                                <td style={{ textAlign: 'right' }}>
-                                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                    <button
-                                      onClick={() => {
-                                        setEditingCat(cat);
-                                        setCatFormTab(cat.tab);
-                                        setCatFormTitle(cat.title);
-                                        setCatFormIcon(cat.icon || 'ri-tools-line');
-                                        const details = megaDetails[cat.id] || {};
-                                        setCatFormDesc(details.desc || '');
-                                        setCatFormImg(details.img || '');
-                                        setCatFormFeatures((details.features || []).join('\n'));
-                                        setCatFormSpecs((details.specs || []).map(s => `${s.label}: ${s.value}`).join('\n'));
-                                        setShowCatForm(true);
-                                      }}
-                                      style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
-                                    >
-                                      <i className="ri-pencil-line"></i> Изменить
-                                    </button>
-                                    <button
-                                      onClick={() => handleDeleteCategory(cat.id)}
-                                      style={{ border: 'none', background: 'rgba(255,122,89,0.1)', color: '#ff7a59', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
-                                    >
-                                      <i className="ri-delete-bin-line"></i>
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                                  <tr key={cat.id} className="admin-table-row">
+                                    <td style={{ color: 'var(--muted)', fontSize: '12px', fontFamily: 'monospace' }}>{cat.id}</td>
+                                    <td>
+                                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(249, 115, 22, 0.12)', display: 'grid', placeItems: 'center', color: 'var(--accent)' }}>
+                                        <i className={cat.icon || 'ri-tools-line'}></i>
+                                      </div>
+                                    </td>
+                                    <td style={{ fontWeight: '600' }}>{cat.title}</td>
+                                    <td>
+                                      <span style={{ fontSize: '12px', padding: '4px 8px', borderRadius: '6px', background: 'var(--border)', color: 'var(--text)', fontWeight: '600' }}>
+                                        {megaTabs.find(t => t.id === cat.tab)?.label || cat.tab}
+                                      </span>
+                                    </td>
+                                    <td style={{ textAlign: 'right' }}>
+                                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                                        <button
+                                          onClick={() => {
+                                            setEditingCat(cat);
+                                            setCatFormTab(cat.tab);
+                                            setCatFormTitle(cat.title);
+                                            setCatFormIcon(cat.icon || 'ri-tools-line');
+                                            const details = megaDetails[cat.id] || {};
+                                            setCatFormDesc(details.desc || '');
+                                            setCatFormImg(details.img || '');
+                                            setCatFormFeatures((details.features || []).join('\n'));
+                                            setCatFormSpecs((details.specs || []).map(s => `${s.label}: ${s.value}`).join('\n'));
+                                            setShowCatForm(true);
+                                          }}
+                                          style={{ border: 'none', background: 'rgba(91,140,255,0.1)', color: '#5b8cff', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                        >
+                                          <i className="ri-pencil-line"></i> Изменить
+                                        </button>
+                                        <button
+                                          onClick={() => handleDeleteCategory(cat.id)}
+                                          style={{ border: 'none', background: 'rgba(255,122,89,0.1)', color: '#ff7a59', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: '700' }}
+                                        >
+                                          <i className="ri-delete-bin-line"></i>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                   {/* SUB-TAB CONTENTS: SUBCATEGORIES */}
                   {catalogSubTab === 'subcategories' && (
@@ -3014,12 +3014,12 @@ const pageDataMap = {
                                     </tr>
                                   ));
                               })()}
-                          </tbody>
-                        </table>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                   {/* MODAL: SECTION / TAB FORM */}
                   {showTabForm && (
@@ -3033,11 +3033,11 @@ const pageDataMap = {
                         <form onSubmit={handleSaveTab} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>ID раздела (Английские буквы)</label>
-                            <input 
-                              type="text" 
-                              required 
+                            <input
+                              type="text"
+                              required
                               disabled={!!editingTabObj}
-                              value={tabFormId} 
+                              value={tabFormId}
                               onChange={e => setTabFormId(e.target.value)}
                               placeholder="Например: electro"
                               style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3050,10 +3050,10 @@ const pageDataMap = {
                           </div>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название раздела (Отображаемое имя)</label>
-                            <input 
-                              type="text" 
-                              required 
-                              value={tabFormLabel} 
+                            <input
+                              type="text"
+                              required
+                              value={tabFormLabel}
                               onChange={e => setTabFormLabel(e.target.value)}
                               placeholder="Например: Электрика"
                               style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3070,7 +3070,7 @@ const pageDataMap = {
                   {/* MODAL: CATEGORY FORM */}
                   {showCatForm && (
                     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
-                       <div className="cb-form-card" style={{ maxWidth: '540px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+                      <div className="cb-form-card" style={{ maxWidth: '540px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
                         <button onClick={() => setShowCatForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
                         <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <i className="ri-grid-line" style={{ color: 'var(--accent)' }}></i>
@@ -3080,8 +3080,8 @@ const pageDataMap = {
                           <div style={{ maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px', paddingRight: '8px' }}>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Раздел</label>
-                              <select 
-                                value={catFormTab} 
+                              <select
+                                value={catFormTab}
                                 onChange={e => setCatFormTab(e.target.value)}
                                 style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                               >
@@ -3092,10 +3092,10 @@ const pageDataMap = {
                             </div>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название категории</label>
-                              <input 
-                                type="text" 
-                                required 
-                                value={catFormTitle} 
+                              <input
+                                type="text"
+                                required
+                                value={catFormTitle}
                                 onChange={e => setCatFormTitle(e.target.value)}
                                 placeholder="Например: Москитные сетки"
                                 style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3103,10 +3103,10 @@ const pageDataMap = {
                             </div>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Иконка RemixIcon</label>
-                              <input 
-                                type="text" 
-                                required 
-                                value={catFormIcon} 
+                              <input
+                                type="text"
+                                required
+                                value={catFormIcon}
                                 onChange={e => setCatFormIcon(e.target.value)}
                                 placeholder="Например: ri-window-line"
                                 style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3117,8 +3117,8 @@ const pageDataMap = {
                             </div>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Описание страницы категории</label>
-                              <textarea 
-                                value={catFormDesc} 
+                              <textarea
+                                value={catFormDesc}
                                 onChange={e => setCatFormDesc(e.target.value)}
                                 placeholder="Подробное описание услуг категории для отображения на ее странице..."
                                 rows={3}
@@ -3127,9 +3127,9 @@ const pageDataMap = {
                             </div>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ссылка на изображение/обложку (URL)</label>
-                              <input 
-                                type="text" 
-                                value={catFormImg} 
+                              <input
+                                type="text"
+                                value={catFormImg}
                                 onChange={e => setCatFormImg(e.target.value)}
                                 placeholder="Например: ./cat_moskit.png"
                                 style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3137,8 +3137,8 @@ const pageDataMap = {
                             </div>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Преимущества (Одно на строку)</label>
-                              <textarea 
-                                value={catFormFeatures} 
+                              <textarea
+                                value={catFormFeatures}
                                 onChange={e => setCatFormFeatures(e.target.value)}
                                 placeholder="Например:&#10;Гарантия на полотно 2 года&#10;Установка за 24 часа&#10;Бесплатный замер"
                                 rows={4}
@@ -3147,8 +3147,8 @@ const pageDataMap = {
                             </div>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Характеристики (Формат: Имя: Значение, одна на строку)</label>
-                              <textarea 
-                                value={catFormSpecs} 
+                              <textarea
+                                value={catFormSpecs}
                                 onChange={e => setCatFormSpecs(e.target.value)}
                                 placeholder="Например:&#10;Изготовление: за 24 часа&#10;Материал полотна: Нейлон / ПЭ&#10;Профиль рамки: Алюминий 1мм"
                                 rows={4}
@@ -3176,8 +3176,8 @@ const pageDataMap = {
                         <form onSubmit={handleSaveSubcategory} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Фильтр по разделу</label>
-                            <select 
-                              value={subFormSectionFilter} 
+                            <select
+                              value={subFormSectionFilter}
                               onChange={e => {
                                 const selectedSection = e.target.value;
                                 setSubFormSectionFilter(selectedSection);
@@ -3202,8 +3202,8 @@ const pageDataMap = {
                           </div>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Родительская категория</label>
-                            <select 
-                              value={subFormCatId} 
+                            <select
+                              value={subFormCatId}
                               onChange={e => setSubFormCatId(e.target.value)}
                               style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                             >
@@ -3211,16 +3211,16 @@ const pageDataMap = {
                                 ? megaCategories
                                 : megaCategories.filter(cat => cat.tab === subFormSectionFilter)
                               ).map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.title} ({megaTabs.find(t=>t.id===cat.tab)?.label})</option>
+                                <option key={cat.id} value={cat.id}>{cat.title} ({megaTabs.find(t => t.id === cat.tab)?.label})</option>
                               ))}
                             </select>
                           </div>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Название подкатегории / услуги</label>
-                            <input 
-                              type="text" 
-                              required 
-                              value={subFormTitle} 
+                            <input
+                              type="text"
+                              required
+                              value={subFormTitle}
                               onChange={e => setSubFormTitle(e.target.value)}
                               placeholder="Например: Сетки Антикошка"
                               style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3228,8 +3228,8 @@ const pageDataMap = {
                           </div>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Описание услуги</label>
-                            <textarea 
-                              value={subFormDesc} 
+                            <textarea
+                              value={subFormDesc}
                               onChange={e => setSubFormDesc(e.target.value)}
                               placeholder="Детальное описание услуги для карточки товара..."
                               style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', minHeight: '80px', fontFamily: 'inherit', resize: 'vertical' }}
@@ -3238,9 +3238,9 @@ const pageDataMap = {
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Цена</label>
-                              <input 
-                                type="text" 
-                                value={subFormPrice} 
+                              <input
+                                type="text"
+                                value={subFormPrice}
                                 onChange={e => setSubFormPrice(e.target.value)}
                                 placeholder="от 5 000 ₸"
                                 style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3248,9 +3248,9 @@ const pageDataMap = {
                             </div>
                             <div className="cb-form-group">
                               <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Сроки исполнения</label>
-                              <input 
-                                type="text" 
-                                value={subFormTime} 
+                              <input
+                                type="text"
+                                value={subFormTime}
                                 onChange={e => setSubFormTime(e.target.value)}
                                 placeholder="Изготовление: 1 день"
                                 style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3259,9 +3259,9 @@ const pageDataMap = {
                           </div>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '4px' }}>Гарантия</label>
-                            <input 
-                              type="text" 
-                              value={subFormWarr} 
+                            <input
+                              type="text"
+                              value={subFormWarr}
                               onChange={e => setSubFormWarr(e.target.value)}
                               placeholder="Гарантия: 1 год"
                               style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -3288,14 +3288,14 @@ const pageDataMap = {
                       </p>
                     </div>
                     <div style={{ display: 'flex', gap: '10px' }}>
-                      <button 
-                        onClick={handleResetAssistantSettings} 
+                      <button
+                        onClick={handleResetAssistantSettings}
                         className="btn-ghost"
                         style={{ padding: '8px 16px', borderRadius: '10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px', color: '#ff7a59', border: '1px solid rgba(255,122,89,0.2)' }}
                       >
                         <i className="ri-history-line"></i> Сбросить по умолчанию
                       </button>
-                      <button 
+                      <button
                         onClick={() => {
                           setEditingRule(null);
                           setRuleFormTriggers('');
@@ -3328,15 +3328,15 @@ const pageDataMap = {
                             value={assistantFallback}
                             onChange={(e) => saveAssistantFallback(e.target.value)}
                             placeholder="Введите текст стандартного ответа..."
-                            style={{ 
-                              flex: 1, 
-                              padding: '12px', 
-                              borderRadius: '10px', 
-                              background: 'var(--bg)', 
-                              border: '1px solid var(--border)', 
-                              color: 'var(--text)', 
-                              minHeight: '80px', 
-                              fontFamily: 'inherit', 
+                            style={{
+                              flex: 1,
+                              padding: '12px',
+                              borderRadius: '10px',
+                              background: 'var(--bg)',
+                              border: '1px solid var(--border)',
+                              color: 'var(--text)',
+                              minHeight: '80px',
+                              fontFamily: 'inherit',
                               resize: 'vertical',
                               fontSize: '14px'
                             }}
@@ -3366,12 +3366,12 @@ const pageDataMap = {
                         ) : (
                           <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                             {assistantRules.map((rule, idx) => (
-                              <div 
-                                key={rule.id} 
-                                style={{ 
-                                  background: 'var(--bg)', 
-                                  border: '1px solid var(--border)', 
-                                  borderRadius: '16px', 
+                              <div
+                                key={rule.id}
+                                style={{
+                                  background: 'var(--bg)',
+                                  border: '1px solid var(--border)',
+                                  borderRadius: '16px',
                                   padding: '20px',
                                   position: 'relative'
                                 }}
@@ -3431,14 +3431,14 @@ const pageDataMap = {
                                   <div style={{ fontSize: '11px', color: 'var(--muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '4px' }}>Если текст сообщения содержит:</div>
                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                     {rule.triggers.map((trg, tIdx) => (
-                                      <span 
-                                        key={tIdx} 
-                                        style={{ 
-                                          background: 'rgba(91,140,255,0.12)', 
-                                          color: 'var(--accent2)', 
-                                          padding: '4px 10px', 
-                                          borderRadius: '8px', 
-                                          fontSize: '12px', 
+                                      <span
+                                        key={tIdx}
+                                        style={{
+                                          background: 'rgba(91,140,255,0.12)',
+                                          color: 'var(--accent2)',
+                                          padding: '4px 10px',
+                                          borderRadius: '8px',
+                                          fontSize: '12px',
                                           fontWeight: '700',
                                           border: '1px solid rgba(91,140,255,0.2)'
                                         }}
@@ -3470,7 +3470,7 @@ const pageDataMap = {
                             <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></div>
                             <span style={{ fontSize: '14px', fontWeight: '800' }}>Тест ассистента Иришка</span>
                           </div>
-                          <button 
+                          <button
                             onClick={() => setTestMessages([{ sender: 'ai', text: 'Здравствуйте! Напишите мне любой вопрос, чтобы протестировать настроенные правила ответов.' }])}
                             style={{ background: 'transparent', border: 'none', color: '#ff7a59', fontSize: '12px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit' }}
                           >
@@ -3481,24 +3481,24 @@ const pageDataMap = {
                         {/* Messages display */}
                         <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--bg)' }}>
                           {testMessages.map((msg, mIdx) => (
-                            <div 
-                              key={mIdx} 
-                              style={{ 
+                            <div
+                              key={mIdx}
+                              style={{
                                 alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
                                 maxWidth: '80%',
                                 display: 'flex',
                                 flexDirection: 'column'
                               }}
                             >
-                              <span style={{ 
-                                fontSize: '10px', 
-                                color: 'var(--muted)', 
+                              <span style={{
+                                fontSize: '10px',
+                                color: 'var(--muted)',
                                 marginBottom: '2px',
                                 alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start'
                               }}>
                                 {msg.sender === 'user' ? 'Вы' : 'Иришка'}
                               </span>
-                              <div style={{ 
+                              <div style={{
                                 background: msg.sender === 'user' ? 'var(--accent2)' : 'var(--surface)',
                                 color: msg.sender === 'user' ? '#fff' : 'var(--text)',
                                 padding: '10px 14px',
@@ -3516,31 +3516,31 @@ const pageDataMap = {
 
                         {/* Input row */}
                         <div style={{ padding: '12px', borderTop: '1px solid var(--border)', display: 'flex', gap: '8px', background: 'var(--surface)' }}>
-                          <input 
-                            type="text" 
-                            value={testInput} 
+                          <input
+                            type="text"
+                            value={testInput}
                             onChange={(e) => setTestInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleTestSend()}
                             placeholder="Задайте вопрос ассистенту..."
-                            style={{ 
-                              flex: 1, 
-                              padding: '10px 14px', 
-                              borderRadius: '10px', 
-                              background: 'var(--bg)', 
-                              border: '1px solid var(--border)', 
+                            style={{
+                              flex: 1,
+                              padding: '10px 14px',
+                              borderRadius: '10px',
+                              background: 'var(--bg)',
+                              border: '1px solid var(--border)',
                               color: 'var(--text)',
                               fontSize: '13px',
                               fontFamily: 'inherit'
                             }}
                           />
-                          <button 
-                            onClick={() => handleTestSend()} 
-                            style={{ 
-                              padding: '10px 16px', 
-                              borderRadius: '10px', 
-                              background: 'var(--accent)', 
-                              border: 'none', 
-                              color: '#1a1f2c', 
+                          <button
+                            onClick={() => handleTestSend()}
+                            style={{
+                              padding: '10px 16px',
+                              borderRadius: '10px',
+                              background: 'var(--accent)',
+                              border: 'none',
+                              color: '#1a1f2c',
                               cursor: 'pointer',
                               fontWeight: '700'
                             }}
@@ -3564,10 +3564,10 @@ const pageDataMap = {
                         <form onSubmit={handleSaveRule} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ключевые слова (через запятую)</label>
-                            <input 
-                              type="text" 
-                              required 
-                              value={ruleFormTriggers} 
+                            <input
+                              type="text"
+                              required
+                              value={ruleFormTriggers}
                               onChange={e => setRuleFormTriggers(e.target.value)}
                               placeholder="Например: цен, стоимость, прайс, сколько"
                               style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', fontSize: '14px' }}
@@ -3578,9 +3578,9 @@ const pageDataMap = {
                           </div>
                           <div className="cb-form-group">
                             <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ответ ассистента</label>
-                            <textarea 
+                            <textarea
                               required
-                              value={ruleFormReply} 
+                              value={ruleFormReply}
                               onChange={e => setRuleFormReply(e.target.value)}
                               placeholder="Введите ответ ассистента..."
                               style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)', minHeight: '120px', fontFamily: 'inherit', resize: 'vertical', fontSize: '14px' }}
@@ -3667,7 +3667,7 @@ const pageDataMap = {
 
                   {/* Grid Builder Layout */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'start' }} className="pages-admin-grid">
-                    
+
                     {/* Left: Input Form Fields */}
                     <form onSubmit={(e) => {
                       e.preventDefault();
@@ -4081,7 +4081,7 @@ const pageDataMap = {
                               <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '16px' }}>
                                 Бренды и услуги, отображаемые в соответствующих секциях в нижней части страницы категории.
                               </p>
-                              
+
                               {(() => {
                                 const catPageDataObj = getCategoryPageData({ id: cat.id, title: cat.title, parentCatId: cat.id, parentTabId: cat.tab }, lang);
                                 return (
@@ -4262,7 +4262,7 @@ const pageDataMap = {
                                 const h = landingBlocks?.hero?.[currentHeroSlide] || {};
                                 return (
                                   <div>
-                                    <h3 
+                                    <h3
                                       style={{ fontSize: '16px', fontWeight: '850', color: 'var(--text)', marginBottom: '8px' }}
                                       dangerouslySetInnerHTML={{ __html: previewLang === 'ru' ? (h.titleRu || 'Заголовок') : (h.titleKz || 'Тақырып') }}
                                     />
@@ -4459,9 +4459,9 @@ const pageDataMap = {
     <>
       {/* TOPBAR */}
       <header className="topbar">
-        <div 
-          className="brand" 
-          style={{ cursor: 'pointer' }} 
+        <div
+          className="brand"
+          style={{ cursor: 'pointer' }}
           onClick={() => { navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           title="На главную"
         >
@@ -4519,7 +4519,7 @@ const pageDataMap = {
           <a href={`tel:${getPhoneRaw()}`} className="phone" aria-label="Позвонить">
             <i className="ri-phone-line" style={{ color: 'var(--accent)' }}></i> <span>{getPhoneFormatted()}</span>
           </a>
-          
+
           {user ? (
             <button className="auth-trigger-btn" onClick={() => setIsCabinetOpen(true)}>
               <i className="ri-user-line"></i> <span>{t('nav_cabinet')}</span>
@@ -4774,14 +4774,13 @@ const pageDataMap = {
                         }
                       }}
                     >
-                      <i className={`mega-cat-icon ${
-                        tab.id === 'okna' ? 'ri-window-line' :
-                        tab.id === 'mebel' ? 'ri-archive-line' :
-                        tab.id === 'appliances' ? 'ri-fridge-line' :
-                        tab.id === 'climate' ? 'ri-temp-hot-line' :
-                        tab.id === 'computers' ? 'ri-computer-line' :
-                        'ri-tools-line'
-                      }`}></i>
+                      <i className={`mega-cat-icon ${tab.id === 'okna' ? 'ri-window-line' :
+                          tab.id === 'mebel' ? 'ri-archive-line' :
+                            tab.id === 'appliances' ? 'ri-fridge-line' :
+                              tab.id === 'climate' ? 'ri-temp-hot-line' :
+                                tab.id === 'computers' ? 'ri-computer-line' :
+                                  'ri-tools-line'
+                        }`}></i>
                       <span className="mega-cat-link">{t(tab.label)}</span>
                       {activeMegaTab === tab.id && (
                         <i className="ri-arrow-right-s-line mega-cat-arrow" style={{ opacity: 0.8, color: 'var(--accent)', marginLeft: 'auto' }}></i>
@@ -4847,7 +4846,7 @@ const pageDataMap = {
                       }}
                     >
                       <span className="mega-sub-link">{t(sub.title)}</span>
-                      <i 
+                      <i
                         className="ri-arrow-right-s-line mega-sub-arrow"
                         style={activeMegaSub === sub.id ? { color: 'var(--accent)', opacity: 1 } : {}}
                       ></i>
@@ -4861,9 +4860,9 @@ const pageDataMap = {
                     {/* Top: Photo/Hologram container */}
                     <div className="mega-preview-banner">
                       <div className="mega-preview-grid-overlay"></div>
-                      <img 
-                        src={getCategoryCharacter(activeMegaCat)} 
-                        alt="Category character" 
+                      <img
+                        src={getCategoryCharacter(activeMegaCat)}
+                        alt="Category character"
                         className="mega-preview-banner-char"
                       />
                       <div className="mega-preview-status-badge">
@@ -4875,7 +4874,7 @@ const pageDataMap = {
                     <div className="mega-preview-info">
                       <h4 className="mega-preview-title-styled">{t(currentDetail.title)}</h4>
                       <p className="mega-preview-desc-styled">{t(currentDetail.desc)}</p>
-                      
+
                       <div className="mega-preview-stats-row">
                         <div className="mega-stat-card">
                           <i className="ri-time-line"></i>
@@ -4914,8 +4913,8 @@ const pageDataMap = {
                             lang === 'ru'
                               ? `Здравствуйте! Хочу заказать услугу: "${t(currentDetail.title)}"`
                               : lang === 'kz'
-                              ? `Сәлеметсіз бе! Мен мына қызметке тапсырыс бергім келеді: "${t(currentDetail.title)}"`
-                              : `Hello! I would like to order: "${t(currentDetail.title)}"`
+                                ? `Сәлеметсіз бе! Мен мына қызметке тапсырыс бергім келеді: "${t(currentDetail.title)}"`
+                                : `Hello! I would like to order: "${t(currentDetail.title)}"`
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -4964,17 +4963,17 @@ const pageDataMap = {
                   {/* City selector - styled via CSS class */}
                   <div className="city-switch">
                     <i className="ri-map-pin-line" style={{ color: 'var(--accent)', fontSize: '14px' }}></i>
-                    <select 
-                      className="city-select" 
-                      value={city} 
-                      onChange={(e) => setCity(e.target.value)} 
-                      aria-label="Выбор города" 
-                      style={{ 
-                        width: '100%', 
-                        background: 'transparent', 
-                        border: 'none', 
-                        outline: 'none', 
-                        color: 'var(--text)', 
+                    <select
+                      className="city-select"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      aria-label="Выбор города"
+                      style={{
+                        width: '100%',
+                        background: 'transparent',
+                        border: 'none',
+                        outline: 'none',
+                        color: 'var(--text)',
                         fontSize: '12px',
                         fontWeight: '700',
                         padding: 0,
@@ -5003,25 +5002,25 @@ const pageDataMap = {
                       <option value="konaev">{t('city_konaev')}</option>
                     </select>
                   </div>
-                  
+
                   {/* Language Selector - styled via CSS class */}
                   <div className="lang-switch">
-                    <button 
-                      className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} 
+                    <button
+                      className={`lang-btn ${lang === 'ru' ? 'active' : ''}`}
                       onClick={() => setLang('ru')}
                       style={{ border: 'none', cursor: 'pointer' }}
                     >
                       RU
                     </button>
-                    <button 
-                      className={`lang-btn ${lang === 'kz' ? 'active' : ''}`} 
+                    <button
+                      className={`lang-btn ${lang === 'kz' ? 'active' : ''}`}
                       onClick={() => setLang('kz')}
                       style={{ border: 'none', cursor: 'pointer' }}
                     >
                       KZ
                     </button>
-                    <button 
-                      className={`lang-btn ${lang === 'en' ? 'active' : ''}`} 
+                    <button
+                      className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
                       onClick={() => setLang('en')}
                       style={{ border: 'none', cursor: 'pointer' }}
                     >
@@ -5030,27 +5029,27 @@ const pageDataMap = {
                   </div>
 
                   {/* Theme Toggle - styled via CSS class */}
-                  <button 
-                    className="theme-toggle" 
-                    onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} 
+                  <button
+                    className="theme-toggle"
+                    onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
                     aria-label="Переключить тему"
                   >
                     <i className={theme === 'light' ? 'ri-moon-line' : 'ri-sun-line'}></i>
                   </button>
-                  
+
                   {/* Login/Cabinet icon-only button - styled via CSS class */}
                   {user ? (
-                    <button 
+                    <button
                       className="auth-btn"
-                      onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }} 
+                      onClick={() => { setIsCabinetOpen(true); setMegaMenuOpen(false); }}
                       title={t('nav_cabinet')}
                     >
                       <i className="ri-user-line"></i>
                     </button>
                   ) : (
-                    <button 
+                    <button
                       className="auth-btn"
-                      onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }} 
+                      onClick={() => { setAuthTab('login'); setIsAuthModalOpen(true); setMegaMenuOpen(false); }}
                       title={t('nav_login')}
                     >
                       <i className="ri-login-box-line"></i>
@@ -5096,8 +5095,8 @@ const pageDataMap = {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {/* Back header */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--line)', marginBottom: '8px' }}>
-                      <button 
-                        onClick={() => setMobileMenuStep('sections')} 
+                      <button
+                        onClick={() => setMobileMenuStep('sections')}
                         style={{
                           display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--surface)', border: '1px solid var(--line)',
                           borderRadius: '8px', color: 'var(--text)', fontSize: '13px', fontWeight: 'bold', padding: '6px 12px', cursor: 'pointer'
@@ -5147,8 +5146,8 @@ const pageDataMap = {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {/* Back header */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--line)', marginBottom: '8px' }}>
-                      <button 
-                        onClick={() => setMobileMenuStep('categories')} 
+                      <button
+                        onClick={() => setMobileMenuStep('categories')}
                         style={{
                           display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--surface)', border: '1px solid var(--line)',
                           borderRadius: '8px', color: 'var(--text)', fontSize: '13px', fontWeight: 'bold', padding: '6px 12px', cursor: 'pointer'
@@ -5242,7 +5241,7 @@ const pageDataMap = {
             <span>{t(catPageData.parentCatTitle)}</span>
             <span>/</span>
             <span style={{ color: 'var(--text)', fontWeight: '700' }}>{t(selectedCategoryPageObj.title)}</span>
-            
+
             <button className="btn-ghost" style={{ marginLeft: 'auto', padding: '6px 16px', fontSize: '12px' }} onClick={() => navigateTo('/')}>
               ← Назад на главную
             </button>
@@ -5251,7 +5250,7 @@ const pageDataMap = {
           {/* Custom Rich Themed Category Block */}
           {(() => {
             const catId = selectedCategoryPageObj.parentCatId || selectedCategoryPageObj.id;
-            
+
             // Map category data specifically
             const categoryMetaMap = {
               'cat-okna-1': {
@@ -5365,7 +5364,7 @@ const pageDataMap = {
                 ]
               }
             };
-            
+
             const dbMeta = megaDetails[catId] || {};
             const meta = categoryMetaMap[catId] || {
               img: dbMeta.img || './slide_windows.png',
@@ -5377,11 +5376,11 @@ const pageDataMap = {
                 { label: 'Гарантия', value: 'до 12 месяцев' }
               ]
             };
-            
+
             return (
               <div className="cat-page-split-hero" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '40px', alignItems: 'center', marginBottom: '56px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--line)', borderRadius: '24px', padding: '40px', overflow: 'hidden', position: 'relative' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, transparent, var(--accent), transparent)' }}></div>
-                
+
                 {/* Left details */}
                 <div>
                   <div className="pill" style={{ marginBottom: '16px', display: 'inline-block', background: 'rgba(124, 242, 199, 0.08)', border: '1px solid rgba(124, 242, 199, 0.2)', color: 'var(--accent)', padding: '6px 14px', borderRadius: '8px', fontSize: '11px', textTransform: 'uppercase', fontWeight: '700', letterSpacing: '1px' }}>
@@ -5393,7 +5392,7 @@ const pageDataMap = {
                   <p className="cat-page-desc" style={{ fontSize: '15px', color: 'var(--muted)', lineHeight: '1.7', marginBottom: '28px' }}>
                     {meta.desc}
                   </p>
-                  
+
                   {/* Category Features list */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px', marginBottom: '32px' }}>
                     {meta.features.map((feat, fIdx) => (
@@ -5403,7 +5402,7 @@ const pageDataMap = {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
                     <button className="btn-primary big" style={{ padding: '16px 36px', fontSize: '15px' }} onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
                       Вызвать мастера на дом <i className="ri-arrow-right-line"></i>
@@ -5414,12 +5413,12 @@ const pageDataMap = {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Right theme photo with HUD specs */}
                 <div className="cat-page-hero-img-container" style={{ position: 'relative', width: '100%', height: '100%', minHeight: '380px', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', border: '1px solid var(--line)' }}>
                   <img src={meta.img} alt={t(selectedCategoryPageObj.title)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'all 0.5s ease' }} />
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,16,32,0.9) 0%, rgba(11,16,32,0.1) 60%)' }}></div>
-                  
+
                   {/* Floating HUD metrics on image */}
                   <div className="cat-page-hud" style={{ position: 'absolute', bottom: '24px', left: '24px', right: '24px', background: 'rgba(20, 27, 52, 0.85)', backdropFilter: 'blur(16px)', border: '1px solid rgba(124, 242, 199, 0.25)', borderRadius: '12px', padding: '16px 20px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', zIndex: 5 }}>
                     {meta.specs.map((spec, sIdx) => (
@@ -5523,15 +5522,15 @@ const pageDataMap = {
                   </div>
                 ) : (
                   catReviewsData.map((rev) => (
-                    <div 
-                      key={rev.id} 
-                      style={{ 
-                        background: 'rgba(255, 255, 255, 0.02)', 
-                        border: '1px solid var(--line)', 
-                        borderRadius: '16px', 
-                        padding: '24px', 
-                        display: 'flex', 
-                        flexDirection: 'column', 
+                    <div
+                      key={rev.id}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.02)',
+                        border: '1px solid var(--line)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        display: 'flex',
+                        flexDirection: 'column',
                         gap: '12px',
                         position: 'relative'
                       }}
@@ -5559,12 +5558,12 @@ const pageDataMap = {
               </div>
 
               {/* Right Column: Submission Form */}
-              <div 
-                style={{ 
-                  background: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(20, 27, 52, 0.6)', 
-                  backdropFilter: 'blur(20px)', 
-                  border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.08)', 
-                  borderRadius: '20px', 
+              <div
+                style={{
+                  background: theme === 'light' ? 'rgba(255, 255, 255, 0.85)' : 'rgba(20, 27, 52, 0.6)',
+                  backdropFilter: 'blur(20px)',
+                  border: theme === 'light' ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '20px',
                   padding: '30px',
                   position: 'sticky',
                   top: '100px'
@@ -5631,7 +5630,7 @@ const pageDataMap = {
                   {user && (
                     <div style={{ fontSize: '13px', color: 'var(--muted)', background: theme === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: theme === 'light' ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.04)' }}>
                       <i className="ri-user-line" style={{ marginRight: '6px', color: 'var(--accent)' }}></i>
-                      {lang === 'ru' ? 'Вы пишите отзыв от имени: ' : lang === 'kz' ? 'Сіз келесі атпен пікір жазып жатырсыз: ' : 'Posting as: '} 
+                      {lang === 'ru' ? 'Вы пишите отзыв от имени: ' : lang === 'kz' ? 'Сіз келесі атпен пікір жазып жатырсыз: ' : 'Posting as: '}
                       <strong style={{ color: theme === 'light' ? 'var(--text)' : '#fff' }}>{user.name}</strong>
                     </div>
                   )}
@@ -5670,7 +5669,7 @@ const pageDataMap = {
         </section>
       ) : (
         <>
-            {/* HERO */}
+          {/* HERO */}
           <section className="hero" style={{ position: 'relative', overflow: 'hidden', padding: '100px 0 60px 0' }}>
             {/* Ambient High-Tech Visual Layers */}
             <div className="hero-glow hero-glow-1"></div>
@@ -5682,20 +5681,20 @@ const pageDataMap = {
               const heroSlides = [
                 {
                   pill: lang === 'ru' ? '🔧 Направление: Окна и оконные системы' : (lang === 'kz' ? '🔧 Бағыт: Терезе және окон жүйелері' : '🔧 Category: Windows and window systems'),
-                  title: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[0]?.titleRu || 'Профессиональный ремонт и<br/>регулировка <span class="accent">окон под ключ</span>') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[0]?.titleKz || 'Терезелерді кәсіби жөндеу және<br/><span class="accent">реттеу</span>') 
+                  title: lang === 'ru'
+                    ? (landingBlocks?.hero?.[0]?.titleRu || 'Профессиональный ремонт и<br/>регулировка <span class="accent">окон под ключ</span>')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[0]?.titleKz || 'Терезелерді кәсіби жөндеу және<br/><span class="accent">реттеу</span>')
                       : 'Professional repair and<br/>adjustment of <span class="accent">windows</span>'),
-                  lead: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[0]?.leadRu || 'Устраним продувание, заменим уплотнитель, отрегулируем фурнитуру с гарантией до 12 месяцев. Быстрый выезд мастера.') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[0]?.leadKz || 'Соғуды жоямыз, тығыздауышты ауыстырамыз, 12 айға дейінгі кепілдікпен фурнитураны реттейміз. Шебердің жылдам келуі.') 
+                  lead: lang === 'ru'
+                    ? (landingBlocks?.hero?.[0]?.leadRu || 'Устраним продувание, заменим уплотнитель, отрегулируем фурнитуру с гарантией до 12 месяцев. Быстрый выезд мастера.')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[0]?.leadKz || 'Соғуды жоямыз, тығыздауышты ауыстырамыз, 12 айға дейінгі кепілдікпен фурнитураны реттейміз. Шебердің жылдам келуі.')
                       : 'We eliminate drafts, replace seals, and adjust hardware under a 12-month warranty. Fast master arrival.'),
-                  btnText: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[0]?.btnTextRu || 'Вызвать оконщика') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[0]?.btnTextKz || 'Шеберді шақыру') 
+                  btnText: lang === 'ru'
+                    ? (landingBlocks?.hero?.[0]?.btnTextRu || 'Вызвать оконщика')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[0]?.btnTextKz || 'Шеберді шақыру')
                       : 'Call a window master'),
                   img: './slide_windows.png',
                   cat: 'okna',
@@ -5706,20 +5705,20 @@ const pageDataMap = {
                 },
                 {
                   pill: lang === 'ru' ? '⚡ Направление: Бытовая техника' : (lang === 'kz' ? '⚡ Бағыт: Тұрмыстық техника' : '⚡ Category: Home Appliances'),
-                  title: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[1]?.titleRu || 'Срочный и надежный ремонт<br/><span class="accent">бытовой техники</span> на дому') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[1]?.titleKz || 'Тұрмыстық техниканы үйге<br/>барып <span class="accent">шұғыл жөндеу</span>') 
+                  title: lang === 'ru'
+                    ? (landingBlocks?.hero?.[1]?.titleRu || 'Срочный и надежный ремонт<br/><span class="accent">бытовой техники</span> на дому')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[1]?.titleKz || 'Тұрмыстық техниканы үйге<br/>барып <span class="accent">шұғыл жөндеу</span>')
                       : 'Urgent and reliable repair of<br/><span class="accent">home appliances</span> at home'),
-                  lead: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[1]?.leadRu || 'Ремонт холодильников, стиральных и посудомоечных машин. Оригинальные запчасти в наличии, выезд мастера за 45 минут.') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[1]?.leadKz || 'Тоңазытқыштарды, кір жуғыш және ыдыс жуғыш машиналарды жөндеу. Түпнұсқа бөлшектер бар, шебер 45 минутта келеді.') 
+                  lead: lang === 'ru'
+                    ? (landingBlocks?.hero?.[1]?.leadRu || 'Ремонт холодильников, стиральных и посудомоечных машин. Оригинальные запчасти в наличии, выезд мастера за 45 минут.')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[1]?.leadKz || 'Тоңазытқыштарды, кір жуғыш және ыдыс жуғыш машиналарды жөндеу. Түпнұсқа бөлшектер бар, шебер 45 минутта келеді.')
                       : 'Repair of refrigerators, washing machines, and dishwashewers. Original parts in stock, master arrival in 45 minutes.'),
-                  btnText: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[1]?.btnTextRu || 'Вызвать мастера') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[1]?.btnTextKz || 'Шеберді шақыру') 
+                  btnText: lang === 'ru'
+                    ? (landingBlocks?.hero?.[1]?.btnTextRu || 'Вызвать мастера')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[1]?.btnTextKz || 'Шеберді шақыру')
                       : 'Call a master'),
                   img: './slide_appliances.png',
                   cat: 'servis',
@@ -5730,20 +5729,20 @@ const pageDataMap = {
                 },
                 {
                   pill: lang === 'ru' ? '🛋️ Направление: Ремонт и сборка мебели' : (lang === 'kz' ? '🛋️ Бағыт: Жиһаз құрастыру және жөндеу' : '🛋️ Category: Furniture Assembly & Repair'),
-                  title: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[2]?.titleRu || 'Качественная сборка и<br/>реставрация <span class="accent">вашей мебели</span>') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[2]?.titleKz || 'Жиһаздарды сапалы құрастыру<br/>және <span class="accent">қалпына келтіру</span>') 
+                  title: lang === 'ru'
+                    ? (landingBlocks?.hero?.[2]?.titleRu || 'Качественная сборка и<br/>реставрация <span class="accent">вашей мебели</span>')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[2]?.titleKz || 'Жиһаздарды сапалы құрастыру<br/>және <span class="accent">қалпына келтіру</span>')
                       : 'High-quality assembly and<br/>restoration of <span class="accent">your furniture</span>'),
-                  lead: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[2]?.leadRu || 'Сборка кухонь, шкафов-купе, ремонт каркасов и перетяжка мягкой мебели с премиальной фурнитурой и гарантией качества.') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[2]?.leadKz || 'Асүй жиһазын, шкафтарды құрастыру, қаңқаларды жөндеу және сапалы фурнитурамен жұмсақ жиһазды қаптау.') 
+                  lead: lang === 'ru'
+                    ? (landingBlocks?.hero?.[2]?.leadRu || 'Сборка кухонь, шкафов-купе, ремонт каркасов и перетяжка мягкой мебели с премиальной фурнитурой и гарантией качества.')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[2]?.leadKz || 'Асүй жиһазын, шкафтарды құрастыру, қаңқаларды жөндеу және сапалы фурнитурамен жұмсақ жиһазды қаптау.')
                       : 'Assembly of kitchens, sliding wardrobes, frame repairs, and reupholstering of upholstered furniture with premium hardware.'),
-                  btnText: lang === 'ru' 
-                    ? (landingBlocks?.hero?.[2]?.btnTextRu || 'Вызвать мебельщика') 
-                    : (lang === 'kz' 
-                      ? (landingBlocks?.hero?.[2]?.btnTextKz || 'Шеберді шақыру') 
+                  btnText: lang === 'ru'
+                    ? (landingBlocks?.hero?.[2]?.btnTextRu || 'Вызвать мебельщика')
+                    : (lang === 'kz'
+                      ? (landingBlocks?.hero?.[2]?.btnTextKz || 'Шеберді шақыру')
                       : 'Call a furniture master'),
                   img: './slide_furniture.png',
                   cat: 'mebel',
@@ -5756,26 +5755,26 @@ const pageDataMap = {
 
               return (
                 <div className="hero-slides-viewport" style={{ overflow: 'hidden', width: '100%', maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}>
-                  <div 
-                    className="hero-slides-wrapper" 
-                    style={{ 
-                      display: 'flex', 
-                      width: '300%', 
-                      transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)', 
-                      transform: `translateX(-${currentHeroSlide * 33.3333}%)` 
+                  <div
+                    className="hero-slides-wrapper"
+                    style={{
+                      display: 'flex',
+                      width: '300%',
+                      transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                      transform: `translateX(-${currentHeroSlide * 33.3333}%)`
                     }}
                   >
                     {heroSlides.map((slide, slideIdx) => (
-                                            <div 
-                        key={slideIdx} 
-                        className="hero-slide-container" 
-                        style={{ 
-                          width: '33.3333%', 
-                          flexShrink: 0, 
-                          position: 'relative', 
-                          filter: slideIdx === currentHeroSlide ? 'none' : 'blur(6px)', 
-                          opacity: slideIdx === currentHeroSlide ? 1 : 0.3, 
-                          transition: 'filter 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1)' 
+                      <div
+                        key={slideIdx}
+                        className="hero-slide-container"
+                        style={{
+                          width: '33.3333%',
+                          flexShrink: 0,
+                          position: 'relative',
+                          filter: slideIdx === currentHeroSlide ? 'none' : 'blur(6px)',
+                          opacity: slideIdx === currentHeroSlide ? 1 : 0.3,
+                          transition: 'filter 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
                         }}
                       >
                         <div className="hero-content">
@@ -5893,21 +5892,21 @@ const pageDataMap = {
           {/* QUICK STEPS */}
           <section className="quick-steps" data-reveal="fade-up">
             <div className="quick-steps-grid">
-              <div className="quick-step-item" data-reveal="fade-up" style={{'--reveal-delay':'0ms'}}>
+              <div className="quick-step-item" data-reveal="fade-up" style={{ '--reveal-delay': '0ms' }}>
                 <div className="quick-step-icon"><i className="ri-hand-coin-line"></i></div>
                 <div>
                   <h4 className="quick-step-title">1. Выбираете услугу</h4>
                   <p className="quick-step-desc">Фиксированный прайс без скрытых наценок</p>
                 </div>
               </div>
-              <div className="quick-step-item" data-reveal="fade-up" style={{'--reveal-delay':'100ms'}}>
+              <div className="quick-step-item" data-reveal="fade-up" style={{ '--reveal-delay': '100ms' }}>
                 <div className="quick-step-icon"><i className="ri-timer-flash-line"></i></div>
                 <div>
                   <h4 className="quick-step-title">2. Выезд за 45 минут</h4>
                   <p className="quick-step-desc">Мастер прибудет в среднем за 45 минут</p>
                 </div>
               </div>
-              <div className="quick-step-item" data-reveal="fade-up" style={{'--reveal-delay':'200ms'}}>
+              <div className="quick-step-item" data-reveal="fade-up" style={{ '--reveal-delay': '200ms' }}>
                 <div className="quick-step-icon"><i className="ri-shield-star-line"></i></div>
                 <div>
                   <h4 className="quick-step-title">3. Гарантия 1 год</h4>
@@ -5923,7 +5922,7 @@ const pageDataMap = {
               <h2>Чем мы занимаемся</h2>
               <p>Три ключевых направления нашего мультисервиса с гарантией качества и фиксированным прайсом.</p>
             </div>
-            
+
             {/* Slider Tabs */}
             <div className="what-we-do-tabs">
               {[
@@ -5993,21 +5992,21 @@ const pageDataMap = {
               ];
               return (
                 <div className="what-we-do-viewport">
-                  <div 
-                    className="what-we-do-wrapper" 
-                    style={{ 
-                      display: 'flex', 
-                      width: '300%', 
-                      transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)', 
-                      transform: `translateX(-${activeSlide * 33.3333}%)` 
+                  <div
+                    className="what-we-do-wrapper"
+                    style={{
+                      display: 'flex',
+                      width: '300%',
+                      transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                      transform: `translateX(-${activeSlide * 33.3333}%)`
                     }}
                   >
                     {slides.map((currentSlide, sIdx) => (
-                      <div 
-                        key={currentSlide.id} 
-                        className="what-we-do-slide" 
-                        style={{ 
-                          width: '33.3333%', 
+                      <div
+                        key={currentSlide.id}
+                        className="what-we-do-slide"
+                        style={{
+                          width: '33.3333%',
                           flexShrink: 0,
                           display: 'grid',
                           gridTemplateColumns: '1.1fr 1fr',
@@ -6080,17 +6079,17 @@ const pageDataMap = {
               {srvCards.filter(c => c.cat === activeCatPill).map((card, idx) => (
                 <div className="srv-card" key={idx} style={{ '--reveal-delay': `${idx * 70}ms`, overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
                   {card.img && (
-                    <div 
-                      className="srv-img-wrapper" 
+                    <div
+                      className="srv-img-wrapper"
                       style={{ width: '100%', height: '180px', overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
                       onClick={() => {
                         navigateTo(`/category/${card.id}`);
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                     >
-                      <img 
-                        src={card.img} 
-                        alt={t(card.title)} 
+                      <img
+                        src={card.img}
+                        alt={t(card.title)}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
                         className="srv-card-img"
                       />
@@ -6100,8 +6099,8 @@ const pageDataMap = {
                     </div>
                   )}
                   <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <h3 
-                      className="srv-title" 
+                    <h3
+                      className="srv-title"
                       style={{ marginTop: 0, cursor: 'pointer', transition: 'color 0.2s ease' }}
                       onClick={() => {
                         navigateTo(`/category/${card.id}`);
@@ -6223,7 +6222,7 @@ const pageDataMap = {
                 { cat: 'mebel', name: 'Руслан Б.', role: 'Мягкая мебель', exp: '8 лет', rating: '4.9', reviews: 134, photo: 'a4' },
                 { cat: 'mebel', name: 'Денис В.', role: 'Корпусная мебель', exp: '6 лет', rating: '4.7', reviews: 95, photo: 'a3' },
               ].filter(m => m.cat === activeMasterCat).map((m, idx) => (
-                <div className="m-card" key={idx} style={{'--reveal-delay': `${idx * 60}ms`}}>
+                <div className="m-card" key={idx} style={{ '--reveal-delay': `${idx * 60}ms` }}>
                   <div className={`m-photo ${m.photo === 'a1' ? '' : m.photo}`}><i className="ri-user-line"></i></div>
                   <h4>{m.name}</h4>
                   <span>{m.role}</span>
@@ -6251,7 +6250,7 @@ const pageDataMap = {
                 { num: 8, icon: 'ri-hand-heart-line' },
                 { num: 9, icon: 'ri-safe-2-line' }
               ].map(item => (
-                <div className="t-item" key={item.num} data-reveal="fade-up" style={{'--reveal-delay': `${(item.num - 1) * 55}ms`}}>
+                <div className="t-item" key={item.num} data-reveal="fade-up" style={{ '--reveal-delay': `${(item.num - 1) * 55}ms` }}>
                   <div className="t-item-icon-wrapper">
                     <div className="t-item-icon">
                       <i className={item.icon}></i>
@@ -6266,7 +6265,7 @@ const pageDataMap = {
           </section>
 
           {/* REVIEWS */}
-          
+
 
           {/* REVIEWS */}
           <section id="reviews" data-reveal="fade-up">
@@ -6360,7 +6359,7 @@ const pageDataMap = {
                 {user && (
                   <div style={{ fontSize: '13px', color: 'var(--muted)', background: theme === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px', border: theme === 'light' ? '1px solid rgba(0,0,0,0.05)' : '1px solid rgba(255,255,255,0.04)' }}>
                     <i className="ri-user-line" style={{ marginRight: '6px', color: 'var(--accent)' }}></i>
-                    {lang === 'ru' ? 'Вы пишите отзыв от имени: ' : lang === 'kz' ? 'Сіз келесі атпен пікір жазып жатырсыз: ' : 'Posting as: '} 
+                    {lang === 'ru' ? 'Вы пишите отзыв от имени: ' : lang === 'kz' ? 'Сіз келесі атпен пікір жазып жатырсыз: ' : 'Posting as: '}
                     <strong style={{ color: theme === 'light' ? 'var(--text)' : '#fff' }}>{user.name}</strong>
                   </div>
                 )}
@@ -6421,13 +6420,13 @@ const pageDataMap = {
               </div>
               <div className="how-steps-grid">
                 {[
-                  { num: '01', icon: 'ri-phone-line',      title: lang === 'ru' ? 'Заявка'       : lang === 'kz' ? 'Өтінім'      : 'Request',   desc: lang === 'ru' ? 'Оставьте номер или позвоните — ответим за минуту.'                            : lang === 'kz' ? 'Нөміріңізді қалдырыңыз немесе қоңырау шалыңыз — бір минутта жауап береміз.'   : 'Leave your number or call — we respond in a minute.' },
-                  { num: '02', icon: 'ri-clipboard-line',   title: lang === 'ru' ? 'Диагностика'  : lang === 'kz' ? 'Диагностика' : 'Diagnosis', desc: lang === 'ru' ? 'Мастер выезжает и определяет причину поломки.'                             : lang === 'kz' ? 'Шебер барып, ақаулықтың себебін анықтайды.'                                    : 'Master arrives and identifies the fault.' },
-                  { num: '03', icon: 'ri-file-list-3-line', title: lang === 'ru' ? 'Согласование' : lang === 'kz' ? 'Келісу'      : 'Agreement', desc: lang === 'ru' ? 'Фиксируем стоимость и сроки перед началом работ.'                          : lang === 'kz' ? 'Жұмыс басталмас бұрын баға мен мерзімді бекітеміз.'                           : 'We fix cost and timeline before starting.' },
-                  { num: '04', icon: 'ri-tools-line',       title: lang === 'ru' ? 'Ремонт'       : lang === 'kz' ? 'Жөндеу'      : 'Repair',    desc: lang === 'ru' ? 'Выполняем работу с оригинальными запчастями.'                             : lang === 'kz' ? 'Жұмысты түпнұсқа бөлшектермен орындаймыз.'                                    : 'We perform work using original spare parts.' },
-                  { num: '05', icon: 'ri-award-line',       title: lang === 'ru' ? 'Гарантия'     : lang === 'kz' ? 'Кепілдік'    : 'Warranty',  desc: lang === 'ru' ? 'Выдаём акт, чек и официальную гарантию до 12 мес.'                      : lang === 'kz' ? 'Акт, чек және 12 айға дейінгі ресми кепілдік береміз.'                      : 'We issue an act, receipt & warranty up to 12 months.' },
+                  { num: '01', icon: 'ri-phone-line', title: lang === 'ru' ? 'Заявка' : lang === 'kz' ? 'Өтінім' : 'Request', desc: lang === 'ru' ? 'Оставьте номер или позвоните — ответим за минуту.' : lang === 'kz' ? 'Нөміріңізді қалдырыңыз немесе қоңырау шалыңыз — бір минутта жауап береміз.' : 'Leave your number or call — we respond in a minute.' },
+                  { num: '02', icon: 'ri-clipboard-line', title: lang === 'ru' ? 'Диагностика' : lang === 'kz' ? 'Диагностика' : 'Diagnosis', desc: lang === 'ru' ? 'Мастер выезжает и определяет причину поломки.' : lang === 'kz' ? 'Шебер барып, ақаулықтың себебін анықтайды.' : 'Master arrives and identifies the fault.' },
+                  { num: '03', icon: 'ri-file-list-3-line', title: lang === 'ru' ? 'Согласование' : lang === 'kz' ? 'Келісу' : 'Agreement', desc: lang === 'ru' ? 'Фиксируем стоимость и сроки перед началом работ.' : lang === 'kz' ? 'Жұмыс басталмас бұрын баға мен мерзімді бекітеміз.' : 'We fix cost and timeline before starting.' },
+                  { num: '04', icon: 'ri-tools-line', title: lang === 'ru' ? 'Ремонт' : lang === 'kz' ? 'Жөндеу' : 'Repair', desc: lang === 'ru' ? 'Выполняем работу с оригинальными запчастями.' : lang === 'kz' ? 'Жұмысты түпнұсқа бөлшектермен орындаймыз.' : 'We perform work using original spare parts.' },
+                  { num: '05', icon: 'ri-award-line', title: lang === 'ru' ? 'Гарантия' : lang === 'kz' ? 'Кепілдік' : 'Warranty', desc: lang === 'ru' ? 'Выдаём акт, чек и официальную гарантию до 12 мес.' : lang === 'kz' ? 'Акт, чек және 12 айға дейінгі ресми кепілдік береміз.' : 'We issue an act, receipt & warranty up to 12 months.' },
                 ].map((step, idx) => (
-                  <div key={idx} className="how-step-card" data-reveal="fade-up" style={{'--reveal-delay': `${idx * 80}ms`}}>
+                  <div key={idx} className="how-step-card" data-reveal="fade-up" style={{ '--reveal-delay': `${idx * 80}ms` }}>
                     <div className="how-step-top">
                       <div className="how-step-icon-wrap"><i className={step.icon}></i></div>
                       <span className="how-step-num">{step.num}</span>
@@ -6445,10 +6444,10 @@ const pageDataMap = {
             <div className="wrap">
               <div className="stats-banner-inner">
                 {[
-                  { num: '50 000+', label: lang === 'ru' ? 'довольных клиентов'     : lang === 'kz' ? 'қанағаттанған клиент'     : 'happy clients' },
-                  { num: '12 482',  label: lang === 'ru' ? 'отзыва с оценкой 4.9'  : lang === 'kz' ? 'пікір, баға 4.9'          : 'reviews rated 4.9' },
-                  { num: '45 мин',  label: lang === 'ru' ? 'среднее время выезда'   : lang === 'kz' ? 'орташа шығу уақыты'       : 'avg. arrival time' },
-                  { num: '12 мес',  label: lang === 'ru' ? 'гарантия на работы'     : lang === 'kz' ? 'жұмыстарға кепілдік'      : 'warranty on work' },
+                  { num: '50 000+', label: lang === 'ru' ? 'довольных клиентов' : lang === 'kz' ? 'қанағаттанған клиент' : 'happy clients' },
+                  { num: '12 482', label: lang === 'ru' ? 'отзыва с оценкой 4.9' : lang === 'kz' ? 'пікір, баға 4.9' : 'reviews rated 4.9' },
+                  { num: '45 мин', label: lang === 'ru' ? 'среднее время выезда' : lang === 'kz' ? 'орташа шығу уақыты' : 'avg. arrival time' },
+                  { num: '12 мес', label: lang === 'ru' ? 'гарантия на работы' : lang === 'kz' ? 'жұмыстарға кепілдік' : 'warranty on work' },
                 ].map((stat, idx) => (
                   <div key={idx} className="stats-banner-item">
                     <span className="stats-banner-num">{stat.num}</span>
@@ -6722,170 +6721,427 @@ const pageDataMap = {
 
       {/* CALLBACK FORM */}
       {activePage !== 'admin' && (
-      <section id="contact" className="callback" data-reveal="fade-up" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-          <img src="./why_bg.png" alt="Smart Home Interior" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, filter: 'blur(3px)' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'var(--callback-overlay)' }}></div>
-        </div>
-        <div className="callback-inner" data-reveal="zoom-in" style={{ '--reveal-delay': '100ms', position: 'relative', zIndex: 2, background: 'var(--callback-bg)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.2)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
-          <div>
-            <h2>{t('call_title')}</h2>
-            <p>{t('call_sub')}</p>
-            <ul className="cb-feat">
-              <li>{t('call_f1')}</li>
-              <li>{t('call_f2')}</li>
-              <li>{t('call_f3')}</li>
-            </ul>
+        <section id="contact" className="callback" data-reveal="fade-up" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+            <img src="./why_bg.png" alt="Smart Home Interior" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.18, filter: 'blur(3px)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--callback-overlay)' }}></div>
           </div>
-          <div>
-            {callbackStatus && (
-              <div style={{ padding: '16px', background: 'rgba(124,242,199,0.2)', border: '1px solid var(--accent)', borderRadius: '12px', marginBottom: '20px', color: 'var(--text)' }}>
-                {callbackStatus.message}
-              </div>
-            )}
-            <form className="cb-form" onSubmit={handleCallbackSubmit}>
-              <label>
-                {t('call_lbl1')}
-                <input
-                  type="text"
-                  required
-                  placeholder={t('Например, Алия')}
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                />
-              </label>
-              <label>
-                {t('call_lbl2')}
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <select
-                    value={formCountryCode}
-                    onChange={(e) => {
-                      const code = e.target.value;
-                      setFormCountryCode(code);
-                      const maxLen = countryPhoneLengths[code] || 10;
-                      setFormPhone(prev => prev.replace(/\D/g, '').slice(0, maxLen));
-                    }}
-                    style={{
-                      width: '100px',
-                      flexShrink: 0,
-                      cursor: 'pointer',
-                      padding: '14px 10px'
-                    }}
-                  >
-                    <option value="+7">🇰🇿 +7</option>
-                    <option value="+7">🇷🇺 +7</option>
-                    <option value="+996">🇰🇬 +996</option>
-                    <option value="+998">🇺🇿 +998</option>
-                    <option value="+375">🇧🇾 +375</option>
-                  </select>
-                  <input
-                    type="tel"
-                    required
-                    pattern={`\\d{${countryPhoneLengths[formCountryCode] || 10}}`}
-                    title={lang === 'ru' ? `Номер телефона должен состоять ровно из ${countryPhoneLengths[formCountryCode] || 10} цифр` : (lang === 'kz' ? `Телефон нөмірі дәл ${countryPhoneLengths[formCountryCode] || 10} саннан тұруы керек` : `Phone number must be exactly ${countryPhoneLengths[formCountryCode] || 10} digits`)}
-                    placeholder={formCountryCode === '+7' ? '701 123 4567' : '--------'}
-                    value={formPhone}
-                    onChange={(e) => {
-                      const maxLen = countryPhoneLengths[formCountryCode] || 10;
-                      const digits = e.target.value.replace(/\D/g, '');
-                      setFormPhone(digits.slice(0, maxLen));
-                    }}
-                    style={{ flex: 1 }}
-                  />
+          <div className="callback-inner" data-reveal="zoom-in" style={{ '--reveal-delay': '100ms', position: 'relative', zIndex: 2, background: 'var(--callback-bg)', backdropFilter: 'blur(20px)', border: '1px solid rgba(124,242,199,0.2)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
+            <div>
+              <h2>{t('call_title')}</h2>
+              <p>{t('call_sub')}</p>
+              <ul className="cb-feat">
+                <li>{t('call_f1')}</li>
+                <li>{t('call_f2')}</li>
+                <li>{t('call_f3')}</li>
+              </ul>
+            </div>
+            <div>
+              {callbackStatus && (
+                <div style={{ padding: '16px', background: 'rgba(124,242,199,0.2)', border: '1px solid var(--accent)', borderRadius: '12px', marginBottom: '20px', color: 'var(--text)' }}>
+                  {callbackStatus.message}
                 </div>
-              </label>
-              <label>
-                Город
-                <select value={formCity} onChange={(e) => setFormCity(e.target.value)}>
-                  <option value="almaty">{t('city_almaty')}</option>
-                  <option value="astana">{t('city_astana')}</option>
-                  <option value="shymkent">{t('city_shymkent')}</option>
-                  <option value="karaganda">{t('city_karaganda')}</option>
-                  <option value="aktobe">{t('city_aktobe')}</option>
-                  <option value="taraz">{t('city_taraz')}</option>
-                  <option value="pavlodar">{t('city_pavlodar')}</option>
-                  <option value="oskemen">{t('city_oskemen')}</option>
-                  <option value="semey">{t('city_semey')}</option>
-                  <option value="atyrau">{t('city_atyrau')}</option>
-                  <option value="aktau">{t('city_aktau')}</option>
-                  <option value="kostanay">{t('city_kostanay')}</option>
-                  <option value="kyzylorda">{t('city_kyzylorda')}</option>
-                  <option value="oral">{t('city_oral')}</option>
-                  <option value="petropavl">{t('city_petropavl')}</option>
-                  <option value="taldykorgan">{t('city_taldykorgan')}</option>
-                  <option value="kokshetau">{t('city_kokshetau')}</option>
-                  <option value="turkistan">{t('city_turkistan')}</option>
-                  <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
-                  <option value="konaev">{t('city_konaev')}</option>
-                </select>
-              </label>
-              <label>
-                {t('call_lbl3')}
-                <select value={formService} onChange={(e) => setFormService(e.target.value)}>
-                  <option value="Не знаю, нужна консультация">{t('Не знаю, нужна консультация')}</option>
-                  <option value="Ремонт стиральных машин">{t('Ремонт стиральных машин')}</option>
-                  <option value="Ремонт холодильников">{t('Ремонт холодильников')}</option>
-                  <option value="Ремонт посудомоек">{t('Ремонт посудомоек')}</option>
-                  <option value="Ремонт кофемашин">{t('Ремонт кофемашин')}</option>
-                  <option value="Ремонт телефонов">{t('Ремонт телефонов')}</option>
-                  <option value="Ремонт iPhone">{t('Ремонт iPhone')}</option>
-                  <option value="Ремонт кондиционеров">{t('Ремонт кондиционеров')}</option>
-                  <option value="Генеральная уборка">{t('Генеральная уборка')}</option>
-                  <option value="Услуги сантехника">{t('Услуги сантехника')}</option>
-                </select>
-              </label>
-              <label>
-                {lang === 'ru' ? 'Описание проблемы или пожелания' : lang === 'kz' ? 'Мәселенің немесе тілектің сипаттамасы' : 'Problem description or wishes'}
-                <textarea
-                  placeholder={lang === 'ru' ? 'Например: дует из левой створки окна, нужен ремонт холодильника LG, стиралка не сливает воду...' : (lang === 'kz' ? 'Мысалы: терезенің сол жағынан соғып тұр, LG тоңазытқышын жөндеу керек...' : 'E.g. draft from left window sash, refrigerator repair, washer does not drain...')}
-                  value={formComment}
-                  onChange={(e) => setFormComment(e.target.value)}
-                  rows={3}
-                />
-              </label>
-              <button type="submit" className="btn-primary big" style={{ width: '100%', marginTop: '14px' }}>
-                {t('call_btn')}
-              </button>
+              )}
+              <form className="cb-form" onSubmit={handleCallbackSubmit}>
+                <label>
+                  {t('call_lbl1')}
+                  <input
+                    type="text"
+                    required
+                    placeholder={t('Например, Алия')}
+                    value={formName}
+                    onChange={(e) => setFormName(e.target.value)}
+                  />
+                </label>
+                <label>
+                  {t('call_lbl2')}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <select
+                      value={formCountryCode}
+                      onChange={(e) => {
+                        const code = e.target.value;
+                        setFormCountryCode(code);
+                        const maxLen = countryPhoneLengths[code] || 10;
+                        setFormPhone(prev => prev.replace(/\D/g, '').slice(0, maxLen));
+                      }}
+                      style={{
+                        width: '100px',
+                        flexShrink: 0,
+                        cursor: 'pointer',
+                        padding: '14px 10px'
+                      }}
+                    >
+                      <option value="+7">🇰🇿 +7</option>
+                      <option value="+7">🇷🇺 +7</option>
+                      <option value="+996">🇰🇬 +996</option>
+                      <option value="+998">🇺🇿 +998</option>
+                      <option value="+375">🇧🇾 +375</option>
+                    </select>
+                    <input
+                      type="tel"
+                      required
+                      pattern={`\\d{${countryPhoneLengths[formCountryCode] || 10}}`}
+                      title={lang === 'ru' ? `Номер телефона должен состоять ровно из ${countryPhoneLengths[formCountryCode] || 10} цифр` : (lang === 'kz' ? `Телефон нөмірі дәл ${countryPhoneLengths[formCountryCode] || 10} саннан тұруы керек` : `Phone number must be exactly ${countryPhoneLengths[formCountryCode] || 10} digits`)}
+                      placeholder={formCountryCode === '+7' ? '701 123 4567' : '--------'}
+                      value={formPhone}
+                      onChange={(e) => {
+                        const maxLen = countryPhoneLengths[formCountryCode] || 10;
+                        const digits = e.target.value.replace(/\D/g, '');
+                        setFormPhone(digits.slice(0, maxLen));
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                  </div>
+                </label>
+                <label>
+                  Город
+                  <select value={formCity} onChange={(e) => setFormCity(e.target.value)}>
+                    <option value="almaty">{t('city_almaty')}</option>
+                    <option value="astana">{t('city_astana')}</option>
+                    <option value="shymkent">{t('city_shymkent')}</option>
+                    <option value="karaganda">{t('city_karaganda')}</option>
+                    <option value="aktobe">{t('city_aktobe')}</option>
+                    <option value="taraz">{t('city_taraz')}</option>
+                    <option value="pavlodar">{t('city_pavlodar')}</option>
+                    <option value="oskemen">{t('city_oskemen')}</option>
+                    <option value="semey">{t('city_semey')}</option>
+                    <option value="atyrau">{t('city_atyrau')}</option>
+                    <option value="aktau">{t('city_aktau')}</option>
+                    <option value="kostanay">{t('city_kostanay')}</option>
+                    <option value="kyzylorda">{t('city_kyzylorda')}</option>
+                    <option value="oral">{t('city_oral')}</option>
+                    <option value="petropavl">{t('city_petropavl')}</option>
+                    <option value="taldykorgan">{t('city_taldykorgan')}</option>
+                    <option value="kokshetau">{t('city_kokshetau')}</option>
+                    <option value="turkistan">{t('city_turkistan')}</option>
+                    <option value="zhezkazgan">{t('city_zhezkazgan')}</option>
+                    <option value="konaev">{t('city_konaev')}</option>
+                  </select>
+                </label>
+                <label>
+                  {t('call_lbl3')}
+                  <select value={formService} onChange={(e) => setFormService(e.target.value)}>
+                    <option value="Не знаю, нужна консультация">{t('Не знаю, нужна консультация')}</option>
+                    <option value="Ремонт стиральных машин">{t('Ремонт стиральных машин')}</option>
+                    <option value="Ремонт холодильников">{t('Ремонт холодильников')}</option>
+                    <option value="Ремонт посудомоек">{t('Ремонт посудомоек')}</option>
+                    <option value="Ремонт кофемашин">{t('Ремонт кофемашин')}</option>
+                    <option value="Ремонт телефонов">{t('Ремонт телефонов')}</option>
+                    <option value="Ремонт iPhone">{t('Ремонт iPhone')}</option>
+                    <option value="Ремонт кондиционеров">{t('Ремонт кондиционеров')}</option>
+                    <option value="Генеральная уборка">{t('Генеральная уборка')}</option>
+                    <option value="Услуги сантехника">{t('Услуги сантехника')}</option>
+                  </select>
+                </label>
+                <label>
+                  {lang === 'ru' ? 'Описание проблемы или пожелания' : lang === 'kz' ? 'Мәселенің немесе тілектің сипаттамасы' : 'Problem description or wishes'}
+                  <textarea
+                    placeholder={lang === 'ru' ? 'Например: дует из левой створки окна, нужен ремонт холодильника LG, стиралка не сливает воду...' : (lang === 'kz' ? 'Мысалы: терезенің сол жағынан соғып тұр, LG тоңазытқышын жөндеу керек...' : 'E.g. draft from left window sash, refrigerator repair, washer does not drain...')}
+                    value={formComment}
+                    onChange={(e) => setFormComment(e.target.value)}
+                    rows={3}
+                  />
+                </label>
+                <button type="submit" className="btn-primary big" style={{ width: '100%', marginTop: '14px' }}>
+                  {t('call_btn')}
+                </button>
 
-              <div style={{ display: 'flex', alignItems: 'center', margin: '16px 0 10px', color: 'var(--muted)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                <div style={{ flex: 1, height: '1px', background: 'var(--line)' }}></div>
-                <span style={{ padding: '0 10px' }}>{lang === 'ru' ? 'или' : lang === 'kz' ? 'немесе' : 'or'}</span>
-                <div style={{ flex: 1, height: '1px', background: 'var(--line)' }}></div>
-              </div>
+                <div style={{ display: 'flex', alignItems: 'center', margin: '16px 0 10px', color: 'var(--muted)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <div style={{ flex: 1, height: '1px', background: 'var(--line)' }}></div>
+                  <span style={{ padding: '0 10px' }}>{lang === 'ru' ? 'или' : lang === 'kz' ? 'немесе' : 'or'}</span>
+                  <div style={{ flex: 1, height: '1px', background: 'var(--line)' }}></div>
+                </div>
 
-              <a
-                href={`https://wa.me/${getWhatsappRaw()}?text=${encodeURIComponent(
-                  lang === 'ru'
-                    ? `Здравствуйте! Хочу заказать услугу: "${t(formService)}"`
-                    : lang === 'kz'
-                    ? `Сәлеметсіз бе! Мен мына қызметке тапсырыс бергім келеді: "${t(formService)}"`
-                    : `Hello! I would like to order: "${t(formService)}"`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  background: '#25d366',
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  fontSize: '15px',
-                  padding: '14px',
-                  borderRadius: 'var(--radius)',
-                  textDecoration: 'none',
-                  textAlign: 'center',
-                  boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)',
-                  transition: 'all 0.25s ease',
-                  width: '100%',
-                  boxSizing: 'border-box'
-                }}
-              >
-                <i className="ri-whatsapp-line" style={{ fontSize: '20px' }}></i> {lang === 'ru' ? 'Связаться по WhatsApp' : lang === 'kz' ? 'WhatsApp-пен хабарласу' : 'Contact via WhatsApp'}
-              </a>
-            </form>
+                <a
+                  href={`https://wa.me/${getWhatsappRaw()}?text=${encodeURIComponent(
+                    lang === 'ru'
+                      ? `Здравствуйте! Хочу заказать услугу: "${t(formService)}"`
+                      : lang === 'kz'
+                        ? `Сәлеметсіз бе! Мен мына қызметке тапсырыс бергім келеді: "${t(formService)}"`
+                        : `Hello! I would like to order: "${t(formService)}"`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    background: '#25d366',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    fontSize: '15px',
+                    padding: '14px',
+                    borderRadius: 'var(--radius)',
+                    textDecoration: 'none',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 20px rgba(37, 211, 102, 0.3)',
+                    transition: 'all 0.25s ease',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <i className="ri-whatsapp-line" style={{ fontSize: '20px' }}></i> {lang === 'ru' ? 'Связаться по WhatsApp' : lang === 'kz' ? 'WhatsApp-пен хабарласу' : 'Contact via WhatsApp'}
+                </a>
+              </form>
+            </div>
           </div>
+        </section>
+      )}
+
+      {/* ═══ GEOGRAPHY ═══ */}
+      {activePage !== 'admin' && (
+      <section className="geo-section" data-reveal="fade-up">
+        <div className="wrap">
+          {(() => {
+            const cityDistricts = {
+              almaty: {
+                address: { ru: 'пр. Аль-Фараби, 77/1', kz: 'Әл-Фараби д., 77/1', en: 'Al-Farabi Ave, 77/1' },
+                districts: [
+                  { ru: 'Бостандыкский р-н', kz: 'Бостандық ауданы', en: 'Bostandyk District' },
+                  { ru: 'Медеуский р-н', kz: 'Медеу ауданы', en: 'Medeu District' },
+                  { ru: 'Алатауский р-н', kz: 'Алатау ауданы', en: 'Alatau District' },
+                  { ru: 'Ауэзовский р-н', kz: 'Әуезов ауданы', en: 'Auezov District' },
+                  { ru: 'Наурызбайский р-н', kz: 'Наурызбай ауданы', en: 'Nauryzbay District' },
+                  { ru: 'Жетысуский р-н', kz: 'Жетісу ауданы', en: 'Zhetysu District' },
+                  { ru: 'Турксибский р-н', kz: 'Түрксіб ауданы', en: 'Turksib District' },
+                  { ru: 'Алмалинский р-н', kz: 'Алмалы ауданы', en: 'Almaly District' },
+                  { ru: 'мкр Самал', kz: 'Самал ш/а', en: 'Samal Microdistrict' },
+                  { ru: 'мкр Тастак', kz: 'Тастақ ш/а', en: 'Tastak' },
+                  { ru: 'мкр Алгабас', kz: 'Алғабас ш/а', en: 'Algabas' },
+                  { ru: 'пос. Алатау', kz: 'Алатау к/е', en: 'Alatau settlement' },
+                ],
+              },
+              astana: {
+                address: { ru: 'пр. Туран, 22', kz: 'Туран д., 22', en: 'Turan Ave, 22' },
+                districts: [
+                  { ru: 'р-н Есиль', kz: 'Есіл ауданы', en: 'Yesil District' },
+                  { ru: 'р-н Алматы', kz: 'Алматы ауданы', en: 'Almaty District' },
+                  { ru: 'р-н Сарыарка', kz: 'Сарыарқа ауданы', en: 'Saryarka District' },
+                  { ru: 'р-н Байконур', kz: 'Байқоңыр ауданы', en: 'Baikonur District' },
+                  { ru: 'Левый берег', kz: 'Сол жағалау', en: 'Left Bank' },
+                  { ru: 'Правый берег', kz: 'Оң жағалау', en: 'Right Bank' },
+                  { ru: 'пос. Акмол', kz: 'Ақмол к/е', en: 'Akmol settlement' },
+                  { ru: 'мкр Чубары', kz: 'Шұбар ш/а', en: 'Chubary' },
+                ],
+              },
+              shymkent: {
+                address: { ru: 'пр. Республики, 45', kz: 'Республика д., 45', en: 'Respubliki Ave, 45' },
+                districts: [
+                  { ru: 'р-н Аль-Фараби', kz: 'Әл-Фараби ауданы', en: 'Al-Farabi District' },
+                  { ru: 'р-н Абай', kz: 'Абай ауданы', en: 'Abay District' },
+                  { ru: 'р-н Каратау', kz: 'Қаратау ауданы', en: 'Karatau District' },
+                  { ru: 'р-н Енбекши', kz: 'Еңбекші ауданы', en: 'Yenbekshy District' },
+                  { ru: 'мкр Нурсат', kz: 'Нұрсат ш/а', en: 'Nursat' },
+                  { ru: 'мкр Самал', kz: 'Самал ш/а', en: 'Samal' },
+                ],
+              },
+              karaganda: {
+                address: { ru: 'ул. Ерубаева, 37', kz: 'Еруbaev к., 37', en: 'Yerbayev St, 37' },
+                districts: [
+                  { ru: 'р-н Казыбек би', kz: 'Қазыбек би ауданы', en: 'Kazybek bi District' },
+                  { ru: 'р-н Алихан Бокейхан', kz: 'Әлихан Бөкейхан ауданы', en: 'Alikhan Bokeikhan District' },
+                  { ru: 'р-н Наурызбай батыр', kz: 'Наурызбай батыр ауданы', en: 'Nauryzbaybatyr District' },
+                  { ru: 'Майкудук', kz: 'Майқұдық', en: 'Maikuduk' },
+                  { ru: 'Пришахтинск', kz: 'Пришахтинск', en: 'Prishakhtinsk' },
+                  { ru: 'Юго-Восток', kz: 'Оңтүстік-Шығыс', en: 'South-East' },
+                ],
+              },
+              aktobe: {
+                address: { ru: 'пр. Абилкайыр хана, 55', kz: 'Әбілқайыр хан д., 55', en: 'Abilkayyr Khan Ave, 55' },
+                districts: [
+                  { ru: 'р-н Астана', kz: 'Астана ауданы', en: 'Astana District' },
+                  { ru: 'р-н Нур Актобе', kz: 'Нұр Ақтөбе ауданы', en: 'Nur Aktobe District' },
+                  { ru: 'р-н Алматы', kz: 'Алматы ауданы', en: 'Almaty District' },
+                  { ru: 'мкр Болашак', kz: 'Болашақ ш/а', en: 'Bolashak' },
+                  { ru: 'Жилгородок', kz: 'Жилгородок', en: 'Zhilgorodok' },
+                ],
+              },
+              taraz: {
+                address: { ru: 'ул. Толе би, 53', kz: 'Төле би к., 53', en: 'Tole Bi St, 53' },
+                districts: [
+                  { ru: 'р-н Байзак', kz: 'Байзақ ауданы', en: 'Bayzak District' },
+                  { ru: 'р-н Жамбыл', kz: 'Жамбыл ауданы', en: 'Zhambyl District' },
+                  { ru: 'р-н Коксай', kz: 'Қоқсай ауданы', en: 'Koksay District' },
+                  { ru: 'мкр Восток', kz: 'Шығыс ш/а', en: 'East District' },
+                ],
+              },
+              pavlodar: {
+                address: { ru: 'ул. Ленина, 111', kz: 'Ленин к., 111', en: 'Lenin St, 111' },
+                districts: [
+                  { ru: 'р-н Достык', kz: 'Достық ауданы', en: 'Dostyk District' },
+                  { ru: 'р-н Ленин', kz: 'Ленин ауданы', en: 'Lenin District' },
+                  { ru: 'р-н Ак-Кудук', kz: 'Ақ-Құдық ауданы', en: 'Ak-Kuduk District' },
+                  { ru: 'мкр Химгородок', kz: 'Химгородок ш/а', en: 'Khimgorodok' },
+                ],
+              },
+              oskemen: {
+                address: { ru: 'пр. Независимости, 12', kz: 'Тәуелсіздік д., 12', en: 'Independence Ave, 12' },
+                districts: [
+                  { ru: 'р-н Ульба', kz: 'Үлба ауданы', en: 'Ulba District' },
+                  { ru: 'р-н Аблакетка', kz: 'Аблакетка ауданы', en: 'Ablaketka District' },
+                  { ru: 'Защита', kz: 'Защита', en: 'Zashchita' },
+                  { ru: 'мкр Согра', kz: 'Сोғра ш/а', en: 'Sogra' },
+                ],
+              },
+              semey: {
+                address: { ru: 'ул. Шакарима, 18', kz: 'Шәкәрім к., 18', en: 'Shakarim St, 18' },
+                districts: [
+                  { ru: 'р-н Абай', kz: 'Абай ауданы', en: 'Abay District' },
+                  { ru: 'р-н Алашкала', kz: 'Алашқала ауданы', en: 'Alashkala District' },
+                  { ru: 'Жана Семей', kz: 'Жаңа Семей', en: 'Zhana Semey' },
+                ],
+              },
+              atyrau: {
+                address: { ru: 'ул. Азаттык, 45', kz: 'Азаттық к., 45', en: 'Azattyk St, 45' },
+                districts: [
+                  { ru: 'р-н Макат', kz: 'Мақат ауданы', en: 'Makat District' },
+                  { ru: 'р-н Привокзальный', kz: 'Привокзальный ауданы', en: 'Privokzalny District' },
+                  { ru: 'Авангард', kz: 'Авангард', en: 'Avangard' },
+                  { ru: 'ж/м Нурсая', kz: 'Нұрсая т/м', en: 'Nursaya' },
+                ],
+              },
+              aktau: {
+                address: { ru: '14-й микрорайон', kz: '14-ші шағын аудан', en: '14th Microdistrict' },
+                districts: [
+                  { ru: '1–9 мкр', kz: '1–9 ш/а', en: 'Microdistricts 1–9' },
+                  { ru: '10–17 мкр', kz: '10–17 ш/а', en: 'Microdistricts 10–17' },
+                  { ru: 'Новый город', kz: 'Жаңа қала', en: 'New City' },
+                  { ru: 'мкр Мирас', kz: 'Мирас ш/а', en: 'Miras' },
+                ],
+              },
+              kostanay: {
+                address: { ru: 'пр. Аль-Фараби, 100', kz: 'Әл-Фараби д., 100', en: 'Al-Farabi Ave, 100' },
+                districts: [
+                  { ru: 'р-н Костанай', kz: 'Қостанай ауданы', en: 'Kostanay District' },
+                  { ru: 'р-н Тобол', kz: 'Тобыл ауданы', en: 'Tobol District' },
+                  { ru: 'мкр Юбилейный', kz: 'Юбилейный ш/а', en: 'Yubileynyy' },
+                ],
+              },
+              kyzylorda: {
+                address: { ru: 'пр. Достык, 3', kz: 'Достық д., 3', en: 'Dostyk Ave, 3' },
+                districts: [
+                  { ru: 'р-н Шиели', kz: 'Шиелі ауданы', en: 'Shiyeli District' },
+                  { ru: 'р-н Арал', kz: 'Арал ауданы', en: 'Aral District' },
+                  { ru: 'мкр Саяхат', kz: 'Саяхат ш/а', en: 'Sayakhat' },
+                ],
+              },
+              oral: {
+                address: { ru: 'ул. Достык, 22', kz: 'Достық к., 22', en: 'Dostyk St, 22' },
+                districts: [
+                  { ru: 'р-н Каратюбинский', kz: 'Қаратөбе ауданы', en: 'Karatyube District' },
+                  { ru: 'р-н Зачаганск', kz: 'Зачаганск ауданы', en: 'Zachagansk District' },
+                  { ru: 'Старый Уральск', kz: 'Ескі Орал', en: 'Old Oral' },
+                ],
+              },
+              petropavl: {
+                address: { ru: 'ул. Конституции, 8', kz: 'Конституция к., 8', en: 'Konstitutsii St, 8' },
+                districts: [
+                  { ru: 'Северный р-н', kz: 'Солтүстік ауданы', en: 'North District' },
+                  { ru: 'Центральный р-н', kz: 'Орталық ауданы', en: 'Central District' },
+                  { ru: 'мкр Береке', kz: 'Береке ш/а', en: 'Bereke' },
+                ],
+              },
+              taldykorgan: {
+                address: { ru: 'ул. Сейткали, 20', kz: 'Сейткали к., 20', en: 'Seytkali St, 20' },
+                districts: [
+                  { ru: 'р-н Жетысу', kz: 'Жетісу ауданы', en: 'Zhetysu District' },
+                  { ru: 'Центр', kz: 'Орталық', en: 'Center' },
+                  { ru: 'мкр Жастар', kz: 'Жастар ш/а', en: 'Zhastar' },
+                ],
+              },
+              kokshetau: {
+                address: { ru: 'ул. Абылай хана, 9', kz: 'Әбілай хан к., 9', en: 'Ablai Khan St, 9' },
+                districts: [
+                  { ru: 'р-н Красный Яр', kz: 'Қызыл жар ауданы', en: 'Krasny Yar District' },
+                  { ru: 'Центральный р-н', kz: 'Орталық ауданы', en: 'Central District' },
+                  { ru: 'мкр Северный', kz: 'Солтүстік ш/а', en: 'Severny' },
+                ],
+              },
+              turkistan: {
+                address: { ru: 'пр. Байдибек, 15', kz: 'Байдібек д., 15', en: 'Baydibek Ave, 15' },
+                districts: [
+                  { ru: 'р-н Туркистан', kz: 'Түркістан ауданы', en: 'Turkistan District' },
+                  { ru: 'Старый город', kz: 'Ескі қала', en: 'Old Town' },
+                  { ru: 'мкр Новый', kz: 'Жаңа ш/а', en: 'New Microdistrict' },
+                ],
+              },
+              zhezkazgan: {
+                address: { ru: 'ул. Гагарина, 22', kz: 'Гагарин к., 22', en: 'Gagarin St, 22' },
+                districts: [
+                  { ru: 'р-н Кенгир', kz: 'Кеңгір ауданы', en: 'Kengir District' },
+                  { ru: 'Балтабай', kz: 'Балтабай', en: 'Baltabay' },
+                  { ru: 'мкр Горняк', kz: 'Горняк ш/а', en: 'Gornyak' },
+                ],
+              },
+              konaev: {
+                address: { ru: 'ул. Конаев, 30', kz: 'Қонаев к., 30', en: 'Konaev St, 30' },
+                districts: [
+                  { ru: 'Центральный р-н', kz: 'Орталық ауданы', en: 'Central District' },
+                  { ru: 'ж/м Самал', kz: 'Самал т/м', en: 'Samal' },
+                  { ru: 'Западный р-н', kz: 'Батыс ауданы', en: 'West District' },
+                ],
+              },
+            };
+
+            const data = cityDistricts[city] || cityDistricts['almaty'];
+            const cityName = getCityDisplay(city);
+            const addr = lang === 'kz' ? data.address.kz : lang === 'en' ? data.address.en : data.address.ru;
+
+            return (
+              <div className="geo-inner">
+                <div className="geo-left">
+                  <div className="geo-tag">
+                    <i className="ri-map-pin-line"></i>
+                    {lang === 'ru' ? 'Районы выезда' : lang === 'kz' ? 'Шығу аудандары' : 'Service Districts'}
+                  </div>
+                  <h2 className="geo-title">
+                    {lang === 'ru' ? <>Выезжаем по всей <span style={{ color: 'var(--accent)' }}>{cityName}</span></> : lang === 'kz' ? <>{cityName} бойынша <span style={{ color: 'var(--accent)' }}>барамыз</span></> : <>Serving all of <span style={{ color: 'var(--accent)' }}>{cityName}</span></>}
+                  </h2>
+                  <p className="geo-desc">
+                    {lang === 'ru' ? `Мастера работают во всех районах ${cityName}. Выезд в течение 45–60 минут.` : lang === 'kz' ? `Шеберлер ${cityName} барлық аудандарында жұмыс жасайды. 45–60 минут ішінде шығу.` : `Masters operate across all districts of ${cityName}. Arrival within 45–60 min.`}
+                  </p>
+                  <div className="geo-address-card">
+                    <i className="ri-building-4-line"></i>
+                    <div>
+                      <strong>{cityName}, {addr}</strong>
+                      <span>{lang === 'ru' ? 'Сервисный центр' : lang === 'kz' ? 'Сервістік орталық' : 'Service Center'}</span>
+                    </div>
+                  </div>
+                  <div className="geo-stats-row">
+                    <div className="geo-stat-chip">
+                      <i className="ri-map-pin-2-line"></i>
+                      <span><strong>{data.districts.length}</strong> {lang === 'ru' ? 'районов охвата' : lang === 'kz' ? 'аудан' : 'districts'}</span>
+                    </div>
+                    <div className="geo-stat-chip">
+                      <i className="ri-time-line"></i>
+                      <span><strong>45</strong> {lang === 'ru' ? 'мин выезд' : lang === 'kz' ? 'мин шығу' : 'min arrival'}</span>
+                    </div>
+                    <div className="geo-stat-chip">
+                      <i className="ri-user-star-line"></i>
+                      <span><strong>24/7</strong></span>
+                    </div>
+                  </div>
+                </div>
+                <div className="geo-right">
+                  <div className="geo-districts-header">
+                    <span className="geo-districts-label">
+                      <i className="ri-focus-3-line"></i>
+                      {lang === 'ru' ? `Районы обслуживания — ${cityName}` : lang === 'kz' ? `${cityName} қызмет аудандары` : `Coverage — ${cityName}`}
+                    </span>
+                  </div>
+                  <div className="geo-cities-grid">
+                    {data.districts.map((d, idx) => (
+                      <div key={idx} className="geo-city-pill">
+                        <i className="ri-checkbox-circle-line geo-pill-icon"></i>
+                        {lang === 'kz' ? d.kz : lang === 'en' ? d.en : d.ru}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
       )}
@@ -6893,9 +7149,9 @@ const pageDataMap = {
       {/* FOOTER */}
       <footer>
         <div className="f-col">
-          <div 
-            className="brand" 
-            style={{ marginBottom: '16px', cursor: 'pointer' }} 
+          <div
+            className="brand"
+            style={{ marginBottom: '16px', cursor: 'pointer' }}
             onClick={() => { navigateTo('/'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             title="На главную"
           >
@@ -6940,7 +7196,7 @@ const pageDataMap = {
       {selectedModalItem && (
         <div className="cyber-modal-overlay" onClick={() => closeServiceModal()}>
           <div className="cyber-modal-container" onClick={(e) => e.stopPropagation()}>
-            
+
             {/* Left Column: Tech Status Panel */}
             <div className="cyber-tech-panel">
               <div>
@@ -6948,7 +7204,7 @@ const pageDataMap = {
                   <div className="cyber-status-pulse"></div>
                   <span>STATUS: ACTIVE</span>
                 </div>
-                
+
                 <div className="cyber-metric-list">
                   <div className="cyber-metric-item">
                     <span className="cyber-metric-label">{lang === 'ru' ? 'Свободные мастера' : (lang === 'kz' ? 'Бос шеберлер' : 'Free Masters')}</span>
@@ -6960,7 +7216,7 @@ const pageDataMap = {
                       <div className="cyber-progress-fill"></div>
                     </div>
                   </div>
-                  
+
                   <div className="cyber-metric-item">
                     <span className="cyber-metric-label">{lang === 'ru' ? 'Комплектующие' : (lang === 'kz' ? 'Қосалқы бөлшектер' : 'Components')}</span>
                     <span className="cyber-metric-value">
@@ -6984,7 +7240,7 @@ const pageDataMap = {
                   System ID
                 </div>
                 <div style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--text)', opacity: 0.7, marginTop: '4px' }}>
-                  MH-SERV-P2{selectedModalItem.parentTitle ? selectedModalItem.parentTitle.substring(0,2).toUpperCase() : 'XX'}
+                  MH-SERV-P2{selectedModalItem.parentTitle ? selectedModalItem.parentTitle.substring(0, 2).toUpperCase() : 'XX'}
                 </div>
               </div>
             </div>
@@ -6998,14 +7254,14 @@ const pageDataMap = {
               >
                 <i className="ri-close-line"></i>
               </button>
-              
+
               <div className="cyber-tag">
-                {selectedModalItem.type === 'brand' 
+                {selectedModalItem.type === 'brand'
                   ? (lang === 'ru' ? 'Бренд / Производитель' : (lang === 'kz' ? 'Бренд / Өндіруші' : 'Brand / Manufacturer'))
                   : (lang === 'ru' ? 'Услуга / Ремонтная деталь' : (lang === 'kz' ? 'Қызмет / Жөндеу бөлшегі' : 'Service / Spare Part'))
                 }
               </div>
-              
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '16px' }}>
                 <h3 className="cyber-title" style={{ margin: 0 }}>{selectedModalItem.title}</h3>
                 {user?.role === 'admin' && selectedModalItem.type === 'service' && selectedModalItem.id && (
@@ -7057,11 +7313,11 @@ const pageDataMap = {
               {(() => {
                 const subId = selectedModalItem.id;
                 const dbSubMeta = subId ? (megaDetails[subId] || {}) : {};
-                
+
                 const descText = dbSubMeta.desc || (
-                  lang === 'ru' 
+                  lang === 'ru'
                     ? `Вы выбрали «${selectedModalItem.title}» в категории «${selectedModalItem.parentTitle}». Мы обеспечиваем профессиональный ремонт, настройку и замену деталей с официальной письменной гарантией до 12 месяцев.`
-                    : (lang === 'kz' 
+                    : (lang === 'kz'
                       ? `Сіз «${selectedModalItem.parentTitle}» санатындағы «${selectedModalItem.title}» таңдадыңыз. Біз 12 айға дейінгі ресми жазбаша кепілдікпен кәсіби жөндеуді, баптауды және бөлшектерді ауыстыруды қамтамасыз етеміз.`
                       : `You selected "${selectedModalItem.title}" under "${selectedModalItem.parentTitle}". We provide expert repair, tuning, and parts replacement with a formal written guarantee of up to 12 months.`
                     )
@@ -7082,7 +7338,7 @@ const pageDataMap = {
                 return (
                   <>
                     <p className="cyber-desc">{descText}</p>
-                    
+
                     {/* Unique Interactive Feature Checklist */}
                     <div className="cyber-features-grid">
                       <div className="cyber-feature-check">
@@ -7131,8 +7387,8 @@ const pageDataMap = {
                 >
                   {lang === 'ru' ? 'Оформить быструю заявку' : (lang === 'kz' ? 'Жылдам өтінім беру' : 'Submit Quick Request')}
                 </button>
-                <button 
-                  className="btn-ghost" 
+                <button
+                  className="btn-ghost"
                   style={{ flex: 1, minWidth: '100px' }}
                   onClick={() => closeServiceModal()}
                 >
@@ -7295,42 +7551,42 @@ const pageDataMap = {
               <i className="ri-close-line"></i>
             </button>
             <div className="auth-tabs">
-              <button 
-                className={`auth-tab ${authTab === 'login' ? 'active' : ''}`} 
+              <button
+                className={`auth-tab ${authTab === 'login' ? 'active' : ''}`}
                 onClick={() => { setAuthTab('login'); setAuthError(''); }}
               >
                 {t('auth_title_login')}
               </button>
-              <button 
-                className={`auth-tab ${authTab === 'register' ? 'active' : ''}`} 
+              <button
+                className={`auth-tab ${authTab === 'register' ? 'active' : ''}`}
                 onClick={() => { setAuthTab('register'); setAuthError(''); }}
               >
                 {t('auth_title_register')}
               </button>
             </div>
-            
+
             {authError && <div className="auth-error">{authError}</div>}
 
             {authTab === 'login' ? (
               <form className="auth-form" onSubmit={handleLogin}>
                 <div className="auth-form-group">
                   <label>{t('auth_email')}</label>
-                  <input 
-                    type="email" 
-                    className="auth-input" 
-                    required 
-                    placeholder="email@example.com" 
+                  <input
+                    type="email"
+                    className="auth-input"
+                    required
+                    placeholder="email@example.com"
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
                   />
                 </div>
                 <div className="auth-form-group">
                   <label>{t('auth_password')}</label>
-                  <input 
-                    type="password" 
-                    className="auth-input" 
-                    required 
-                    placeholder="••••••••" 
+                  <input
+                    type="password"
+                    className="auth-input"
+                    required
+                    placeholder="••••••••"
                     value={authPassword}
                     onChange={(e) => setAuthPassword(e.target.value)}
                   />
@@ -7338,9 +7594,9 @@ const pageDataMap = {
                 <button type="submit" className="auth-submit-btn">
                   {t('auth_btn_login')}
                 </button>
-                <button 
-                  type="button" 
-                  className="auth-switch" 
+                <button
+                  type="button"
+                  className="auth-switch"
                   onClick={() => { setAuthTab('register'); setAuthError(''); }}
                 >
                   {t('auth_switch_to_register')}
@@ -7350,33 +7606,33 @@ const pageDataMap = {
               <form className="auth-form" onSubmit={handleRegister}>
                 <div className="auth-form-group">
                   <label>{t('auth_name')}</label>
-                  <input 
-                    type="text" 
-                    className="auth-input" 
-                    required 
-                    placeholder="Алексей" 
+                  <input
+                    type="text"
+                    className="auth-input"
+                    required
+                    placeholder="Алексей"
                     value={authName}
                     onChange={(e) => setAuthName(e.target.value)}
                   />
                 </div>
                 <div className="auth-form-group">
                   <label>{t('auth_email')}</label>
-                  <input 
-                    type="email" 
-                    className="auth-input" 
-                    required 
-                    placeholder="email@example.com" 
+                  <input
+                    type="email"
+                    className="auth-input"
+                    required
+                    placeholder="email@example.com"
                     value={authEmail}
                     onChange={(e) => setAuthEmail(e.target.value)}
                   />
                 </div>
                 <div className="auth-form-group">
                   <label>{t('auth_phone')}</label>
-                  <input 
-                    type="tel" 
-                    className="auth-input" 
-                    required 
-                    placeholder="+77071234567" 
+                  <input
+                    type="tel"
+                    className="auth-input"
+                    required
+                    placeholder="+77071234567"
                     value={authPhone}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -7387,9 +7643,9 @@ const pageDataMap = {
                 </div>
                 <div className="auth-form-group">
                   <label>{t('auth_city')}</label>
-                  <select 
-                    className="auth-select" 
-                    value={authCity} 
+                  <select
+                    className="auth-select"
+                    value={authCity}
                     onChange={(e) => setAuthCity(e.target.value)}
                   >
                     <option value="almaty">{t('city_almaty')}</option>
@@ -7416,11 +7672,11 @@ const pageDataMap = {
                 </div>
                 <div className="auth-form-group">
                   <label>{t('auth_password')}</label>
-                  <input 
-                    type="password" 
-                    className="auth-input" 
-                    required 
-                    placeholder="••••••••" 
+                  <input
+                    type="password"
+                    className="auth-input"
+                    required
+                    placeholder="••••••••"
                     value={authPassword}
                     onChange={(e) => setAuthPassword(e.target.value)}
                   />
@@ -7428,9 +7684,9 @@ const pageDataMap = {
                 <button type="submit" className="auth-submit-btn">
                   {t('auth_btn_register')}
                 </button>
-                <button 
-                  type="button" 
-                  className="auth-switch" 
+                <button
+                  type="button"
+                  className="auth-switch"
                   onClick={() => { setAuthTab('login'); setAuthError(''); }}
                 >
                   {t('auth_switch_to_login')}
@@ -7459,34 +7715,34 @@ const pageDataMap = {
                 <i className="ri-close-line"></i>
               </button>
             </div>
-            
+
             {/* CABINET NAVIGATION TABS */}
             <div className="cabinet-tabs">
-              <button 
+              <button
                 className={`cabinet-tab-btn ${cabinetTab === 'dashboard' ? 'active' : ''}`}
                 onClick={() => setCabinetTab('dashboard')}
               >
                 <i className="ri-dashboard-3-line"></i> Панель
               </button>
-              <button 
+              <button
                 className={`cabinet-tab-btn ${cabinetTab === 'warranty' ? 'active' : ''}`}
                 onClick={() => setCabinetTab('warranty')}
               >
                 <i className="ri-shield-check-line"></i> {lang === 'ru' ? 'Гарантии' : lang === 'kz' ? 'Кепілдіктер' : 'Warranties'}
               </button>
-              <button 
+              <button
                 className={`cabinet-tab-btn ${cabinetTab === 'profile' ? 'active' : ''}`}
                 onClick={() => { setCabinetTab('profile'); setProfileSuccess(''); setProfileError(''); }}
               >
                 <i className="ri-user-settings-line"></i> {t('cab_edit_profile')}
               </button>
-              <button 
+              <button
                 className={`cabinet-tab-btn ${cabinetTab === 'support' ? 'active' : ''}`}
                 onClick={() => setCabinetTab('support')}
               >
                 <i className="ri-customer-service-2-line"></i> Поддержка
               </button>
-              <button 
+              <button
                 className="cabinet-tab-btn logout-tab-btn"
                 onClick={handleLogout}
               >
@@ -7522,7 +7778,7 @@ const pageDataMap = {
                     <div className="request-tracker">
                       <h4 className="tracker-title">Отслеживание текущей заявки #{myCallbacks[0].id}</h4>
                       <div className="tracker-service-name">{myCallbacks[0].service}</div>
-                      
+
                       <div className="tracker-steps">
                         <div className={`tracker-step ${myCallbacks[0].status === 'pending' || myCallbacks[0].status === 'in_progress' ? 'active' : ''}`}>
                           <div className="step-circle"><i className="ri-file-list-3-line"></i></div>
@@ -7611,11 +7867,11 @@ const pageDataMap = {
                   {myCallbacks.filter(cb => cb.status === 'completed').length === 0 ? (
                     <div style={{ padding: '40px 20px', textAlign: 'center', background: 'var(--surface-2)', borderRadius: '16px', color: 'var(--muted)', fontSize: '14px', border: '1px dashed rgba(255,255,255,0.05)' }}>
                       <i className="ri-shield-flash-line" style={{ fontSize: '36px', color: 'rgba(255,255,255,0.1)', display: 'block', marginBottom: '15px' }}></i>
-                      {lang === 'ru' 
-                        ? 'У вас пока нет выполненных заказов с активной гарантией.' 
-                        : lang === 'kz' 
-                        ? 'Сізде әлі белсенді кепілдігі бар орындалған тапсырыстар жоқ.' 
-                        : 'You do not have any completed orders with active warranty yet.'}
+                      {lang === 'ru'
+                        ? 'У вас пока нет выполненных заказов с активной гарантией.'
+                        : lang === 'kz'
+                          ? 'Сізде әлі белсенді кепілдігі бар орындалған тапсырыстар жоқ.'
+                          : 'You do not have any completed orders with active warranty yet.'}
                     </div>
                   ) : (
                     <div className="warranties-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
@@ -7623,7 +7879,7 @@ const pageDataMap = {
                         const compDate = new Date(cb.created_at);
                         const expiryDate = new Date(compDate.getTime() + 90 * 24 * 60 * 60 * 1000);
                         const isExpired = new Date() > expiryDate;
-                        
+
                         return (
                           <div key={cb.id} className="warranty-card" style={{
                             background: 'linear-gradient(135deg, rgba(20, 20, 25, 0.9) 0%, rgba(30, 30, 40, 0.9) 100%)',
@@ -7661,8 +7917,8 @@ const pageDataMap = {
                                   color: isExpired ? '#aaa' : '#00e673',
                                   border: isExpired ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0, 230, 115, 0.2)'
                                 }}>
-                                  {isExpired 
-                                    ? (lang === 'ru' ? 'ИСТЕКЛА' : lang === 'kz' ? 'МЕРЗІМІ БІТТІ' : 'EXPIRED') 
+                                  {isExpired
+                                    ? (lang === 'ru' ? 'ИСТЕКЛА' : lang === 'kz' ? 'МЕРЗІМІ БІТТІ' : 'EXPIRED')
                                     : (lang === 'ru' ? 'АКТИВНА' : lang === 'kz' ? 'БЕЛСЕНДІ' : 'ACTIVE')}
                                 </span>
                               </div>
@@ -7712,11 +7968,11 @@ const pageDataMap = {
                               border: '1px solid rgba(255,255,255,0.03)'
                             }}>
                               <i className="ri-information-line" style={{ marginRight: '5px', color: 'var(--accent)' }}></i>
-                              {lang === 'ru' 
-                                ? 'Гарантия покрывает все выполненные работы. При возникновении гарантийного случая обратитесь в поддержку.' 
-                                : lang === 'kz' 
-                                ? 'Кепілдік барлық жұмыстарды қамтиды. Кепілдік жағдайы туындаса, қолдау қызметіне хабарласыңыз.' 
-                                : 'The warranty covers all completed works. In case of a warranty event, contact support.'}
+                              {lang === 'ru'
+                                ? 'Гарантия покрывает все выполненные работы. При возникновении гарантийного случая обратитесь в поддержку.'
+                                : lang === 'kz'
+                                  ? 'Кепілдік барлық жұмыстарды қамтиды. Кепілдік жағдайы туындаса, қолдау қызметіне хабарласыңыз.'
+                                  : 'The warranty covers all completed works. In case of a warranty event, contact support.'}
                             </div>
                           </div>
                         );
@@ -7738,9 +7994,9 @@ const pageDataMap = {
                   <form onSubmit={handleUpdateProfile} className="profile-form">
                     <div className="profile-form-group">
                       <label>Имя</label>
-                      <input 
-                        type="text" 
-                        className="profile-input" 
+                      <input
+                        type="text"
+                        className="profile-input"
                         required
                         value={editName}
                         onChange={(e) => setEditName(e.target.value)}
@@ -7748,9 +8004,9 @@ const pageDataMap = {
                     </div>
                     <div className="profile-form-group">
                       <label>Телефон</label>
-                      <input 
-                        type="tel" 
-                        className="profile-input" 
+                      <input
+                        type="tel"
+                        className="profile-input"
                         required
                         placeholder="+77071234567"
                         value={editPhone}
@@ -7763,9 +8019,9 @@ const pageDataMap = {
                     </div>
                     <div className="profile-form-group">
                       <label>Город</label>
-                      <select 
-                        className="profile-select" 
-                        value={editCity} 
+                      <select
+                        className="profile-select"
+                        value={editCity}
                         onChange={(e) => setEditCity(e.target.value)}
                       >
                         <option value="almaty">{t('city_almaty')}</option>
@@ -7792,10 +8048,10 @@ const pageDataMap = {
                     </div>
                     <div className="profile-form-group">
                       <label>{t('cab_new_password')}</label>
-                      <input 
-                        type="password" 
-                        className="profile-input" 
-                        placeholder="••••••••" 
+                      <input
+                        type="password"
+                        className="profile-input"
+                        placeholder="••••••••"
                         value={editPassword}
                         onChange={(e) => setEditPassword(e.target.value)}
                       />
@@ -7859,7 +8115,7 @@ const pageDataMap = {
         color: theme === 'light' ? '#0f172a' : '#fff'
       }}>
         {/* Toggle Button */}
-        <button 
+        <button
           onClick={() => setIsColorPanelOpen(!isColorPanelOpen)}
           style={{
             position: 'absolute',
@@ -7949,14 +8205,14 @@ const pageDataMap = {
           <label style={{ display: 'block', fontSize: '11px', color: 'var(--muted)', fontWeight: 'bold', textTransform: 'uppercase' }}>
             {lang === 'ru' ? 'Свой выбор:' : lang === 'kz' ? 'Өз түсіңіз:' : 'Custom Choice:'}
           </label>
-          
+
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
               {lang === 'ru' ? 'Основной цвет:' : 'Primary Accent:'}
             </span>
-            <input 
-              type="color" 
-              value={accentColor} 
+            <input
+              type="color"
+              value={accentColor}
               onChange={(e) => setAccentColor(e.target.value)}
               style={{ width: '40px', height: '24px', border: 'none', background: 'none', cursor: 'pointer' }}
             />
@@ -7966,9 +8222,9 @@ const pageDataMap = {
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
               {lang === 'ru' ? 'Вторичный цвет:' : 'Secondary Accent:'}
             </span>
-            <input 
-              type="color" 
-              value={accent2Color} 
+            <input
+              type="color"
+              value={accent2Color}
               onChange={(e) => setAccent2Color(e.target.value)}
               style={{ width: '40px', height: '24px', border: 'none', background: 'none', cursor: 'pointer' }}
             />
@@ -7978,9 +8234,9 @@ const pageDataMap = {
             <span style={{ fontSize: '12px', color: 'var(--muted)' }}>
               {lang === 'ru' ? 'Третичный цвет:' : 'Tertiary Accent:'}
             </span>
-            <input 
-              type="color" 
-              value={accent3Color} 
+            <input
+              type="color"
+              value={accent3Color}
               onChange={(e) => setAccent3Color(e.target.value)}
               style={{ width: '40px', height: '24px', border: 'none', background: 'none', cursor: 'pointer' }}
             />
@@ -8018,7 +8274,7 @@ const pageDataMap = {
       {/* GLOBAL MODALS FOR ADMIN QUICK EDITING */}
       {showCatForm && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'grid', placeItems: 'center', padding: '20px' }}>
-           <div className="cb-form-card" style={{ maxWidth: '540px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
+          <div className="cb-form-card" style={{ maxWidth: '540px', width: '100%', padding: '32px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '24px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', position: 'relative' }}>
             <button onClick={() => setShowCatForm(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '20px', cursor: 'pointer' }}>✕</button>
             <h3 style={{ fontSize: '18px', fontWeight: '850', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <i className="ri-grid-line" style={{ color: 'var(--accent)' }}></i>
@@ -8028,8 +8284,8 @@ const pageDataMap = {
               <div style={{ maxHeight: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px', paddingRight: '8px' }}>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Раздел</label>
-                  <select 
-                    value={catFormTab} 
+                  <select
+                    value={catFormTab}
                     onChange={e => setCatFormTab(e.target.value)}
                     style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                   >
@@ -8040,10 +8296,10 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название категории</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={catFormTitle} 
+                  <input
+                    type="text"
+                    required
+                    value={catFormTitle}
                     onChange={e => setCatFormTitle(e.target.value)}
                     placeholder="Например: Москитные сетки"
                     style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -8051,10 +8307,10 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Иконка RemixIcon</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={catFormIcon} 
+                  <input
+                    type="text"
+                    required
+                    value={catFormIcon}
                     onChange={e => setCatFormIcon(e.target.value)}
                     placeholder="Например: ri-window-line"
                     style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -8065,8 +8321,8 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Описание страницы категории</label>
-                  <textarea 
-                    value={catFormDesc} 
+                  <textarea
+                    value={catFormDesc}
                     onChange={e => setCatFormDesc(e.target.value)}
                     placeholder="Подробное описание услуг категории для отображения на ее странице..."
                     rows={3}
@@ -8075,9 +8331,9 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Ссылка на фоновое изображение</label>
-                  <input 
-                    type="text" 
-                    value={catFormImg} 
+                  <input
+                    type="text"
+                    value={catFormImg}
                     onChange={e => setCatFormImg(e.target.value)}
                     placeholder="Например: ./cat_moskit.png"
                     style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -8085,8 +8341,8 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Преимущества (по одному в строке)</label>
-                  <textarea 
-                    value={catFormFeatures} 
+                  <textarea
+                    value={catFormFeatures}
                     onChange={e => setCatFormFeatures(e.target.value)}
                     placeholder="Защита питомцев от падения&#10;Усиленный алюминиевый профиль"
                     rows={3}
@@ -8095,8 +8351,8 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Характеристики (Формат: Название: Значение, по одной в строке)</label>
-                  <textarea 
-                    value={catFormSpecs} 
+                  <textarea
+                    value={catFormSpecs}
                     onChange={e => setCatFormSpecs(e.target.value)}
                     placeholder="Время установки: от 20 минут&#10;Прочность: Усиленная"
                     rows={3}
@@ -8104,8 +8360,8 @@ const pageDataMap = {
                   />
                 </div>
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn-primary"
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}
               >
@@ -8129,8 +8385,8 @@ const pageDataMap = {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="cb-form-group">
                     <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Фильтр разделов</label>
-                    <select 
-                      value={subFormSectionFilter} 
+                    <select
+                      value={subFormSectionFilter}
                       onChange={e => {
                         setSubFormSectionFilter(e.target.value);
                         const firstCat = megaCategories.find(c => e.target.value === 'all' || c.tab === e.target.value);
@@ -8146,8 +8402,8 @@ const pageDataMap = {
                   </div>
                   <div className="cb-form-group">
                     <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Родительская категория</label>
-                    <select 
-                      value={subFormCatId} 
+                    <select
+                      value={subFormCatId}
                       onChange={e => setSubFormCatId(e.target.value)}
                       style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                     >
@@ -8161,10 +8417,10 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Название услуги</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={subFormTitle} 
+                  <input
+                    type="text"
+                    required
+                    value={subFormTitle}
                     onChange={e => setSubFormTitle(e.target.value)}
                     placeholder="Например: Замена уплотнителя"
                     style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -8172,8 +8428,8 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Описание услуги</label>
-                  <textarea 
-                    value={subFormDesc} 
+                  <textarea
+                    value={subFormDesc}
                     onChange={e => setSubFormDesc(e.target.value)}
                     placeholder="Подробное описание работы, материалов, этапов..."
                     rows={3}
@@ -8183,9 +8439,9 @@ const pageDataMap = {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="cb-form-group">
                     <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Стоимость</label>
-                    <input 
-                      type="text" 
-                      value={subFormPrice} 
+                    <input
+                      type="text"
+                      value={subFormPrice}
                       onChange={e => setSubFormPrice(e.target.value)}
                       placeholder="Например: от 1 500 ₸"
                       style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -8193,9 +8449,9 @@ const pageDataMap = {
                   </div>
                   <div className="cb-form-group">
                     <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Время выполнения</label>
-                    <input 
-                      type="text" 
-                      value={subFormTime} 
+                    <input
+                      type="text"
+                      value={subFormTime}
                       onChange={e => setSubFormTime(e.target.value)}
                       placeholder="Например: от 30 мин"
                       style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
@@ -8204,17 +8460,17 @@ const pageDataMap = {
                 </div>
                 <div className="cb-form-group">
                   <label style={{ fontSize: '12px', fontWeight: '700', color: 'var(--muted)', display: 'block', marginBottom: '6px' }}>Срок гарантии</label>
-                  <input 
-                    type="text" 
-                    value={subFormWarr} 
+                  <input
+                    type="text"
+                    value={subFormWarr}
                     onChange={e => setSubFormWarr(e.target.value)}
                     placeholder="Например: 12 месяцев"
                     style={{ width: '100%', padding: '12px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--text)' }}
                   />
                 </div>
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn-primary"
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '10px' }}
               >
