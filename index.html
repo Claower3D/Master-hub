@@ -5886,6 +5886,7 @@
     // RENDER HERO PILLS
     function populatePills() {
       const pillsContainer = document.getElementById('hero-pills');
+      if (!pillsContainer) return;
       pillsContainer.innerHTML = '';
       servicesData.forEach(svc => {
         const btn = document.createElement('button');
