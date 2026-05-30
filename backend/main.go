@@ -354,6 +354,80 @@ func main() {
 		}
 	}))
 
+	// Assistant configuration (GET /api/assistant-config, POST /api/assistant-config)
+	mux.HandleFunc("/api/assistant-config", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			return
+		}
+
+		filePath := "assistant_config.json"
+
+		if r.Method == http.MethodGet {
+			w.Header().Set("Content-Type", "application/json")
+			data, err := os.ReadFile(filePath)
+			if err == nil {
+				w.Write(data)
+				return
+			}
+
+			// Return default configuration if file doesn't exist
+			defaultConfig := `{
+				"fallback": "Спасибо за обращение! Наш специалист свяжется с вами в течение 5 минут для точного расчета.",
+				"rules": [
+					{
+						"id": "rule-price",
+						"triggers": ["цен", "стоим", "прайс", "бага", "құн"],
+						"reply": "Стоимость большинства услуг начинается от 2 500 ₸. Выезд мастера и диагностика при продолжении работ — бесплатно! Хотите оставить заявку на точный расчет?"
+					},
+					{
+						"id": "rule-time",
+						"triggers": ["как", "когда", "қашан"],
+						"reply": "Наши специалисты работают 24/7. Мастер может выехать к вам в течение 45 минут после оформления заявки."
+					}
+				]
+			}`
+			w.Write([]byte(defaultConfig))
+			return
+		}
+
+		if r.Method == http.MethodPost {
+			authHeader := r.Header.Get("Authorization")
+			if authHeader == "" {
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+			token := strings.TrimPrefix(authHeader, "Bearer ")
+			sess, err := dbInstance.GetSession(token)
+			if err != nil {
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+			user, err := dbInstance.GetUserByID(sess.UserID)
+			if err != nil || user.Role != "admin" {
+				http.Error(w, "Forbidden", http.StatusForbidden)
+				return
+			}
+
+			data, err := io.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = os.WriteFile(filePath, data, 0644)
+			if err != nil {
+				http.Error(w, "Failed to save configuration", http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.Write([]byte(`{"status":"success"}`))
+			return
+		}
+
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}))
+
 	// Callback form submission endpoint (supports optional authentication)
 	mux.HandleFunc("/api/callback", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
@@ -404,7 +478,186 @@ func main() {
 
 	// ---- AUTH ENDPOINTS ----
 
+	// POST /api/auth/send-sms  — send a 4-digit OTP to the given phone
+	mux.HandleFunc("/api/auth/send-sms", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Method not allowed"})
+			return
+		}
+
+		var input struct {
+			Phone string `json:"phone"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&input); err != nil || input.Phone == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Укажите номер телефона"})
+			return
+		}
+
+		code, err := SendVerificationSMS(input.Phone)
+		if err != nil {
+			log.Printf("⚠️ SMS send error: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Не удалось отправить SMS"})
+			return
+		}
+
+		// In demo/dev mode return the code in response so frontend can show it
+		demoCode := ""
+		if smscLogin() == "" {
+			demoCode = code
+		}
+
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status":    "sent",
+			"demo_code": demoCode, // empty in production
+		})
+	}))
+
+	// POST /api/auth/verify-sms  — verify OTP and login (or return "new_user" flag)
+	mux.HandleFunc("/api/auth/verify-sms", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Method not allowed"})
+			return
+		}
+
+		var input struct {
+			Phone string `json:"phone"`
+			Code  string `json:"code"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&input); err != nil || input.Phone == "" || input.Code == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Укажите телефон и код"})
+			return
+		}
+
+		ok, errMsg := verifySmsCodeStore(input.Phone, input.Code)
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(map[string]string{"error": errMsg})
+			return
+		}
+
+		// Check if user already exists by phone
+		user, err := dbInstance.GetUserByPhone(input.Phone)
+
+		if err != nil {
+			// New user — front-end should show registration form
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "new_user",
+				"phone":  input.Phone,
+				"token":  "",
+				"user":   nil,
+			})
+			return
+		}
+
+		// Existing user — create session
+		sess, err := dbInstance.CreateSession(user.ID)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Ошибка создания сессии"})
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status": "ok",
+			"token":  sess.Token,
+			"user":   ToAPIUser(user),
+		})
+	}))
+
+	// POST /api/auth/register-phone — complete registration after SMS verification
+	mux.HandleFunc("/api/auth/register-phone", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.Method == http.MethodOptions {
+			return
+		}
+		if r.Method != http.MethodPost {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Method not allowed"})
+			return
+		}
+
+		var input struct {
+			Phone   string `json:"phone"`
+			Name    string `json:"name"`
+			Email   string `json:"email"`
+			City    string `json:"city"`
+			Address string `json:"address"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Неверный формат данных"})
+			return
+		}
+		if input.Phone == "" || input.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Номер телефона и имя обязательны"})
+			return
+		}
+
+		// Email is optional — auto-generate from phone if not provided
+		if input.Email == "" {
+			cleanPhone := strings.TrimPrefix(input.Phone, "+")
+			cleanPhone = strings.ReplaceAll(cleanPhone, " ", "")
+			input.Email = "user_" + cleanPhone + "@hubmaster.kz"
+		}
+
+		// City defaults to Алматы if not provided
+		if input.City == "" {
+			input.City = "Алматы"
+		}
+
+		// Use phone as default password (user can change later via profile)
+		password := input.Phone
+
+		user, err := dbInstance.CreateUser(input.Name, input.Email, input.Phone, input.City, password)
+		if err != nil {
+			// Maybe already exists — return existing user session
+			existingUser, fetchErr := dbInstance.GetUserByPhone(input.Phone)
+			if fetchErr == nil {
+				user = existingUser
+			} else {
+				// Return the original CreateUser error as JSON
+				w.WriteHeader(http.StatusConflict)
+				json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+				return
+			}
+		}
+
+		sess, err := dbInstance.CreateSession(user.ID)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{"error": "Ошибка создания сессии"})
+			return
+		}
+
+		// Store address in user notes (saved via Telegram / admin panel)
+		if input.Address != "" {
+			log.Printf("📍 Address for user %d (%s): %s", user.ID, input.Phone, input.Address)
+		}
+
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status": "ok",
+			"token":  sess.Token,
+			"user":   ToAPIUser(user),
+		})
+	}))
+
 	// POST /api/auth/register
+
 	mux.HandleFunc("/api/auth/register", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			return
@@ -929,10 +1182,10 @@ func main() {
 		http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
 	}))
 
-	// Check environment PORT or fallback to 8080
+	// Check environment PORT or fallback to 3030
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "3030"
 	}
 
 	fmt.Printf("🚀 HUB MASTER Go Backend server running on http://localhost:%s (serving from %s)\n", port, staticDir)

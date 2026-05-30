@@ -71,6 +71,7 @@ type CategoryReviewRecord struct {
 type DB interface {
 	CreateUser(name, email, phone, city, password string) (*User, error)
 	GetUserByEmail(email string) (*User, error)
+	GetUserByPhone(phone string) (*User, error)
 	GetUserByID(id int) (*User, error)
 	CreateSession(userID int) (*Session, error)
 	GetSession(token string) (*Session, error)
@@ -221,6 +222,23 @@ func (p *PostgresDB) GetUserByEmail(email string) (*User, error) {
 		SELECT id, name, email, phone, city, password_hash, role, bonuses, created_at
 		FROM users WHERE email = $1
 	`, email).Scan(
+		&user.ID, &user.Name, &user.Email, &user.Phone, &user.City, &user.PasswordHash, &user.Role, &user.Bonuses, &user.CreatedAt,
+	)
+	if err == sql.ErrNoRows {
+		return nil, errors.New("user not found")
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (p *PostgresDB) GetUserByPhone(phone string) (*User, error) {
+	var user User
+	err := p.db.QueryRow(`
+		SELECT id, name, email, phone, city, password_hash, role, bonuses, created_at
+		FROM users WHERE phone = $1
+	`, phone).Scan(
 		&user.ID, &user.Name, &user.Email, &user.Phone, &user.City, &user.PasswordHash, &user.Role, &user.Bonuses, &user.CreatedAt,
 	)
 	if err == sql.ErrNoRows {
@@ -685,6 +703,16 @@ func (j *JsonDB) GetUserByEmail(email string) (*User, error) {
 	j.load()
 	for _, u := range j.Data.Users {
 		if u.Email == email {
+			return &u, nil
+		}
+	}
+	return nil, errors.New("user not found")
+}
+
+func (j *JsonDB) GetUserByPhone(phone string) (*User, error) {
+	j.load()
+	for _, u := range j.Data.Users {
+		if u.Phone == phone {
 			return &u, nil
 		}
 	}
