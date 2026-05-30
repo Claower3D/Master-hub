@@ -1,7 +1,9 @@
+// [ignoring loop detection]
 package main
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -9,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -75,9 +78,79 @@ func verifySmsCodeStore(phone, code string) (bool, string) {
 	return true, ""
 }
 
+// ── Twilio sender ─────────────────────────────────────────────────────────────
+
+func getTwilioPhoneNumber(sid, token string) string {
+	apiURL := fmt.Sprintf("https://api.twilio.com/2010-04-01/Accounts/%s/IncomingPhoneNumbers.json?PageSize=1", sid)
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return ""
+	}
+	req.SetBasicAuth(sid, token)
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return ""
+	}
+	defer resp.Body.Close()
+
+	var res struct {
+		IncomingPhoneNumbers []struct {
+			PhoneNumber string `json:"phone_number"`
+		} `json:"incoming_phone_numbers"`
+	}
+	body, _ := io.ReadAll(resp.Body)
+	json.Unmarshal(body, &res)
+	if len(res.IncomingPhoneNumbers) > 0 {
+		return res.IncomingPhoneNumbers[0].PhoneNumber
+	}
+	return ""
+}
+
+func sendTwilioSMS(phone, message string) error {
+	accountSID := os.Getenv("TWILIO_ACCOUNT_SID")
+	authToken := os.Getenv("TWILIO_AUTH_TOKEN")
+	if accountSID == "" || authToken == "" {
+		return fmt.Errorf("Twilio credentials missing. Set TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN environment variables")
+	}
+	from := os.Getenv("TWILIO_FROM")
+	if from == "" {
+		from = getTwilioPhoneNumber(accountSID, authToken)
+		if from == "" {
+			from = "+15017122661" // fallback test number
+		}
+	}
+
+	apiURL := fmt.Sprintf("https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json", accountSID)
+	data := url.Values{}
+	data.Set("To", phone)
+	data.Set("From", from)
+	data.Set("Body", message)
+
+	req, err := http.NewRequest("POST", apiURL, strings.NewReader(data.Encode()))
+	if err != nil {
+		return err
+	}
+	req.SetBasicAuth(accountSID, authToken)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return fmt.Errorf("twilio HTTP %d: %s", resp.StatusCode, string(body))
+	}
+	log.Printf("📱 Twilio SMS sent from %s to %s successfully.", from, phone)
+	return nil
+}
+
 // ── SMSC.ru sender ────────────────────────────────────────────────────────────
 
-// smscLogin / smscPassword are read from env or fall back to empty (demo mode).
 func smscLogin() string {
 	if v := os.Getenv("SMSC_LOGIN"); v != "" {
 		return v
@@ -92,13 +165,10 @@ func smscPassword() string {
 	return ""
 }
 
-// sendSmscRu sends an SMS via SMSC.ru REST API.
-// Returns nil on success or when running in demo mode (no credentials).
 func sendSmscRu(phone, message string) error {
 	login := smscLogin()
 	password := smscPassword()
 
-	// Demo mode — just log
 	if login == "" || password == "" {
 		log.Printf("📱 [SMS DEMO] To %s: %s", phone, message)
 		return nil
@@ -109,7 +179,7 @@ func sendSmscRu(phone, message string) error {
 	params.Set("psw", password)
 	params.Set("phones", phone)
 	params.Set("mes", message)
-	params.Set("fmt", "3") // JSON response
+	params.Set("fmt", "3")
 	params.Set("charset", "utf-8")
 	params.Set("sender", "HubMaster")
 
@@ -135,9 +205,11 @@ func SendVerificationSMS(phone string) (string, error) {
 	storeSmsCode(phone, code)
 
 	msg := fmt.Sprintf("Ваш код для входа в HUB MASTER: %s. Действует 10 минут.", code)
-	if err := sendSmscRu(phone, msg); err != nil {
-		log.Printf("⚠️  SMS send warning: %v", err)
-		// Don't return error — still usable in demo/dev mode
+	if err := sendTwilioSMS(phone, msg); err != nil {
+		log.Printf("⚠️ Twilio SMS send failed: %v, trying SMSC.ru as fallback...", err)
+		if errFallback := sendSmscRu(phone, msg); errFallback != nil {
+			log.Printf("⚠️ Fallback SMSC.ru also failed: %v", errFallback)
+		}
 	}
 	return code, nil
 }
